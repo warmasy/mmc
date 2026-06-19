@@ -1,0 +1,9 @@
+{
+  "name": "earthonline",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build:prod",
+  "assets": {
+    "directory": "./dist",
+    "notFoundStrategy": "singlePageApplication"
+  }
+}

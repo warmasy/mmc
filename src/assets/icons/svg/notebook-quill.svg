@@ -1,0 +1,6 @@
+<svg width="128" height="128" xmlns="http://www.w3.org/2000/svg">
+  <path d="M16 24h64a8 8 0 0 1 8 8v72a8 8 0 0 1-8 8H16a8 8 0 0 1-8-8V32a8 8 0 0 1 8-8z" fill="none" stroke="currentColor" stroke-width="6"/>
+  <path d="M36 16v96" stroke="currentColor" stroke-width="3"/>
+  <path d="M48 44h20M48 60h20M48 76h16" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+  <path d="M88 28c12-8 28-4 32 8 4 12-4 28-16 36-8 4-16 4-20 0l-8 16 4-20c-4-4-4-12 0-20 4-8 12-16 20-20z" fill="currentColor"/>
+</svg>
