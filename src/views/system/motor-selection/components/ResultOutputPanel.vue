@@ -47,7 +47,7 @@ const props = defineProps({
 .result-panel { display: flex; flex-direction: column; gap: 12px; }
 
 /* 分组框 */
-.calc-fieldset { border: 1px solid var(--el-border-color); border-radius: 4px; padding: 10px 12px; background-color: var(--el-fill-color-light); margin: 0; }
+.calc-fieldset { border: 1px solid var(--el-border-color); border-radius: 4px; padding: 10px 12px; background-color: var(--el-bg-color); margin: 0; }
 .calc-fieldset legend { font-weight: bold; color: var(--el-text-color-primary); padding: 0 6px; font-size: 13px; }
 
 /* 参数网格 */

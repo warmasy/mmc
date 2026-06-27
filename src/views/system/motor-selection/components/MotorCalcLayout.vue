@@ -252,67 +252,6 @@ defineEmits(['calculate', 'reset', 'help'])
   line-height: 1.4;
 }
 
-/* el-input-number 箭头样式 */
-.calc-card :deep(.el-input-number.is-controls-right .el-input__wrapper) {
-  padding: 0;
-}
-
-.calc-card :deep(.el-input-number.is-controls-right .el-input__inner) {
-  text-align: left;
-  padding-left: 6px;
-  padding-right: 20px;
-}
-
-.calc-card :deep(.el-input .el-input__wrapper) {
-  padding: 0;
-}
-
-.calc-card :deep(.el-input .el-input__inner) {
-  text-align: left;
-  padding-left: 6px;
-  padding-right: 6px;
-}
-
-.calc-card :deep(.el-input-number.is-controls-right .el-input-number__decrease),
-.calc-card :deep(.el-input-number.is-controls-right .el-input-number__increase) {
-  width: 18px;
-  height: 50%;
-  border: none;
-  background: transparent;
-  color: var(--el-text-color-regular);
-  right: 2px;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.calc-card :deep(.el-input-number.is-controls-right .el-input-number__decrease .el-icon),
-.calc-card :deep(.el-input-number.is-controls-right .el-input-number__increase .el-icon) {
-  font-size: 10px;
-}
-
-.calc-card :deep(.el-input-number.is-controls-right .el-input-number__decrease) {
-  bottom: 1px;
-  border-radius: 0 0 2px 0;
-  border-top: 1px solid var(--el-border-color-lighter);
-}
-
-.calc-card :deep(.el-input-number.is-controls-right .el-input-number__increase) {
-  top: 1px;
-  border-radius: 0 2px 0 0;
-  border-bottom: 1px solid var(--el-border-color-lighter);
-}
-
-.calc-card :deep(.el-input-number.is-controls-right:hover .el-input-number__decrease),
-.calc-card :deep(.el-input-number.is-controls-right:hover .el-input-number__increase) {
-  opacity: 1;
-}
-
-.calc-card :deep(.el-input-number.is-controls-right .el-input-number__decrease:hover),
-.calc-card :deep(.el-input-number.is-controls-right .el-input-number__increase:hover) {
-  color: var(--el-color-primary);
-  background-color: var(--el-fill-color-light);
-}
-
 /* 响应式 */
 @media (max-width: 768px) {
   .calc-row { flex-direction: column; }

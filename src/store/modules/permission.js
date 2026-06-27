@@ -18,7 +18,8 @@ const MOCK_ROUTERS = [
     "children": [
       { "name": "Blog", "path": "blog", "hidden": false, "component": "system/blog/index", "meta": { "title": "博客", "icon": "link", "noCache": false } },
       { "name": "Memos", "path": "memos", "hidden": false, "component": "system/memos/index", "meta": { "title": "Memos", "icon": "documentation", "noCache": false } },
-      { "name": "MotorSelection", "path": "motor-selection", "hidden": false, "component": "system/motor-selection/index", "meta": { "title": "电机选型", "icon": "tool", "noCache": false } }
+      { "name": "MotorSelection", "path": "motor-selection", "hidden": false, "component": "system/motor-selection/index", "meta": { "title": "电机选型", "icon": "tool", "noCache": false } },
+      { "name": "UnitConversion", "path": "unit-conversion", "hidden": false, "component": "system/unit-conversion/index", "meta": { "title": "单位转换", "icon": "number", "noCache": false } }
     ]
   },
   {

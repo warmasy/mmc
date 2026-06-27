@@ -43,10 +43,9 @@
               <!-- 只读计算值 -->
               <el-input v-else-if="item.readonly" v-model="readonlyDisplay[item.key]" readonly size="small" style="width: 110px" />
               <!-- 数字输入 -->
-              <el-input-number v-else v-model="form[item.key]" :step="item.step || 1" :precision="item.precision"
+              <NumberInput v-else v-model="form[item.key]" :step="item.step || 1" :precision="item.precision"
                 :min="item.min !== undefined ? item.min : -Infinity" :max="item.max !== undefined ? item.max : Infinity"
-                controls-position="right" size="small" style="width: 110px"
-                @wheel.prevent="handleWheel($event, item)" />
+                :width="80" />
               <span class="param-unit" v-if="item.unit !== undefined">{{ item.unit }}</span>
             </div>
           </div>
@@ -57,30 +56,13 @@
 </template>
 
 <script setup>
+import NumberInput from "@/components/NumberInput/index.vue"
 const props = defineProps({
   inputParams: { type: Object, required: true },
   form: { type: Object, required: true },
   readonlyDisplay: { type: Object, default: () => ({}) }
 })
 
-function handleWheel(e, item) {
-  e.preventDefault()
-  const delta = e.deltaY > 0 ? -1 : 1
-  const step = item.step || 1
-  const precision = item.precision || 0
-  let currentVal = parseFloat(props.form[item.key])
-  if (isNaN(currentVal)) currentVal = 0
-  let newVal = currentVal + delta * step
-  if (item.min !== undefined && newVal < item.min) newVal = item.min
-  if (item.max !== undefined && newVal > item.max) newVal = item.max
-  if (precision > 0) {
-    newVal = parseFloat(newVal.toFixed(precision))
-  } else if (step < 1) {
-    const stepDecimals = step.toString().split('.')[1]?.length || 0
-    newVal = parseFloat(newVal.toFixed(stepDecimals))
-  }
-  props.form[item.key] = newVal
-}
 </script>
 
 <style scoped>
@@ -88,12 +70,12 @@ function handleWheel(e, item) {
 
 /* 图片 */
 .image-section { display: flex; gap: 12px; margin-bottom: 4px; }
-.image-item { flex: 1; display: flex; flex-direction: column; align-items: center; background-color: var(--el-fill-color); border: 1px solid var(--el-border-color-light); border-radius: 4px; padding: 8px 6px; min-width: 0; }
+.image-item { flex: 1; display: flex; flex-direction: column; align-items: center; background-color: var(--el-bg-color); border: 1px solid var(--el-border-color-light); border-radius: 4px; padding: 8px 6px; min-width: 0; }
 .image-title { font-size: 12px; font-weight: 600; color: var(--el-color-primary); margin-bottom: 6px; text-align: center; }
 .calc-image { width: 100%; height: 110px; object-fit: contain; border-radius: 2px; }
 
 /* 分组框 */
-.calc-fieldset { border: 1px solid var(--el-border-color); border-radius: 4px; padding: 10px 12px; background-color: var(--el-fill-color-light); margin: 0; }
+.calc-fieldset { border: 1px solid var(--el-border-color); border-radius: 4px; padding: 10px 12px; background-color: var(--el-bg-color); margin: 0; }
 .calc-fieldset legend { font-weight: bold; color: var(--el-text-color-primary); padding: 0 6px; font-size: 13px; }
 
 /* 单选 */
@@ -110,4 +92,5 @@ function handleWheel(e, item) {
 
 @media (max-width: 1200px) { .param-group { min-width: 180px; } }
 @media (max-width: 768px) { .param-row { flex-direction: column; } .param-group { min-width: 100%; } }
+
 </style>
