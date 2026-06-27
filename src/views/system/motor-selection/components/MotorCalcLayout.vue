@@ -39,11 +39,7 @@
             <ResultOutputPanel :outputParams="outputParams" :form="form" :result="result" />
           </div>
 
-          <div class="card-footer result-note" v-if="resultNotes && resultNotes.length">
-            <div class="note-box">
-              <div class="note-item" v-for="(note, idx) in resultNotes" :key="idx">{{ note }}</div>
-            </div>
-          </div>
+          <ResultNote :notes="resultNotes" />
         </el-card>
       </el-col>
     </el-row>
@@ -53,6 +49,7 @@
 <script setup>
 import ParamInputPanel from './ParamInputPanel.vue'
 import ResultOutputPanel from './ResultOutputPanel.vue'
+import ResultNote from './ResultNote.vue'
 
 const props = defineProps({
   inputParams: { type: Object, required: true },
@@ -224,32 +221,6 @@ defineEmits(['calculate', 'reset', 'help'])
 
 .calc-btn.btn-danger {
   font-weight: 500;
-}
-
-/* 右侧底部注释 */
-.card-footer.result-note {
-  padding: 8px 0;
-  background: transparent;
-  border: none;
-}
-
-.card-footer.result-note .note-box {
-  padding: 0 12px;
-  background: var(--el-fill-color-light);
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 4px;
-  min-height: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-}
-
-.card-footer.result-note .note-item {
-  font-size: 12px;
-  color: var(--el-text-color-secondary);
-  text-align: left;
-  line-height: 1.4;
 }
 
 /* 响应式 */

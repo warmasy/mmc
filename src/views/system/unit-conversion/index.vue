@@ -1,11 +1,10 @@
 <template>
   <div class="app-container unit-conversion-page">
-    <!-- 顶部标题栏 -->
     <div class="calc-header">
       <div class="header-left">
-        <span class="header-title">单位转换</span>
+        <span class="header-title">基本计算</span>
         <el-divider direction="vertical" />
-        <span class="header-subtitle">{{ currentType.name }}</span>
+        <span class="header-subtitle">{{ currentTab === 'unit-conversion' ? currentType.name : currentInertia.name }}</span>
       </div>
       <div class="header-info">
         <div class="info-item">
@@ -23,35 +22,42 @@
       </div>
     </div>
 
-    <!-- 左右卡片布局 -->
     <el-row :gutter="16" class="calc-row">
-      <!-- 左侧：转换类型选择 -->
       <el-col :span="7" :xs="24">
         <el-card class="calc-card type-card" :body-style="{ padding: '0', display: 'flex', flexDirection: 'column', height: '100%' }">
           <template #header>
-            <div class="card-header">
-              <span>转换类型</span>
-            </div>
+            <div class="card-header"><span>选型卡</span></div>
           </template>
           <div class="type-list">
-            <div
-              v-for="type in conversionTypes"
-              :key="type.id"
-              :class="['type-item', { active: currentTypeId === type.id }]"
-              @click="selectType(type.id)"
-            >
-              <span class="type-name">{{ type.name }}</span>
-            </div>
+            <el-collapse v-model="activeCollapse" class="calc-collapse">
+              <el-collapse-item title="单位转换" name="unit-conversion">
+                <div class="sub-type-list">
+                  <div v-for="type in conversionTypes" :key="type.id"
+                    :class="['type-item', { active: currentTypeId === type.id && currentTab === 'unit-conversion' }]"
+                    @click="selectType(type.id)">
+                    <span class="type-name">{{ type.name }}</span>
+                  </div>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item title="惯量计算" name="inertia-calc">
+                <div class="sub-type-list">
+                  <div v-for="model in inertiaModels" :key="model.id"
+                    :class="['type-item', { active: currentInertiaId === model.id && currentTab === 'inertia-calc' }]"
+                    @click="selectInertiaModel(model.id)">
+                    <span class="type-name">{{ model.name }}</span>
+                  </div>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
           </div>
         </el-card>
       </el-col>
 
-      <!-- 右侧：转换操作 -->
       <el-col :span="17" :xs="24">
-        <el-card class="calc-card" :body-style="{ padding: '16px', display: 'flex', flexDirection: 'column', height: '100%', gap: '16px' }">
+        <el-card class="calc-card" :body-style="{ padding: '16px 16px 0px 16px', display: 'flex', flexDirection: 'column', height: '100%', gap: '0px' }">
           <template #header>
             <div class="card-header">
-              <span>转换操作</span>
+              <span>计算卡</span>
               <span class="header-status" v-if="statusText">
                 <span class="status-tag">状态提示</span>
                 <span class="status-text">{{ statusText }}</span>
@@ -59,91 +65,91 @@
             </div>
           </template>
 
-          <!-- 输入区域 -->
-          <div class="convert-input-section">
-            <div class="input-row">
-              <div class="input-group">
-                <span class="input-label">输入数值</span>
-                <NumberInput
-                  v-model="inputValue"
-                  :step="1"
-                  :precision="6"
-                  :width="100"
-                  :min="0"
-                  @change="handleConvert"
-                />
-              </div>
-              <div class="input-group">
-                <span class="input-label">源单位</span>
-                <el-select v-model="sourceUnit" placeholder="选择单位" size="small" style="width: 100px" @change="handleConvert" class="no-arrow-select" @wheel.prevent="handleWheelSource">
-                  <el-option
-                    v-for="(unit, key) in currentType.units"
-                    :key="key"
-                    :label="unit.symbol"
-                    :value="key"
-                  >
-                    <span>{{ unit.name }} ({{ unit.symbol }})</span>
-                  </el-option>
-                </el-select>
-              </div>
-              <div class="input-group">
-                <span class="input-label">目标单位</span>
-                <el-select v-model="targetUnit" placeholder="选择单位" size="small" style="width: 100px" @change="handleConvert" class="no-arrow-select" @wheel.prevent="handleWheelTarget">
-                  <el-option
-                    v-for="(unit, key) in currentType.units"
-                    :key="key"
-                    :label="unit.symbol"
-                    :value="key"
-                  >
-                    <span>{{ unit.name }} ({{ unit.symbol }})</span>
-                  </el-option>
-                </el-select>
-              </div>
-              <div class="input-group">
-                <span class="input-label">转换结果</span>
-                <el-input v-model="resultDisplay" readonly size="small" style="width: 100px" class="center-input" />
-              </div>
-              <div class="input-group formula-group">
-                <span class="input-label">&nbsp;</span>
-                <el-tag v-if="convertResult !== null" type="info" effect="plain" size="small">
-                  {{ inputValue }} {{ currentType.units[sourceUnit]?.symbol }} = {{ formatResult(convertResult) }} {{ currentType.units[targetUnit]?.symbol }}
-                </el-tag>
+          <div v-show="currentTab === 'unit-conversion'" class="tab-panel">
+            <div class="convert-input-section">
+              <div class="input-row">
+                <div class="input-group">
+                  <span class="input-label">输入数值</span>
+                  <NumberInput v-model="inputValue" :step="1" :precision="6" :width="100" :min="0" @change="handleConvert" />
+                </div>
+                <div class="input-group">
+                  <span class="input-label">源单位</span>
+                  <el-select v-model="sourceUnit" placeholder="选择单位" size="small" style="width: 100px" @change="handleConvert" class="no-arrow-select" @wheel.prevent="handleWheelSource">
+                    <el-option v-for="(unit, key) in currentType.units" :key="key" :label="unit.symbol" :value="key">
+                      <span>{{ unit.name }} ({{ unit.symbol }})</span>
+                    </el-option>
+                  </el-select>
+                </div>
+                <div class="input-group">
+                  <span class="input-label">目标单位</span>
+                  <el-select v-model="targetUnit" placeholder="选择单位" size="small" style="width: 100px" @change="handleConvert" class="no-arrow-select" @wheel.prevent="handleWheelTarget">
+                    <el-option v-for="(unit, key) in currentType.units" :key="key" :label="unit.symbol" :value="key">
+                      <span>{{ unit.name }} ({{ unit.symbol }})</span>
+                    </el-option>
+                  </el-select>
+                </div>
+                <div class="input-group">
+                  <span class="input-label">转换结果</span>
+                  <el-input v-model="resultDisplay" readonly size="small" style="width: 100px" class="center-input" />
+                </div>
+                <div class="input-group formula-group">
+                  <span class="input-label">&nbsp;</span>
+                  <el-tag v-if="convertResult !== null" type="info" effect="plain" size="small">
+                    {{ inputValue }} {{ currentType.units[sourceUnit]?.symbol }} = {{ formatResult(convertResult) }} {{ currentType.units[targetUnit]?.symbol }}
+                  </el-tag>
+                </div>
               </div>
             </div>
-
-          </div>
-
-          <!-- 全部单位对照表 -->
-          <div class="convert-table-section">
-            <div class="section-title">全部单位对照表</div>
-            <!-- 硬度类型：建设中 -->
-            <div v-if="currentType.referenceTable" class="building-tip">
-              <el-empty description="硬度换算表正在建设中，敬请期待" />
-            </div>
-            <!-- 其他类型：展示常规换算表 -->
-            <div v-else class="convert-table">
-              <div class="table-header">
-                <span class="col-unit">单位名称</span>
-                <span class="col-symbol">符号</span>
-                <span class="col-value">换算值</span>
-                <span class="col-formula">换算关系</span>
+            <div class="convert-table-section">
+              <div class="section-title">全部单位对照表</div>
+              <div v-if="currentType.referenceTable" class="building-tip">
+                <el-empty description="硬度换算表正在建设中，敬请期待" />
               </div>
-              <div class="table-body">
-                <div
-                  v-for="(unit, key) in currentType.units"
-                  :key="key"
-                  :class="['table-row', { highlight: key === sourceUnit || key === targetUnit }]"
-                >
-                  <span class="col-unit">{{ unit.name }}</span>
-                  <span class="col-symbol">{{ unit.symbol }}</span>
-                  <span class="col-value">{{ formatResult(convertToBase(key)) }}</span>
-                  <span class="col-formula">
-                    1 {{ currentType.units[currentType.baseUnit]?.symbol }} = {{ formatResult(1 / unit.factor) }} {{ unit.symbol }}
-                  </span>
+              <div v-else class="convert-table">
+                <div class="table-header">
+                  <span class="col-unit">单位名称</span>
+                  <span class="col-symbol">符号</span>
+                  <span class="col-value">换算值</span>
+                  <span class="col-formula">换算关系</span>
+                </div>
+                <div class="table-body">
+                  <div v-for="(unit, key) in currentType.units" :key="key" :class="['table-row', { highlight: key === sourceUnit || key === targetUnit }]">
+                    <span class="col-unit">{{ unit.name }}</span>
+                    <span class="col-symbol">{{ unit.symbol }}</span>
+                    <span class="col-value">{{ formatResult(convertToBase(key)) }}</span>
+                    <span class="col-formula">1 {{ currentType.units[currentType.baseUnit]?.symbol }} = {{ formatResult(1 / unit.factor) }} {{ unit.symbol }}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+
+          <div v-show="currentTab === 'inertia-calc'" class="tab-panel">
+            <div class="inertia-desc">
+              <el-tag type="info" effect="plain" size="small">{{ currentInertia.name }}</el-tag>
+              <span class="desc-text">{{ currentInertia.desc }}</span>
+            </div>
+            <div class="convert-input-section">
+              <div class="inertia-input-row">
+                <div class="input-group" v-for="(param, key) in currentInertia.params" :key="key">
+                  <span class="input-label">{{ param.name }}</span>
+                  <NumberInput v-model="inertiaParams[key]" :step="param.step || 1" :precision="param.precision || 4" :width="100" :min="param.min !== undefined ? param.min : 0" @change="calcInertia" />
+                  <span class="param-unit">{{ param.unit }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="convert-table-section inertia-result-section">
+              <div class="section-title">计算结果</div>
+              <div class="inertia-result">
+                <div class="result-row">
+                  <span class="result-label">转动惯量 J</span>
+                  <span class="result-value">{{ inertiaResult !== null ? formatResult(inertiaResult) : '-' }} kg·m²</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ResultNote :notes="['注：计算结果仅供学习参考，请勿用于其它用途']" />
         </el-card>
       </el-col>
     </el-row>
@@ -151,17 +157,12 @@
 </template>
 
 <script setup name="UnitConversion">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import NumberInput from '@/components/NumberInput/index.vue'
-import { conversionTypes, getConversionTypeById, getDefaultConversionType } from './config'
+import ResultNote from '@/views/system/motor-selection/components/ResultNote.vue'
+import { conversionTypes, getConversionTypeById, getDefaultConversionType, inertiaModels, getInertiaModelById, getDefaultInertiaModel } from './config'
 
-// ==================== 项目信息 ====================
-const currentDate = ref(new Date().toLocaleDateString('zh-CN', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric'
-}))
-
+const currentDate = ref(new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }))
 const projectName = ref('')
 const projectNo = ref('')
 function generateUUID() {
@@ -170,11 +171,60 @@ function generateUUID() {
 }
 generateUUID()
 
-// ==================== 转换类型 ====================
+const activeCollapse = ref(['unit-conversion', 'inertia-calc'])
+const currentTab = ref('unit-conversion')
 const currentTypeId = ref(getDefaultConversionType().id)
 const currentType = computed(() => getConversionTypeById(currentTypeId.value))
 
+const currentInertiaId = ref(getDefaultInertiaModel().id)
+const currentInertia = computed(() => getInertiaModelById(currentInertiaId.value))
+const inertiaParams = ref({})
+const inertiaResult = ref(null)
+
+function initInertiaParams() {
+  const params = {}
+  const model = currentInertia.value
+  for (const key in model.params) {
+    params[key] = model.params[key].default
+  }
+  inertiaParams.value = params
+}
+
+function calcInertia() {
+  const model = currentInertia.value
+  const p = inertiaParams.value
+  for (const key in model.params) {
+    if (p[key] === undefined || p[key] === null || isNaN(p[key]) || p[key] < 0) {
+      inertiaResult.value = null
+      return
+    }
+  }
+  switch (model.formulaType) {
+    case 'solid-cylinder': inertiaResult.value = 0.5 * p.m * p.r * p.r; break
+    case 'hollow-cylinder': inertiaResult.value = 0.5 * p.m * (p.r1 * p.r1 + p.r2 * p.r2); break
+    case 'rectangular-prism': inertiaResult.value = (1/12) * p.m * (p.a * p.a + p.b * p.b); break
+    case 'sphere': inertiaResult.value = (2/5) * p.m * p.r * p.r; break
+    case 'thin-disk': inertiaResult.value = 0.5 * p.m * p.r * p.r; break
+    case 'cone': inertiaResult.value = 0.3 * p.m * p.r * p.r; break
+    default: inertiaResult.value = null
+  }
+}
+
+function selectInertiaModel(id) {
+  currentTab.value = 'inertia-calc'
+  currentInertiaId.value = id
+  initInertiaParams()
+  calcInertia()
+  statusText.value = '已切换模型，等待输入...'
+}
+
+onMounted(() => {
+  initInertiaParams()
+  calcInertia()
+})
+
 function selectType(id) {
+  currentTab.value = 'unit-conversion'
   currentTypeId.value = id
   const unitKeys = Object.keys(currentType.value.units)
   sourceUnit.value = unitKeys[0]
@@ -183,7 +233,6 @@ function selectType(id) {
   handleConvert()
 }
 
-// ==================== 转换逻辑 ====================
 const inputValue = ref(1)
 const sourceUnit = ref('')
 const targetUnit = ref('')
@@ -239,14 +288,11 @@ function formatResult(val) {
   return val.toFixed(6).replace(/\.?0+$/, '')
 }
 
-// ==================== 滚轮切换选项 ====================
 function handleWheelSource(e) {
   const keys = Object.keys(currentType.value.units)
   const idx = keys.indexOf(sourceUnit.value)
   if (idx === -1) return
-  const newIdx = e.deltaY > 0
-    ? (idx + 1) % keys.length
-    : (idx - 1 + keys.length) % keys.length
+  const newIdx = e.deltaY > 0 ? (idx + 1) % keys.length : (idx - 1 + keys.length) % keys.length
   sourceUnit.value = keys[newIdx]
   handleConvert()
 }
@@ -255,9 +301,7 @@ function handleWheelTarget(e) {
   const keys = Object.keys(currentType.value.units)
   const idx = keys.indexOf(targetUnit.value)
   if (idx === -1) return
-  const newIdx = e.deltaY > 0
-    ? (idx + 1) % keys.length
-    : (idx - 1 + keys.length) % keys.length
+  const newIdx = e.deltaY > 0 ? (idx + 1) % keys.length : (idx - 1 + keys.length) % keys.length
   targetUnit.value = keys[newIdx]
   handleConvert()
 }
@@ -349,8 +393,9 @@ function handleWheelTarget(e) {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 16px !important;
+  gap: 0px !important;
   background-color: var(--el-bg-color);
+  padding: 16px 16px 0px 16px !important;
 }
 
 .calc-card :deep(.el-card__header) {
@@ -405,9 +450,44 @@ function handleWheelTarget(e) {
 }
 
 .type-list {
+  padding: 0;
+}
+
+.calc-collapse {
+  border: none;
+  margin: 8px 8px 0 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.calc-collapse :deep(.el-collapse-item__header) {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 0 8px !important;
+  height: 35px !important;
+  min-height: 35px !important;
+  line-height: 35px !important;
+  background: #e8f5e9 !important;
+  border-bottom: 1px solid #c8e6c9 !important;
+  color: #1a1a1a !important;
+  display: flex;
+  align-items: center;
+}
+
+.calc-collapse :deep(.el-collapse-item__content) {
+  padding: 4px;
+}
+
+.calc-collapse :deep(.el-collapse-item__wrap) {
+  border-bottom: none;
+}
+
+.sub-type-list {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  padding: 4px;
   gap: 3px;
 }
 
@@ -444,12 +524,21 @@ function handleWheelTarget(e) {
   font-weight: 600;
 }
 
+.tab-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
 .convert-input-section {
   background-color: var(--el-bg-color);
   border: 1px solid var(--el-border-color);
   border-radius: 4px;
   padding: 16px;
   flex-shrink: 0;
+  margin-bottom: 16px;
 }
 
 .input-row {
@@ -468,6 +557,7 @@ function handleWheelTarget(e) {
   font-size: 13px;
   color: var(--el-text-color-regular);
   font-weight: 500;
+  text-align: center;
 }
 
 .formula-group {
@@ -604,12 +694,10 @@ function handleWheelTarget(e) {
   }
 }
 
-/* 输入框文字居中 */
 .center-input :deep(.el-input__inner) {
   text-align: center !important;
 }
 
-/* 隐藏 el-select 右侧箭头，文字居中 */
 .no-arrow-select :deep(.el-select__suffix) {
   display: none !important;
 }
@@ -638,9 +726,105 @@ function handleWheelTarget(e) {
   right: 0 !important;
 }
 
-/* label 文字居中 */
-.input-label {
-  text-align: center;
+/* 惯量计算 */
+.inertia-desc {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-bottom: 12px;
 }
 
+.inertia-desc .desc-text {
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
+}
+
+.inertia-input-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  align-items: flex-end;
+}
+
+.inertia-input-row .input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.inertia-input-row .param-unit {
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
+
+.inertia-result-section {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.inertia-result {
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color);
+  border-radius: 4px;
+  padding: 16px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.inertia-result .result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px dotted var(--el-border-color-light);
+}
+
+.inertia-result .result-row:last-child {
+  border-bottom: none;
+}
+
+.inertia-result .result-label {
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+}
+
+.inertia-result .result-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--el-color-danger);
+  font-family: Consolas, monospace;
+}
+
+/* 底部注释 */
+.card-footer.result-note {
+  padding: 8px 0;
+  background: transparent;
+  border: none;
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+.card-footer.result-note .note-box {
+  padding: 0 12px;
+  background: var(--el-fill-color-light);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 4px;
+  min-height: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.card-footer.result-note .note-item {
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+  text-align: left;
+  line-height: 1.4;
+}
 </style>
