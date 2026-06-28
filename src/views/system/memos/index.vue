@@ -96,7 +96,7 @@ const selectedTab = ref("websites")
 // 图片配置对象
 const imageConfig = ref({
   url: 'https://images.unsplash.com/photo-1517842645767-c639042777db?w=800&h=400&fit=crop',
-  caption: '图片',
+  caption: '',
   width: '600px',
   height: '300px'
 })

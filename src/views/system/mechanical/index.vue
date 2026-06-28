@@ -102,7 +102,7 @@ const imageConfig = ref({
 })
 
 const websiteList = ref([
-  { url: 'https://mech.3139822.xyz', platform: '机械计算' },
+  { url: 'http://mmbc.3139822.xyz/', platform: 'AlibabaCloud' },
 
 ])
 

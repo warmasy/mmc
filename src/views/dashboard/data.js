@@ -4,9 +4,9 @@ export const currentUser = {
   avatar: "https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png",
   name: "吴彦祖",
   userid: "00000001",
-  email: "antdesign@alipay.com",
+  email: "xxx@3139822.xyz",
   signature: "海纳百川，有容乃大",
-  title: "地球online",
+  title: "机械计算",
   group: "一定要好好的哦 ！！",
 };
 
@@ -37,12 +37,8 @@ export const projectNotice = [
 // 当前网址/网址列表（用于首页"当前网址"表格）
 export const webNotice = [
   {
-    url: "https://myblog.3139822.xyz/",
+    url: "http://mmbc.3139822.xyz/",
     lab: "博客",
-  },
-  {
-    url: "http://memos.3139822.xyz/",
-    lab: "Memos",
   },
 ];
 
