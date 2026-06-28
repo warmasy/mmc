@@ -74,3 +74,6 @@ export function getDefaultResult() {
     maxTemp: '0'
   }
 }
+
+export const inputParams = inputLayout
+export const outputParams = outputLayout
