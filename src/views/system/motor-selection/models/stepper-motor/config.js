@@ -74,3 +74,7 @@ export function getDefaultResult() {
     stepAngle: '1.8'
   }
 }
+
+
+export const inputParams = inputLayout
+export const outputParams = outputLayout
