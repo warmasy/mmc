@@ -1,10 +1,8 @@
 <template>
   <input
-    type="number"
+    type="text"
+    inputmode="decimal"
     :value="modelValue"
-    :step="step"
-    :min="min"
-    :max="max"
     :style="computedStyle"
     class="native-number-input"
     @input="handleInput"
@@ -56,7 +54,12 @@ function handleInput(e) {
   }
 }
 
+let wheelTimer = null
 function handleWheel(e) {
+  if (props.readonly) return
+  e.preventDefault()
+  if (wheelTimer) return
+  wheelTimer = setTimeout(() => { wheelTimer = null }, 30)
   const delta = e.deltaY > 0 ? -1 : 1
   const stepVal = parseFloat(props.step) || 1
   let currentVal = parseFloat(props.modelValue)
@@ -80,6 +83,8 @@ function handleWheel(e) {
 .native-number-input {
   width: 100px;
   height: 24px;
+  min-height: 24px;
+  max-height: 24px;
   padding: 0 8px;
   border: 1px solid var(--el-border-color);
   border-radius: 4px;
@@ -87,25 +92,27 @@ function handleWheel(e) {
   color: var(--el-text-color-primary);
   background: var(--el-bg-color);
   outline: none;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  transition: none !important;
+  animation: none !important;
+}
+
+.native-number-input::-webkit-scrollbar {
+  display: none;
 }
 
 .native-number-input:focus {
   border-color: var(--el-color-primary);
+  outline: none;
+  box-shadow: none;
 }
-
-.native-number-input::-webkit-inner-spin-button,
-.native-number-input::-webkit-outer-spin-button {
-  opacity: 0;
-  transition: opacity 0.2s;
-  height: 16px;
-  padding: 1px 0;
-}
-
-.native-number-input:hover::-webkit-inner-spin-button,
-.native-number-input:hover::-webkit-outer-spin-button {
-  opacity: 1;
-}
-
-.native-number-input { -moz-appearance: textfield; }
-.native-number-input:hover { -moz-appearance: number-input; }
 </style>

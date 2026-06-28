@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container unit-conversion-page">
+  <div class="app-container basic-calculation-page">
     <div class="calc-header">
       <div class="header-left">
         <span class="header-title">基本计算</span>
@@ -76,7 +76,7 @@
                   <span class="input-label">源单位</span>
                   <el-select v-model="sourceUnit" placeholder="选择单位" size="small" style="width: 100px" @change="handleConvert" class="no-arrow-select" @wheel.prevent="handleWheelSource">
                     <el-option v-for="(unit, key) in currentType.units" :key="key" :label="unit.symbol" :value="key">
-                      <span>{{ unit.name }} ({{ unit.symbol }})</span>
+                      <span>{{ unit.symbol }}({{ unit.name }})</span>
                     </el-option>
                   </el-select>
                 </div>
@@ -84,7 +84,7 @@
                   <span class="input-label">目标单位</span>
                   <el-select v-model="targetUnit" placeholder="选择单位" size="small" style="width: 100px" @change="handleConvert" class="no-arrow-select" @wheel.prevent="handleWheelTarget">
                     <el-option v-for="(unit, key) in currentType.units" :key="key" :label="unit.symbol" :value="key">
-                      <span>{{ unit.name }} ({{ unit.symbol }})</span>
+                      <span>{{ unit.symbol }}({{ unit.name }})</span>
                     </el-option>
                   </el-select>
                 </div>
@@ -101,23 +101,44 @@
               </div>
             </div>
             <div class="convert-table-section">
-              <div class="section-title">全部单位对照表</div>
-              <div v-if="currentType.referenceTable" class="building-tip">
-                <el-empty description="硬度换算表正在建设中，敬请期待" />
-              </div>
-              <div v-else class="convert-table">
+              <div class="section-header">
+  <span class="section-title">全部单位对照表</span>
+  <div class="base-unit-selector">
+    <span class="base-unit-label">基础单位：</span>
+    <el-dropdown trigger="click" @command="(cmd) => selectedBaseUnit = cmd" :teleported="false">
+      <el-button size="small" class="base-unit-btn" @wheel.prevent="handleWheelBaseUnit">
+        {{ currentType.units[selectedBaseUnit]?.symbol }}
+      </el-button>
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item
+            v-for="(unit, key) in currentType.units"
+            :key="key"
+            :command="key"
+            :class="{ 'is-active': key === selectedBaseUnit }"
+          >
+            {{ unit.symbol }}({{ unit.name }})
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
+  </div>
+</div>
+              <div class="convert-table">
                 <div class="table-header">
                   <span class="col-unit">单位名称</span>
                   <span class="col-symbol">符号</span>
                   <span class="col-value">换算值</span>
                   <span class="col-formula">换算关系</span>
+                  <span class="col-base-formula">基本换算</span>
                 </div>
                 <div class="table-body">
-                  <div v-for="(unit, key) in currentType.units" :key="key" :class="['table-row', { highlight: key === sourceUnit || key === targetUnit }]">
+                  <div v-for="(unit, key) in currentType.units" :key="key" :class="['table-row', { highlight: key === targetUnit }]">
                     <span class="col-unit">{{ unit.name }}</span>
-                    <span class="col-symbol">{{ unit.symbol }}</span>
-                    <span class="col-value">{{ formatResult(convertToBase(key)) }}</span>
-                    <span class="col-formula">1 {{ currentType.units[currentType.baseUnit]?.symbol }} = {{ formatResult(1 / unit.factor) }} {{ unit.symbol }}</span>
+                    <span class="col-symbol"><span :class="['symbol-text', { 'base-active': key === sourceUnit }]">{{ unit.symbol }}</span></span>
+                    <span class="col-value">{{ formatResult(getInputConversionValue(key)) }}</span>
+                    <span class="col-formula">{{ getInputConversionFormula(key) }}</span>
+                    <span class="col-base-formula">{{ getConversionFormula(key) }}</span>
                   </div>
                 </div>
               </div>
@@ -156,7 +177,7 @@
   </div>
 </template>
 
-<script setup name="UnitConversion">
+<script setup name="BasicCalculation">
 import { ref, computed, watch, onMounted } from 'vue'
 import NumberInput from '@/components/NumberInput/index.vue'
 import ResultNote from '@/views/system/motor-selection/components/ResultNote.vue'
@@ -175,6 +196,23 @@ const activeCollapse = ref(['unit-conversion', 'inertia-calc'])
 const currentTab = ref('unit-conversion')
 const currentTypeId = ref(getDefaultConversionType().id)
 const currentType = computed(() => getConversionTypeById(currentTypeId.value))
+const selectedBaseUnit = ref('')
+
+// 基础单位选项
+const baseUnitOptions = computed(() => {
+  if (!currentType.value || !currentType.value.units) return []
+  return Object.entries(currentType.value.units).map(([key, unit]) => ({
+    value: key,
+    label: `${unit.name} (${unit.symbol})`
+  }))
+})
+
+// 初始化基础单位
+function initBaseUnit() {
+  if (currentType.value && currentType.value.units) {
+    selectedBaseUnit.value = sourceUnit.value
+  }
+}
 
 const currentInertiaId = ref(getDefaultInertiaModel().id)
 const currentInertia = computed(() => getInertiaModelById(currentInertiaId.value))
@@ -221,6 +259,7 @@ function selectInertiaModel(id) {
 onMounted(() => {
   initInertiaParams()
   calcInertia()
+  initBaseUnit()
 })
 
 function selectType(id) {
@@ -228,7 +267,8 @@ function selectType(id) {
   currentTypeId.value = id
   const unitKeys = Object.keys(currentType.value.units)
   sourceUnit.value = unitKeys[0]
-  targetUnit.value = unitKeys[1] || unitKeys[0]
+  targetUnit.value = unitKeys[0]
+  selectedBaseUnit.value = unitKeys[0]
   statusText.value = '已切换类型，等待输入...'
   handleConvert()
 }
@@ -249,9 +289,8 @@ watch(() => currentType.value, (type) => {
   if (!sourceUnit.value || !type.units[sourceUnit.value]) {
     sourceUnit.value = unitKeys[0]
   }
-  if (!targetUnit.value || !type.units[targetUnit.value]) {
-    targetUnit.value = unitKeys[1] || unitKeys[0]
-  }
+  targetUnit.value = sourceUnit.value
+  selectedBaseUnit.value = sourceUnit.value
   handleConvert()
 }, { immediate: true })
 
@@ -280,12 +319,53 @@ function formatResult(val) {
   if (val === 0) return '0'
   const absVal = Math.abs(val)
   if (absVal >= 1e6 || absVal < 1e-4) {
-    return val.toExponential(4)
+    let exp = val.toExponential(4)
+    exp = exp.replace(/\.0+e/, 'e')           // 1.0000e+6 → 1e+6
+    exp = exp.replace(/(\.\d*?)0+e/, '$1e')  // 1.2340e+6 → 1.234e+6
+    return exp
   }
   if (absVal >= 1) {
     return val.toFixed(4).replace(/\.?0+$/, '')
   }
   return val.toFixed(6).replace(/\.?0+$/, '')
+}
+
+// 根据选中的基础单位计算换算关系
+function getConversionFormula(unitKey) {
+  if (!currentType.value || !currentType.value.units[unitKey] || !currentType.value.units[selectedBaseUnit.value]) return ''
+  const baseUnit = currentType.value.units[selectedBaseUnit.value]
+  const targetUnit = currentType.value.units[unitKey]
+  const baseFactor = baseUnit.factor
+  const targetFactor = targetUnit.factor
+  const ratio = baseFactor / targetFactor
+  return `1 ${baseUnit.symbol} = ${formatResult(ratio)} ${targetUnit.symbol}`
+}
+
+function getBaseConversionValue(unitKey) {
+  if (!currentType.value || !currentType.value.units[unitKey] || !currentType.value.units[selectedBaseUnit.value]) return 0
+  const baseUnit = currentType.value.units[selectedBaseUnit.value]
+  const targetUnit = currentType.value.units[unitKey]
+  return baseUnit.factor / targetUnit.factor
+}
+
+function getInputConversionFormula(unitKey) {
+  if (!currentType.value || !currentType.value.units[unitKey] || !currentType.value.units[sourceUnit.value]) return ''
+  const inputVal = parseFloat(inputValue.value)
+  if (isNaN(inputVal)) return ''
+  const sourceUnitObj = currentType.value.units[sourceUnit.value]
+  const targetUnit = currentType.value.units[unitKey]
+  const ratio = sourceUnitObj.factor / targetUnit.factor
+  const result = inputVal * ratio
+  return `${formatResult(inputVal)} ${sourceUnitObj.symbol} = ${formatResult(result)} ${targetUnit.symbol}`
+}
+
+function getInputConversionValue(unitKey) {
+  if (!currentType.value || !currentType.value.units[unitKey] || !currentType.value.units[sourceUnit.value]) return 0
+  const inputVal = parseFloat(inputValue.value)
+  if (isNaN(inputVal)) return 0
+  const sourceUnitObj = currentType.value.units[sourceUnit.value]
+  const targetUnit = currentType.value.units[unitKey]
+  return inputVal * (sourceUnitObj.factor / targetUnit.factor)
 }
 
 function handleWheelSource(e) {
@@ -305,10 +385,18 @@ function handleWheelTarget(e) {
   targetUnit.value = keys[newIdx]
   handleConvert()
 }
+
+function handleWheelBaseUnit(e) {
+  const keys = Object.keys(currentType.value.units)
+  const idx = keys.indexOf(selectedBaseUnit.value)
+  if (idx === -1) return
+  const newIdx = e.deltaY > 0 ? (idx + 1) % keys.length : (idx - 1 + keys.length) % keys.length
+  selectedBaseUnit.value = keys[newIdx]
+}
 </script>
 
 <style scoped>
-.unit-conversion-page {
+.basic-calculation-page {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -396,6 +484,7 @@ function handleWheelTarget(e) {
   gap: 0px !important;
   background-color: var(--el-bg-color);
   padding: 16px 16px 0px 16px !important;
+  contain: layout;
 }
 
 .calc-card :deep(.el-card__header) {
@@ -470,11 +559,12 @@ function handleWheelTarget(e) {
   height: 35px !important;
   min-height: 35px !important;
   line-height: 35px !important;
-  background: #e8f5e9 !important;
-  border-bottom: 1px solid #c8e6c9 !important;
-  color: #1a1a1a !important;
+  background: var(--el-fill-color-light) !important;
+  border-bottom: 1px solid var(--el-border-color-light) !important;
+  color: var(--el-color-primary) !important;
   display: flex;
   align-items: center;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 .calc-collapse :deep(.el-collapse-item__content) {
@@ -569,11 +659,12 @@ function handleWheelTarget(e) {
   line-height: 22px;
   padding: 0 10px;
   font-size: 12px;
-  background-color: var(--el-color-primary-light-9) !important;
-  border-color: var(--el-color-primary-light-5) !important;
+  background-color: var(--el-fill-color-light) !important;
+  border-color: var(--el-color-primary) !important;
   color: var(--el-color-primary) !important;
   font-weight: 600;
   border-radius: 4px;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 .convert-table-section {
@@ -582,13 +673,13 @@ function handleWheelTarget(e) {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  contain: layout;
 }
 
 .section-title {
   font-size: 13px;
   font-weight: bold;
   color: var(--el-text-color-primary);
-  margin-bottom: 8px;
   flex-shrink: 0;
 }
 
@@ -602,24 +693,54 @@ function handleWheelTarget(e) {
 
 .table-header {
   display: flex;
-  padding: 8px 12px;
+  padding: 0 12px;
+  height: 36px;
+  min-height: 36px;
   background-color: var(--el-fill-color-light);
   border-bottom: 1px solid var(--el-border-color-light);
   font-size: 13px;
-  font-weight: bold;
   color: var(--el-text-color-primary);
   position: sticky;
   top: 0;
   z-index: 1;
+  box-sizing: border-box;
+}
+
+.table-header > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-header > .col-unit,
+.table-header > .col-formula,
+.table-header > .col-base-formula {
+  justify-content: flex-start;
 }
 
 .table-row {
   display: flex;
-  padding: 8px 12px;
+  padding: 0 12px;
+  height: 36px;
+  min-height: 36px;
   border-bottom: 1px solid var(--el-border-color-light);
   font-size: 13px;
   color: var(--el-text-color-regular);
   transition: background-color 0.2s;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.table-row > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-row > .col-unit,
+.table-row > .col-formula,
+.table-row > .col-base-formula {
+  justify-content: flex-start;
 }
 
 .table-row:last-child {
@@ -631,33 +752,69 @@ function handleWheelTarget(e) {
 }
 
 .table-row.highlight {
-  background-color: var(--el-color-primary-light-9);
+  background-color: var(--el-fill-color-light);
   color: var(--el-color-primary);
   font-weight: 500;
+  border-left: 3px solid var(--el-color-primary);
+  padding-left: 9px;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .col-unit {
-  flex: 2;
-  min-width: 100px;
+  width: 18%;
+  min-width: 70px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .col-symbol {
-  flex: 1;
-  min-width: 60px;
+  width: 10%;
+  min-width: 40px;
   color: var(--el-text-color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.symbol-text.base-active {
+  color: var(--el-color-primary);
+  font-weight: 600;
+  border: 1px solid var(--el-color-primary);
+  border-radius: 3px;
+  padding: 0 2px;
+  display: inline-block;
+  line-height: 1.2;
+  transition: all 0.3s ease;
 }
 
 .col-value {
-  flex: 2;
-  min-width: 100px;
+  width: 16%;
+  min-width: 60px;
   font-family: Consolas, monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .col-formula {
-  flex: 3;
-  min-width: 150px;
+  width: 28%;
+  min-width: 100px;
   color: var(--el-text-color-secondary);
   font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-base-formula {
+  width: 28%;
+  min-width: 100px;
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (max-width: 1200px) {
@@ -826,5 +983,61 @@ function handleWheelTarget(e) {
   color: var(--el-text-color-secondary);
   text-align: left;
   line-height: 1.4;
+}
+
+/* 表头区域 */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.base-unit-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.base-unit-btn {
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 500;
+  min-width: 60px;
+  color: var(--el-color-primary) !important;
+  border-color: var(--el-color-primary) !important;
+  background-color: var(--el-fill-color-light) !important;
+  transition: color 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.base-unit-btn:hover {
+  color: var(--el-color-primary-light-3) !important;
+  border-color: var(--el-color-primary-light-3) !important;
+}
+
+.base-unit-selector :deep(.el-dropdown-menu__item.is-active) {
+  color: var(--el-color-primary);
+  font-weight: 600;
+  background-color: var(--el-fill-color-light);
+}
+
+.base-unit-label {
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+  white-space: nowrap;
+}
+
+/* 下拉选择框在暗色模式下的适配 */
+.base-unit-selector :deep(.el-select__wrapper) {
+  background-color: var(--el-fill-color-light);
+  border-color: var(--el-border-color);
+}
+
+.base-unit-selector :deep(.el-select-dropdown__item) {
+  padding: 0 12px;
+  font-size: 13px;
 }
 </style>
