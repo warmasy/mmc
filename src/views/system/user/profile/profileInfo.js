@@ -16,7 +16,7 @@ export const profileInfoList = [
   {
     icon: 'documentation',
     label: '网站名称',
-    value: '地球online',
+    value: '机械计算',
     type: 'text'
   },
   {
@@ -42,7 +42,7 @@ export const profileInfoList = [
   {
     icon: 'email',
     label: '邮箱',
-    value: '123@3139822.xyz',
+    value: '3139822307@qq.com',
     type: 'text'
   },
   {
