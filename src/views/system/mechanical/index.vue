@@ -87,8 +87,8 @@ const defaultAvatar = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e5
 const siteInfo = reactive({
   logo: '/favicon-jx.svg',
   name: '机械计算',
-  url: 'https://mech.example.com',
-  description: '机械工程常用计算工具平台。'
+  url: 'http://mmbc.3139822.xyz/',
+  description: '机械工程常用计算工具'
 })
 
 const selectedTab = ref("websites")

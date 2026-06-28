@@ -8,7 +8,7 @@
       </template>
       <div class="about-content">
         <ul>
-          <li>不知道写什么，就这样吧。哦，对了，此网站还在建设中</li>
+          <li>不知道写什么，就这样吧。哦，对了，此网站还在建设中。</li>
         </ul>
       </div>
     </el-card>

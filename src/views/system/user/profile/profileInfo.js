@@ -29,7 +29,7 @@ export const profileInfoList = [
   },
   {
     icon: 'peoples',
-    label: '角色',
+    label: '站长角色',
     value: 'NPC',
     type: 'text'
   },
