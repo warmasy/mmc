@@ -14,7 +14,9 @@
 </template>
 
 <script setup>
-import logo from '@/assets/logo/logo.png'
+// 自动识别 logo 目录下任意格式的 logo 文件（logo.svg / logo.png / logo.webp / logo.jpg 等）
+const logoFiles = import.meta.glob('@/assets/logo/logo.*', { eager: true, import: 'default' })
+const logo = Object.values(logoFiles)[0] || ''
 import useSettingsStore from '@/store/modules/settings'
 import variables from '@/assets/styles/variables.module.scss'
 

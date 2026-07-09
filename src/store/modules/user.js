@@ -11,7 +11,7 @@ import defAva from '@/assets/images/profile.jpg'
 export const FAKE_USER = {
   userId: 1,
   userName: 'admin',
-  nickName: '地球online',
+  nickName: 'online',
   avatar: '',
   email: 'admin@ruoyi.com',
   phonenumber: '13800138001',

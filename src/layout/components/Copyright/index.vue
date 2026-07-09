@@ -218,4 +218,58 @@ const copyrightStyle = computed(() => ({
 .badge-tag[href] {
   cursor: pointer;
 }
+
+/* ========== 小屏幕响应式 ========== */
+@media screen and (max-width: 768px) {
+  .copyright {
+    height: auto !important;
+    min-height: 36px;
+    padding: 4px 8px !important;
+    flex-wrap: wrap;
+    justify-content: center !important;
+    gap: 4px;
+  }
+  .copyright-left,
+  .copyright-right {
+    flex: 1 1 auto;
+    justify-content: center;
+    text-align: center;
+  }
+  .copyright-right {
+    gap: 4px;
+  }
+  .copyright-badges {
+    gap: 4px;
+    justify-content: center;
+  }
+  .badge-img {
+    height: 16px;
+  }
+  .badge-tag {
+    height: 18px;
+    font-size: 10px;
+  }
+  .badge-left,
+  .badge-right {
+    padding: 0 4px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .copyright {
+    padding: 2px 6px !important;
+    font-size: 11px;
+  }
+  .badge-tag {
+    height: 16px;
+    font-size: 9px;
+  }
+  .badge-left,
+  .badge-right {
+    padding: 0 3px;
+  }
+  .badge-img {
+    height: 14px;
+  }
+}
 </style>

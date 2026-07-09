@@ -128,7 +128,6 @@
                 <div class="table-header">
                   <span class="col-unit">单位名称</span>
                   <span class="col-symbol">符号</span>
-                  <span class="col-value">换算值</span>
                   <span class="col-formula">换算关系</span>
                   <span class="col-base-formula">基本换算</span>
                 </div>
@@ -136,7 +135,6 @@
                   <div v-for="(unit, key) in currentType.units" :key="key" :class="['table-row', { highlight: key === targetUnit }]">
                     <span class="col-unit">{{ unit.name }}</span>
                     <span class="col-symbol"><span :class="['symbol-text', { 'base-active': key === sourceUnit }]">{{ unit.symbol }}</span></span>
-                    <span class="col-value">{{ formatResult(getInputConversionValue(key)) }}</span>
                     <span class="col-formula">{{ getInputConversionFormula(key) }}</span>
                     <span class="col-base-formula">{{ getConversionFormula(key) }}</span>
                   </div>
@@ -761,7 +759,7 @@ function handleWheelBaseUnit(e) {
 }
 
 .col-unit {
-  width: 18%;
+  width: 22%;
   min-width: 70px;
   white-space: nowrap;
   overflow: hidden;
@@ -769,7 +767,7 @@ function handleWheelBaseUnit(e) {
 }
 
 .col-symbol {
-  width: 10%;
+  width: 15%;
   min-width: 40px;
   color: var(--el-text-color-secondary);
   display: flex;
@@ -788,15 +786,6 @@ function handleWheelBaseUnit(e) {
   transition: all 0.3s ease;
 }
 
-.col-value {
-  width: 16%;
-  min-width: 60px;
-  font-family: Consolas, monospace;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .col-formula {
   width: 28%;
   min-width: 100px;
@@ -808,7 +797,7 @@ function handleWheelBaseUnit(e) {
 }
 
 .col-base-formula {
-  width: 28%;
+  width: 35%;
   min-width: 100px;
   color: var(--el-text-color-secondary);
   font-size: 12px;

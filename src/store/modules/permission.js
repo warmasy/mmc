@@ -16,10 +16,9 @@ const MOCK_ROUTERS = [
     "alwaysShow": true,
     "meta": { "title": "Online手记", "icon": "documentation", "noCache": false },
     "children": [
-      { "name": "Blog", "path": "blog", "hidden": false, "component": "system/blog/index", "meta": { "title": "博客", "icon": "link", "noCache": false } },
-      { "name": "Memos", "path": "memos", "hidden": false, "component": "system/memos/index", "meta": { "title": "Memos", "icon": "documentation", "noCache": false } },
+      { "name": "UnitConversion", "path": "basic-calculation", "hidden": false, "component": "system/basic-calculation/index", "meta": { "title": "基本计算", "icon": "number", "noCache": false } },
       { "name": "MotorSelection", "path": "motor-selection", "hidden": false, "component": "system/motor-selection/index", "meta": { "title": "电机选型", "icon": "tool", "noCache": false } },
-      { "name": "UnitConversion", "path": "basic-calculation", "hidden": false, "component": "system/basic-calculation/index", "meta": { "title": "基本计算", "icon": "number", "noCache": false } }
+      { "name": "Blog", "path": "blog", "hidden": false, "component": "system/blog/index", "meta": { "title": "我的博客", "icon": "link", "noCache": false } }
     ]
   },
   {
