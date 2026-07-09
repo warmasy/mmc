@@ -7,7 +7,7 @@ export const currentUser = {
   email: "3139822307@qq.com",
   signature: "海纳百川，有容乃大",
   title: "朋友，你饿了么",
-  group: "一定要好好的哦 ！！",
+  group: "一定要饱饱的哦 ！！",
 };
 
 // 项目/网址列表
@@ -16,11 +16,11 @@ export const projectNotice = [
     id: "0001",
     title: "主站",
     logo: "https://3139822.xyz/favicon.ico",
-    description: "xxx",
+    description: "不知道写什么，就这样吧。",
     updatedAt: "几天前",
-    member: "醉摘镜中花",
+    member: "北京 方便面",
     href: "https://3139822.xyz/",
-    memberLink: "https://myblog.3139822.xyz/",
+    memberLink: "https://3139822.xyz/",
   },
   {
     id: "0002",
@@ -28,7 +28,7 @@ export const projectNotice = [
     logo: "https://myblog.3139822.xyz/favicon.ico",
     description: "我饿了，想吃饭",
     updatedAt: "几秒前",
-    member: "醉摘镜中花",
+    member: "苏北 地锅鸡",
     href: "https://myblog.3139822.xyz/",
     memberLink: "https://myblog.3139822.xyz/",
   },
@@ -36,9 +36,9 @@ export const projectNotice = [
     id: "0003",
     title: "Memos",
     logo: "http://memos.3139822.xyz/full-logo.webp",
-    description: "希望会越来越好吧",
+    description: "希望会越来越好吧！",
     updatedAt: "几天前",
-    member: "xxx",
+    member: "武汉 热干面",
     href: "http://memos.3139822.xyz/",
     memberLink: "http://memos.3139822.xyz/",
   },
@@ -48,7 +48,7 @@ export const projectNotice = [
 export const webNotice = [
   {
     url: "http://mmbc.3139822.xyz/",
-    lab: "博客",
+    lab: "ESA",
   },
 ];
 
