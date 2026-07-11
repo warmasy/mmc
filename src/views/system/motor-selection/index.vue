@@ -41,7 +41,7 @@
         </div>
         <div class="info-item">
           <label>编号：</label>
-          <el-input v-model="projectNo" placeholder="NO." size="small" style="width: 280px" readonly @click="generateUUID" />
+          <el-input v-model="projectNo" placeholder="NO." size="small" style="width: 280px" readonly @click="initProjectNo" />
         </div>
         <div class="info-item">
           <label>日期：</label>
@@ -57,7 +57,7 @@
         ref="modelRef"
         v-model:projectName="projectName"
         v-model:projectNo="projectNo"
-        @refreshUUID="generateUUID"
+        @refreshUUID="initProjectNo"
       />
     </div>
   </div>
@@ -65,6 +65,7 @@
 
 <script setup name="MotorSelection">
 import { markRaw } from 'vue'
+import { generateUUID } from '@/utils'
 import { motorModels, getModelById, getDefaultModel } from './models'
 
 // ==================== 当前日期 ====================
@@ -103,14 +104,12 @@ function handleModelChange(modelId) {
 const projectName = ref('')
 const projectNo = ref('')
 
-// 生成32位UUID（去掉横线的标准UUID）
-function generateUUID() {
-  const uuid = crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16))
-  projectNo.value = uuid
+function initProjectNo() {
+  projectNo.value = generateUUID()
 }
 
 // 初始化时生成一个UUID
-generateUUID()
+initProjectNo()
 </script>
 
 <style scoped>

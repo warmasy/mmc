@@ -387,4 +387,14 @@ export function camelCase(str) {
 export function isNumberStr(str) {
   return /^[+-]?(0|([1-9]\d*))(\.\d+)?$/g.test(str)
 }
- 
+
+/**
+ * 生成32位UUID（去掉横线的标准UUID）
+ * @returns {string}
+ */
+export function generateUUID() {
+  if (crypto.randomUUID) {
+    return crypto.randomUUID()
+  }
+  return 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16))
+}

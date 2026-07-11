@@ -1,5 +1,5 @@
 // ==================== 伺服电机选型 - 参数配置（JSON 对象格式） ====================
-import motorModelImg from '@/assets/images/motor-model.png'
+import ballScrewModelImg from '@/assets/images/ball-screw-model.png'
 import motionCurveImg from '@/assets/images/motion-curve.png'
 
 // 选项字典
@@ -8,7 +8,7 @@ export const inputParams = {
   "计算模型": {
     type: 'image',
     items: {
-      "计算模型": { src: motorModelImg, desc: '计算模型示意图' },
+      "计算模型": { src: ballScrewModelImg, desc: '滚珠丝杆传动系统' },
       "运动曲线": { src: motionCurveImg, desc: '运动曲线示意图' }
     }
   },

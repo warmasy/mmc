@@ -5,7 +5,6 @@
       <!-- 图片分组 -->
       <div v-if="group.type === 'image'" class="image-section">
         <div class="image-item" v-for="(item, label) in group.items" :key="label">
-          <div class="image-title">{{ label }}</div>
           <img :src="item.src" :alt="label" class="calc-image" />
         </div>
       </div>
@@ -70,9 +69,8 @@ const props = defineProps({
 
 /* 图片 */
 .image-section { display: flex; gap: 12px; margin-bottom: 4px; }
-.image-item { flex: 1; display: flex; flex-direction: column; align-items: center; background-color: var(--el-bg-color); border: 1px solid var(--el-border-color-light); border-radius: 4px; padding: 8px 6px; min-width: 0; }
-.image-title { font-size: 12px; font-weight: 600; color: var(--el-color-primary); margin-bottom: 6px; text-align: center; }
-.calc-image { width: 100%; height: 110px; object-fit: contain; border-radius: 2px; }
+.image-item { flex: 1; display: flex; align-items: center; justify-content: center; min-width: 0; height: 180px; overflow: hidden; border: 2px solid var(--el-border-color); border-radius: 4px; background-color: var(--el-bg-color); }
+.calc-image { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 4px; display: block; }
 
 /* 分组框 */
 .calc-fieldset { border: 1px solid var(--el-border-color); border-radius: 4px; padding: 10px 12px; background-color: var(--el-bg-color); margin: 0; }

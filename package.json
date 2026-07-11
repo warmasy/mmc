@@ -1,7 +1,7 @@
 {
-  "name": "earthonline",
-  "version": "1.9.0",
-  "description": "地球online",
+  "name": "mechanical-calculation",
+  "version": "1.0.0",
+  "description": "机械计算工具系统",
   "author": "insistence",
   "license": "MIT",
   "type": "module",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/insistence2022/地球online.git"
+    "url": "https://gitee.com/insistence2022/机械计算.git"
   },
   "dependencies": {
     "@element-plus/icons-vue": "2.3.2",
