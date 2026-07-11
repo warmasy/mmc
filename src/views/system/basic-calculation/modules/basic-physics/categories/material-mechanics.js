@@ -6,6 +6,10 @@ export default {
     {
       id: 'normal-stress',
       name: '正应力',
+      images: [
+        { src: '/images/basic-physics/normal-stress-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/normal-stress-formula.svg', label: '公式图' }
+      ],
       params: {
         F: { name: '轴力 F', unit: 'N', default: 1000, step: 10, precision: 4 },
         A: { name: '截面积 A', unit: 'm²', default: 0.001, step: 0.0001, precision: 6 }
@@ -17,6 +21,10 @@ export default {
     {
       id: 'tensile-deformation',
       name: '拉压变形',
+      images: [
+        { src: '/images/basic-physics/tensile-deformation-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/tensile-deformation-formula.svg', label: '公式图' }
+      ],
       params: {
         F: { name: '轴力 F', unit: 'N', default: 1000, step: 10, precision: 4 },
         L: { name: '原长 L', unit: 'm', default: 1, step: 0.01, precision: 4 },
@@ -30,6 +38,10 @@ export default {
     {
       id: 'shear-stress',
       name: '剪切应力',
+      images: [
+        { src: '/images/basic-physics/shear-stress-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/shear-stress-formula.svg', label: '公式图' }
+      ],
       params: {
         F: { name: '剪力 F', unit: 'N', default: 1000, step: 10, precision: 4 },
         A: { name: '剪切面积 A', unit: 'm²', default: 0.001, step: 0.0001, precision: 6 }
@@ -41,6 +53,10 @@ export default {
     {
       id: 'torsional-shear-stress',
       name: '扭转剪应力',
+      images: [
+        { src: '/images/basic-physics/torsional-shear-stress-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/torsional-shear-stress-formula.svg', label: '公式图' }
+      ],
       params: {
         T: { name: '扭矩 T', unit: 'N·m', default: 10, step: 0.1, precision: 4 },
         r: { name: '半径 r', unit: 'm', default: 0.05, step: 0.001, precision: 4 },
@@ -53,6 +69,10 @@ export default {
     {
       id: 'bending-normal-stress',
       name: '弯曲正应力',
+      images: [
+        { src: '/images/basic-physics/bending-normal-stress-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/bending-normal-stress-formula.svg', label: '公式图' }
+      ],
       params: {
         M: { name: '弯矩 M', unit: 'N·m', default: 100, step: 1, precision: 4 },
         y: { name: '距离 y', unit: 'm', default: 0.05, step: 0.001, precision: 4 },

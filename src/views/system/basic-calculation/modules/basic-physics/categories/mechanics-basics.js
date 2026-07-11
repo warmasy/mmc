@@ -6,6 +6,10 @@ export default {
     {
       id: 'newton-second-law',
       name: '牛顿第二定律',
+      images: [
+        { src: '/images/basic-physics/newton-second-law-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/newton-second-law-formula.svg', label: '公式图' }
+      ],
       params: {
         m: { name: '质量 m', unit: 'kg', default: 1, step: 0.1, precision: 4 },
         a: { name: '加速度 a', unit: 'm/s²', default: 9.8, step: 0.1, precision: 4 }
@@ -17,6 +21,10 @@ export default {
     {
       id: 'gravity',
       name: '重力',
+      images: [
+        { src: '/images/basic-physics/gravity-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/gravity-formula.svg', label: '公式图' }
+      ],
       params: {
         m: { name: '质量 m', unit: 'kg', default: 1, step: 0.1, precision: 4 },
         g: { name: '重力加速度 g', unit: 'm/s²', default: 9.8, step: 0.1, precision: 4 }
@@ -28,6 +36,10 @@ export default {
     {
       id: 'friction',
       name: '滑动摩擦力',
+      images: [
+        { src: '/images/basic-physics/friction-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/friction-formula.svg', label: '公式图' }
+      ],
       params: {
         mu: { name: '摩擦系数 μ', unit: '', default: 0.3, step: 0.01, precision: 4 },
         N: { name: '正压力 N', unit: 'N', default: 100, step: 1, precision: 4 }
@@ -39,6 +51,10 @@ export default {
     {
       id: 'hooke-law',
       name: '胡克定律',
+      images: [
+        { src: '/images/basic-physics/hooke-law-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/hooke-law-formula.svg', label: '公式图' }
+      ],
       params: {
         k: { name: '劲度系数 k', unit: 'N/m', default: 100, step: 1, precision: 4 },
         x: { name: '形变量 x', unit: 'm', default: 0.01, step: 0.001, precision: 6 }

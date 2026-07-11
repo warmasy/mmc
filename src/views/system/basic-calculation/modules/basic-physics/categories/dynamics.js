@@ -6,6 +6,10 @@ export default {
     {
       id: 'work',
       name: '功',
+      images: [
+        { src: '/images/basic-physics/work-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/work-formula.svg', label: '公式图' }
+      ],
       params: {
         F: { name: '力 F', unit: 'N', default: 100, step: 1, precision: 4 },
         s: { name: '位移 s', unit: 'm', default: 10, step: 0.1, precision: 4 }
@@ -17,6 +21,10 @@ export default {
     {
       id: 'power',
       name: '功率',
+      images: [
+        { src: '/images/basic-physics/power-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/power-formula.svg', label: '公式图' }
+      ],
       params: {
         F: { name: '力 F', unit: 'N', default: 100, step: 1, precision: 4 },
         v: { name: '速度 v', unit: 'm/s', default: 5, step: 0.1, precision: 4 }
@@ -28,6 +36,10 @@ export default {
     {
       id: 'rotational-power',
       name: '功率（旋转）',
+      images: [
+        { src: '/images/basic-physics/rotational-power-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/rotational-power-formula.svg', label: '公式图' }
+      ],
       params: {
         T: { name: '转矩 T', unit: 'N·m', default: 10, step: 0.1, precision: 4 },
         omega: { name: '角速度 ω', unit: 'rad/s', default: 10, step: 0.1, precision: 4 }
@@ -39,6 +51,10 @@ export default {
     {
       id: 'kinetic-energy',
       name: '动能',
+      images: [
+        { src: '/images/basic-physics/kinetic-energy-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/kinetic-energy-formula.svg', label: '公式图' }
+      ],
       params: {
         m: { name: '质量 m', unit: 'kg', default: 1, step: 0.1, precision: 4 },
         v: { name: '速度 v', unit: 'm/s', default: 10, step: 0.1, precision: 4 }
@@ -50,6 +66,10 @@ export default {
     {
       id: 'gravitational-potential-energy',
       name: '重力势能',
+      images: [
+        { src: '/images/basic-physics/gravitational-potential-energy-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/gravitational-potential-energy-formula.svg', label: '公式图' }
+      ],
       params: {
         m: { name: '质量 m', unit: 'kg', default: 1, step: 0.1, precision: 4 },
         h: { name: '高度 h', unit: 'm', default: 10, step: 0.1, precision: 4 }
@@ -61,6 +81,10 @@ export default {
     {
       id: 'elastic-potential-energy',
       name: '弹性势能',
+      images: [
+        { src: '/images/basic-physics/elastic-potential-energy-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/elastic-potential-energy-formula.svg', label: '公式图' }
+      ],
       params: {
         k: { name: '劲度系数 k', unit: 'N/m', default: 100, step: 1, precision: 4 },
         x: { name: '形变量 x', unit: 'm', default: 0.01, step: 0.001, precision: 6 }
@@ -72,6 +96,10 @@ export default {
     {
       id: 'momentum',
       name: '动量',
+      images: [
+        { src: '/images/basic-physics/momentum-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/momentum-formula.svg', label: '公式图' }
+      ],
       params: {
         m: { name: '质量 m', unit: 'kg', default: 1, step: 0.1, precision: 4 },
         v: { name: '速度 v', unit: 'm/s', default: 10, step: 0.1, precision: 4 }
@@ -83,6 +111,10 @@ export default {
     {
       id: 'impulse',
       name: '冲量',
+      images: [
+        { src: '/images/basic-physics/impulse-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/impulse-formula.svg', label: '公式图' }
+      ],
       params: {
         F: { name: '力 F', unit: 'N', default: 100, step: 1, precision: 4 },
         t: { name: '时间 t', unit: 's', default: 0.1, step: 0.01, precision: 4 }
@@ -94,6 +126,10 @@ export default {
     {
       id: 'rotational-kinetic-energy',
       name: '转动动能',
+      images: [
+        { src: '/images/basic-physics/rotational-kinetic-energy-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/rotational-kinetic-energy-formula.svg', label: '公式图' }
+      ],
       params: {
         J: { name: '转动惯量 J', unit: 'kg·m²', default: 0.01, step: 0.001, precision: 6 },
         omega: { name: '角速度 ω', unit: 'rad/s', default: 10, step: 0.1, precision: 4 }
@@ -105,6 +141,10 @@ export default {
     {
       id: 'torque',
       name: '转矩',
+      images: [
+        { src: '/images/basic-physics/torque-model.svg', label: '模型图' },
+        { src: '/images/basic-physics/torque-formula.svg', label: '公式图' }
+      ],
       params: {
         F: { name: '力 F', unit: 'N', default: 100, step: 1, precision: 4 },
         r: { name: '力臂 r', unit: 'm', default: 0.1, step: 0.01, precision: 4 }
