@@ -263,10 +263,11 @@ onMounted(() => {
 function selectType(id) {
   currentTab.value = 'unit-conversion'
   currentTypeId.value = id
-  const unitKeys = Object.keys(currentType.value.units)
-  sourceUnit.value = unitKeys[0]
-  targetUnit.value = unitKeys[0]
-  selectedBaseUnit.value = unitKeys[0]
+  const type = currentType.value
+  // 从配置文件读取默认单位，如果没有配置则使用第一个单位
+  sourceUnit.value = type.sourceUnit || Object.keys(type.units)[0]
+  targetUnit.value = type.targetUnit || Object.keys(type.units)[0]
+  selectedBaseUnit.value = type.defaultBaseUnit || Object.keys(type.units).find(key => type.units[key].isDatum) || Object.keys(type.units)[0]
   statusText.value = '已切换类型，等待输入...'
   handleConvert()
 }
@@ -283,12 +284,21 @@ const resultDisplay = computed(() => {
 })
 
 watch(() => currentType.value, (type) => {
-  const unitKeys = Object.keys(type.units)
+  if (!type || !type.units) return
+  // 从配置文件读取默认单位
+  const defaultSource = type.sourceUnit || Object.keys(type.units)[0]
+  const defaultTarget = type.targetUnit || Object.keys(type.units)[0]
+  const defaultBase = type.defaultBaseUnit || Object.keys(type.units).find(key => type.units[key].isDatum) || Object.keys(type.units)[0]
+
   if (!sourceUnit.value || !type.units[sourceUnit.value]) {
-    sourceUnit.value = unitKeys[0]
+    sourceUnit.value = defaultSource
   }
-  targetUnit.value = sourceUnit.value
-  selectedBaseUnit.value = sourceUnit.value
+  if (!targetUnit.value || !type.units[targetUnit.value]) {
+    targetUnit.value = defaultTarget
+  }
+  if (!selectedBaseUnit.value || !type.units[selectedBaseUnit.value]) {
+    selectedBaseUnit.value = defaultBase
+  }
   handleConvert()
 }, { immediate: true })
 
