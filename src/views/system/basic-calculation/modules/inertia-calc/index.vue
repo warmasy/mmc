@@ -5,7 +5,7 @@
       v-model="currentSubTypeId"
     />
 
-    <ImageSection :images="currentSubType?.images || []" />
+    <MFPic :images="currentSubType?.images || []" />
 
     <ParamInputPanel
       :title="currentSubType?.name || currentCategory?.name"
@@ -25,7 +25,7 @@
 import { inertiaCategories } from './categories'
 import { useInertiaCalc } from './composables/useInertiaCalc'
 import SubTypeTabs from './components/SubTypeTabs.vue'
-import ImageSection from './components/ImageSection.vue'
+import MFPic from '@/components/MFPic/index.vue'
 import ParamInputPanel from './components/ParamInputPanel.vue'
 import ResultPanel from './components/ResultPanel.vue'
 
@@ -57,6 +57,6 @@ const {
   flex-direction: column;
   overflow: hidden;
   min-height: 0;
-  gap: 6px;
+  gap: 12px;
 }
 </style>

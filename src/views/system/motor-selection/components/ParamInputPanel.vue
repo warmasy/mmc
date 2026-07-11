@@ -3,11 +3,7 @@
     <!-- 遍历输入参数对象动态生成分组 -->
     <template v-for="(group, groupName) in inputParams" :key="groupName">
       <!-- 图片分组 -->
-      <div v-if="group.type === 'image'" class="image-section">
-        <div class="image-item" v-for="(item, label) in group.items" :key="label">
-          <img :src="item.src" :alt="label" class="calc-image" />
-        </div>
-      </div>
+      <MFPic v-if="group.type === 'image'" :images="Object.entries(group.items).map(([label, item]) => ({ src: item.src, label }))" />
 
       <!-- 单选分组 -->
       <fieldset v-else-if="group.type === 'radio'" class="calc-fieldset">
@@ -56,6 +52,7 @@
 
 <script setup>
 import NumberInput from "@/components/NumberInput/index.vue"
+import MFPic from "@/components/MFPic/index.vue"
 const props = defineProps({
   inputParams: { type: Object, required: true },
   form: { type: Object, required: true },
@@ -66,11 +63,6 @@ const props = defineProps({
 
 <style scoped>
 .param-panel { display: flex; flex-direction: column; gap: 12px; }
-
-/* 图片 */
-.image-section { display: flex; gap: 12px; margin-bottom: 4px; }
-.image-item { flex: 1; display: flex; align-items: center; justify-content: center; min-width: 0; height: 180px; overflow: hidden; border: 2px solid var(--el-border-color); border-radius: 4px; background-color: var(--el-bg-color); }
-.calc-image { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 4px; display: block; }
 
 /* 分组框 */
 .calc-fieldset { border: 1px solid var(--el-border-color); border-radius: 4px; padding: 10px 12px; background-color: var(--el-bg-color); margin: 0; }

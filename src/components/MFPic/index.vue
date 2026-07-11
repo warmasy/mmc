@@ -1,7 +1,7 @@
 <template>
-  <div class="image-section" v-if="images && images.length">
-    <div class="image-item" v-for="(img, idx) in images" :key="idx">
-      <img :src="img.src" class="calc-image" :alt="img.label" />
+  <div class="mfpic-section">
+    <div class="mfpic-item" v-for="(img, idx) in images" :key="idx">
+      <img :src="img.src" class="mfpic-image" :alt="img.label || img.desc || ''" />
     </div>
   </div>
 </template>
@@ -13,13 +13,13 @@ defineProps({
 </script>
 
 <style scoped lang="less">
-.image-section {
+.mfpic-section {
   display: flex;
   gap: 12px;
   flex-shrink: 0;
 }
 
-.image-item {
+.mfpic-item {
   flex: 1;
   display: flex;
   align-items: center;
@@ -32,7 +32,7 @@ defineProps({
   background-color: var(--el-bg-color);
 }
 
-.calc-image {
+.mfpic-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -42,10 +42,10 @@ defineProps({
 }
 
 @media screen and (max-width: 768px) {
-  .image-section {
+  .mfpic-section {
     flex-direction: column;
   }
-  .image-item {
+  .mfpic-item {
     height: 140px;
   }
 }
