@@ -112,6 +112,8 @@ const currentTypeName = computed(() => {
   return type?.name || mod.name || ''
 })
 
+
+
 const currentModuleComponent = computed(() => {
   const mod = currentModule.value
   return mod?.component || null
@@ -283,6 +285,8 @@ function selectType(moduleId, typeId) {
   flex-direction: column;
   gap: 6px;
 }
+
+
 
 .calc-collapse :deep(.el-collapse-item__header) {
   font-size: 12px !important;

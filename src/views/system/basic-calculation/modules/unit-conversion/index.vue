@@ -1,7 +1,9 @@
 <template>
   <div class="unit-conversion-panel">
-    <div class="convert-input-section">
-      <div class="input-row">
+    <div class="param-fieldset">
+      <div class="param-fieldset-title">{{ currentType.name }}</div>
+      <div class="convert-input-section">
+        <div class="input-row">
         <div class="input-group">
           <span class="input-label">输入数值</span>
           <NumberInput v-model="inputValue" :step="1" :precision="6" :width="100" :min="0" @change="handleConvert" />
@@ -32,6 +34,7 @@
             {{ inputValue }} {{ currentType.units[sourceUnit]?.symbol }} = {{ formatResult(convertResult) }} {{ currentType.units[targetUnit]?.symbol }}
           </el-tag>
         </div>
+      </div>
       </div>
     </div>
 
@@ -198,13 +201,31 @@ function handleWheelBaseUnit(e) {
   min-height: 0;
 }
 
-.convert-input-section {
-  background-color: var(--el-bg-color);
+.param-fieldset {
   border: 1px solid var(--el-border-color);
   border-radius: 4px;
-  padding: 16px;
+  padding: 16px 12px 12px 12px;
+  margin: 8px 0 16px 0;
+  background-color: var(--el-bg-color);
   flex-shrink: 0;
-  margin-bottom: 16px;
+  position: relative;
+}
+
+.param-fieldset-title {
+  position: absolute;
+  top: -9px;
+  left: 12px;
+  font-weight: bold;
+  color: var(--el-text-color-primary);
+  font-size: 13px;
+  padding: 0 6px;
+  background-color: var(--el-bg-color);
+  line-height: 18px;
+}
+
+.convert-input-section {
+  padding: 4px 0 0 0;
+  flex-shrink: 0;
 }
 
 .input-row {
@@ -226,6 +247,11 @@ function handleWheelBaseUnit(e) {
   text-align: center;
 }
 
+.formula-group {
+  min-height: 36px;
+  justify-content: flex-end;
+}
+
 .formula-group :deep(.el-tag) {
   height: 24px;
   line-height: 22px;
@@ -236,7 +262,7 @@ function handleWheelBaseUnit(e) {
   color: var(--el-color-primary) !important;
   font-weight: 600;
   border-radius: 4px;
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  transition: none;
 }
 
 .convert-table-section {

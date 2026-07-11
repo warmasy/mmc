@@ -4,11 +4,9 @@ export default {
   icon: 'Cpu',
   order: 20,
   types: [
-    { id: 'solid-cylinder', name: '实心圆柱体' },
-    { id: 'hollow-cylinder', name: '空心圆柱体' },
-    { id: 'rectangular-prism', name: '长方体' },
-    { id: 'sphere', name: '球体' },
-    { id: 'thin-disk', name: '薄圆盘' },
-    { id: 'cone', name: '圆锥体' },
+    { id: 'slender-rod', name: '细长杆' },
+    { id: 'flat-plate', name: '平面板' },
+    { id: 'solid-shape', name: '立体形状' },
+    { id: 'thin-shell', name: '薄壳体' },
   ]
 }
