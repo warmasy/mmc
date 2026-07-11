@@ -57,10 +57,6 @@
           <template #header>
             <div class="card-header">
               <span>计算卡</span>
-              <span class="header-status" v-if="statusText">
-                <span class="status-tag">状态提示</span>
-                <span class="status-text">{{ statusText }}</span>
-              </span>
             </div>
           </template>
 
@@ -68,7 +64,6 @@
             <component 
               :is="currentModuleComponent" 
               :activeTypeId="currentTypeId"
-              @update:status="statusText = $event"
             />
           </div>
 
@@ -95,7 +90,6 @@ initProjectNo()
 
 const currentModuleId = ref(getDefaultModule()?.id || '')
 const currentTypeId = ref('')
-const statusText = ref('等待输入参数...')
 const activeCollapse = ref(modules.map(m => m.id))
 
 // 初始化默认子类型
@@ -112,8 +106,6 @@ const currentTypeName = computed(() => {
   return type?.name || mod.name || ''
 })
 
-
-
 const currentModuleComponent = computed(() => {
   const mod = currentModule.value
   return mod?.component || null
@@ -122,7 +114,6 @@ const currentModuleComponent = computed(() => {
 function selectType(moduleId, typeId) {
   currentModuleId.value = moduleId
   currentTypeId.value = typeId
-  statusText.value = '已切换类型，等待输入...'
 }
 </script>
 
@@ -236,37 +227,6 @@ function selectType(moduleId, typeId) {
   justify-content: space-between;
 }
 
-.header-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  max-width: 65%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.status-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  font-size: 11px;
-  font-weight: 500;
-  color: #fff;
-  background-color: var(--el-color-primary);
-  border-radius: 10px;
-  flex-shrink: 0;
-}
-
-.status-text {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--el-color-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .type-card :deep(.el-card__body) {
   padding: 0 !important;
   overflow-y: auto;
@@ -285,8 +245,6 @@ function selectType(moduleId, typeId) {
   flex-direction: column;
   gap: 6px;
 }
-
-
 
 .calc-collapse :deep(.el-collapse-item__header) {
   font-size: 12px !important;

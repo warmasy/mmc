@@ -301,15 +301,21 @@ function handleWheelBaseUnit(e) {
 }
 
 .base-unit-btn {
-  color: var(--el-color-primary);
-  border-color: var(--el-color-primary);
-  background-color: var(--el-color-primary-light-9);
+  color: var(--el-text-color-primary);
+  border-color: var(--el-border-color);
+  background-color: var(--el-fill-color-light);
   transition: all 0.3s ease;
   min-width: 80px;
   width: auto;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.base-unit-btn:hover {
+  color: var(--el-color-primary);
+  border-color: var(--el-color-primary);
+  background-color: var(--el-fill-color);
 }
 
 .convert-table {
