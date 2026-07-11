@@ -13,6 +13,10 @@ export default {
       {
         id: 'straight-rod-1',
         name: '直杆1',
+      images: [
+        { src: '/images/inertia-calc/straight-rod-1-model.svg', label: '模型图' },
+        { src: '/images/inertia-calc/straight-rod-1-formula.svg', label: '公式图' }
+      ],
         params: { m: { name: '质量 m', unit: 'kg', default: 1, min: 0, step: 0.1, precision: 4 }, L: { name: '长度 L', unit: 'm', default: 1, min: 0, step: 0.01, precision: 4 } },
         results: [
           { id: 'J', name: '转动惯量 J', unit: 'kg·m²', formula: (p) => (1/12) * p.m * p.L * p.L }
@@ -21,6 +25,10 @@ export default {
       {
         id: 'straight-rod-2',
         name: '直杆2',
+      images: [
+        { src: '/images/inertia-calc/straight-rod-2-model.svg', label: '模型图' },
+        { src: '/images/inertia-calc/straight-rod-2-formula.svg', label: '公式图' }
+      ],
         params: { m: { name: '质量 m', unit: 'kg', default: 1, min: 0, step: 0.1, precision: 4 }, L: { name: '长度 L', unit: 'm', default: 1, min: 0, step: 0.01, precision: 4 } },
         results: [
           { id: 'J', name: '转动惯量 J', unit: 'kg·m²', formula: (p) => (1/3) * p.m * p.L * p.L }
@@ -29,6 +37,10 @@ export default {
       {
         id: 'arc-rod',
         name: '圆弧杆',
+      images: [
+        { src: '/images/inertia-calc/arc-rod-model.svg', label: '模型图' },
+        { src: '/images/inertia-calc/arc-rod-formula.svg', label: '公式图' }
+      ],
         params: { m: { name: '质量 m', unit: 'kg', default: 1, min: 0, step: 0.1, precision: 4 }, R: { name: '半径 R', unit: 'm', default: 0.5, min: 0, step: 0.01, precision: 4 }, theta: { name: '圆心角 θ', unit: 'rad', default: 1.57, min: 0, step: 0.01, precision: 4 } },
         results: [
           { id: 'J', name: '转动惯量 J', unit: 'kg·m²', formula: (p) => p.m * p.R * p.R }
@@ -37,6 +49,10 @@ export default {
       {
         id: 'u-rod',
         name: 'U型杆',
+      images: [
+        { src: '/images/inertia-calc/u-rod-model.svg', label: '模型图' },
+        { src: '/images/inertia-calc/u-rod-formula.svg', label: '公式图' }
+      ],
         params: { m: { name: '质量 m', unit: 'kg', default: 1, min: 0, step: 0.1, precision: 4 }, a: { name: '边长 a', unit: 'm', default: 0.3, min: 0, step: 0.01, precision: 4 }, b: { name: '边长 b', unit: 'm', default: 0.2, min: 0, step: 0.01, precision: 4 } },
         results: [
           { id: 'J', name: '转动惯量 J', unit: 'kg·m²', formula: (p) => p.m * (p.a * p.a + p.b * p.b) / 3 }
@@ -45,6 +61,10 @@ export default {
       {
         id: 'rect-rod',
         name: '矩形杆',
+      images: [
+        { src: '/images/inertia-calc/rect-rod-model.svg', label: '模型图' },
+        { src: '/images/inertia-calc/rect-rod-formula.svg', label: '公式图' }
+      ],
         params: { m: { name: '质量 m', unit: 'kg', default: 1, min: 0, step: 0.1, precision: 4 }, a: { name: '边长 a', unit: 'm', default: 0.2, min: 0, step: 0.01, precision: 4 }, b: { name: '边长 b', unit: 'm', default: 0.1, min: 0, step: 0.01, precision: 4 } },
         results: [
           { id: 'J', name: '转动惯量 J', unit: 'kg·m²', formula: (p) => p.m * (p.a * p.a + p.b * p.b) / 12 }
@@ -53,6 +73,10 @@ export default {
       {
         id: 'ellipse-rod',
         name: '椭圆杆',
+      images: [
+        { src: '/images/inertia-calc/ellipse-rod-model.svg', label: '模型图' },
+        { src: '/images/inertia-calc/ellipse-rod-formula.svg', label: '公式图' }
+      ],
         params: { m: { name: '质量 m', unit: 'kg', default: 1, min: 0, step: 0.1, precision: 4 }, a: { name: '长半轴 a', unit: 'm', default: 0.3, min: 0, step: 0.01, precision: 4 }, b: { name: '短半轴 b', unit: 'm', default: 0.2, min: 0, step: 0.01, precision: 4 } },
         results: [
           { id: 'J', name: '转动惯量 J', unit: 'kg·m²', formula: (p) => p.m * (p.a * p.a + p.b * p.b) / 4 }
@@ -61,6 +85,10 @@ export default {
       {
         id: 'ring-rod',
         name: '圆环杆',
+      images: [
+        { src: '/images/inertia-calc/ring-rod-model.svg', label: '模型图' },
+        { src: '/images/inertia-calc/ring-rod-formula.svg', label: '公式图' }
+      ],
         params: { m: { name: '质量 m', unit: 'kg', default: 1, min: 0, step: 0.1, precision: 4 }, R: { name: '半径 R', unit: 'm', default: 0.3, min: 0, step: 0.01, precision: 4 } },
         results: [
           { id: 'J', name: '转动惯量 J', unit: 'kg·m²', formula: (p) => p.m * p.R * p.R }

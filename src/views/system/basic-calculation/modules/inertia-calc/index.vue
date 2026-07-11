@@ -5,7 +5,7 @@
       v-model="currentSubTypeId"
     />
 
-    <ImageSection :images="currentCategory.images" />
+    <ImageSection :images="currentSubType?.images || []" />
 
     <ParamInputPanel
       :title="currentSubType?.name || currentCategory?.name"
