@@ -9,7 +9,7 @@ export default {
   sidebarLogo: true,
   dynamicTitle: false,
   footerVisible: true,
-  footerContent: '© 2025-2026 地球online',
+  footerContent: '© 2025-2026 计算工具',
   footerIcp: '豫ICP备2025140685号-1',
   footerBadges: [
     {

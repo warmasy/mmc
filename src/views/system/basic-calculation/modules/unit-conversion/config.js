@@ -5,15 +5,13 @@ export const conversionTypes = [
     id: 'force',
     name: '力',
     desc: '牛顿、千牛、达因、磅力等',
-    defaultBaseUnit: 'N',
-    sourceUnit: 'N',
-    targetUnit: 'kN',
+    defaultBaseUnit: 'kgf',
+    sourceUnit: 'kgf',
+    targetUnit: 'N',
     units: {
       N: { name: '牛顿', factor: 1, symbol: 'N', isDatum: true },
       kN: { name: '千牛', factor: 1000, symbol: 'kN' },
       kgf: { name: '千克力', factor: 9.80665, symbol: 'kgf' },
-      lbf: { name: '磅力', factor: 4.44822, symbol: 'lbf' },
-      tf: { name: '吨力', factor: 9806.65, symbol: 'tf' },
     }
   },
   {
@@ -47,7 +45,6 @@ export const conversionTypes = [
       N_mm2: { name: '牛/平方毫米', factor: 1e6, symbol: 'N/mm²' },
       kgf_mm2: { name: '千克力/平方毫米', factor: 9.80665e6, symbol: 'kgf/mm²' },
       psi: { name: '磅力/平方英寸', factor: 6894.76, symbol: 'psi' },
-      ksi: { name: '千磅力/平方英寸', factor: 6.89476e6, symbol: 'ksi' },
       bar: { name: '巴', factor: 1e5, symbol: 'bar' },
     }
   },
@@ -62,8 +59,6 @@ export const conversionTypes = [
       Nm: { name: '牛顿·米', factor: 1, symbol: 'N·m', isDatum: true },
       kNm: { name: '千牛·米', factor: 1000, symbol: 'kN·m' },
       kgfm: { name: '千克力·米', factor: 9.80665, symbol: 'kgf·m' },
-      lbf_ft: { name: '磅力·英尺', factor: 1.35582, symbol: 'lbf·ft' },
-      lbf_in: { name: '磅力·英寸', factor: 0.112985, symbol: 'lbf·in' },
     }
   },
   {
@@ -82,7 +77,6 @@ export const conversionTypes = [
       um: { name: '微米', factor: 0.001, symbol: 'μm' },
       nm: { name: '纳米', factor: 1e-6, symbol: 'nm' },
       inch: { name: '英寸', factor: 25.4, symbol: 'in' },
-      ft: { name: '英尺', factor: 304.8, symbol: 'ft' },
     }
   },
   {
@@ -98,7 +92,6 @@ export const conversionTypes = [
       mm_min: { name: '毫米/分', factor: 1.66667e-5, symbol: 'mm/min' },
       m_min: { name: '米/分', factor: 0.016667, symbol: 'm/min' },
       km_h: { name: '千米/时', factor: 0.277778, symbol: 'km/h' },
-      ft_s: { name: '英尺/秒', factor: 0.3048, symbol: 'ft/s' },
     }
   },
   {
@@ -172,8 +165,6 @@ export const conversionTypes = [
       m_min2: { name: '米/分²', factor: 0.000277778, symbol: 'm/min²' },
       mm_min2: { name: '毫米/分²', factor: 2.77778e-7, symbol: 'mm/min²' },
       g: { name: '重力加速度', factor: 9.80665, symbol: 'g' },
-      ft_s2: { name: '英尺/秒²', factor: 0.3048, symbol: 'ft/s²' },
-      gal: { name: '伽', factor: 0.01, symbol: 'Gal' },
     }
   },
   {
@@ -204,7 +195,6 @@ export const conversionTypes = [
       deg: { name: '度', factor: 0.0174533, symbol: '°' },
       min: { name: '分', factor: 0.000290888, symbol: '′' },
       sec: { name: '秒', factor: 4.84814e-6, symbol: '″' },
-      gon: { name: '冈', factor: 0.015708, symbol: 'gon' },
       rev: { name: '转', factor: 6.28319, symbol: 'rev' },
     }
   },
@@ -218,8 +208,6 @@ export const conversionTypes = [
     units: {
       J: { name: '焦耳', factor: 1, symbol: 'J', isDatum: true },
       kJ: { name: '千焦', factor: 1000, symbol: 'kJ' },
-      cal: { name: '卡路里', factor: 4.184, symbol: 'cal' },
-      kcal: { name: '千卡', factor: 4184, symbol: 'kcal' },
       Wh: { name: '瓦时', factor: 3600, symbol: 'Wh' },
       kWh: { name: '千瓦时', factor: 3.6e6, symbol: 'kWh' },
     }
@@ -238,8 +226,6 @@ export const conversionTypes = [
       mm3: { name: '立方毫米', factor: 1e-9, symbol: 'mm³', isDatum: true },
       L: { name: '升', factor: 1e-3, symbol: 'L' },
       mL: { name: '毫升', factor: 1e-6, symbol: 'mL' },
-      ft3: { name: '立方英尺', factor: 0.0283168, symbol: 'ft³' },
-      in3: { name: '立方英寸', factor: 1.63871e-5, symbol: 'in³' }
     }
   }
 ]
