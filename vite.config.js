@@ -50,8 +50,14 @@ export default defineConfig(({ mode, command }) => {
           changeOrigin: true,
           rewrite: (p) => p.replace(/^\/dev-api/, '')
         }
+      },
+      headers: {
+        'Cross-Origin-Embedder-Policy': 'require-corp',
+        'Cross-Origin-Opener-Policy': 'same-origin'
       }
     },
+    // 将 wasm 文件作为静态资源处理
+    assetsInclude: ['**/*.wasm'],
     //fix:error:stdin>:7356:1: warning: "@charset" must be the first rule in the file
     css: {
       postcss: {

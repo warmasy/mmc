@@ -36,7 +36,8 @@
     "vue-cropper": "1.1.1",
     "vue-router": "4.6.4",
     "splitpanes": "4.0.4",
-    "sortablejs": "^1.15.0"
+    "sortablejs": "^1.15.0",
+    "three": "0.160.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "5.2.4",

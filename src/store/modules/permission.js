@@ -34,6 +34,16 @@ const MOCK_ROUTERS = [
     ]
   },
   {
+    "name": "ModelViewer",
+    "path": "/model-viewer",
+    "hidden": false,
+    "component": "Layout",
+    "meta": { "title": "模型查看", "icon": "component", "noCache": false },
+    "children": [
+      { "name": "ModelViewerPage", "path": "index", "hidden": false, "component": "system/model-viewer/index", "meta": { "title": "模型查看", "icon": "component", "noCache": false } }
+    ]
+  },
+  {
     "name": "Ai",
     "path": "/ai",
     "hidden": false,
