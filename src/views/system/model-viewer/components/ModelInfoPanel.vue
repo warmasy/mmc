@@ -27,7 +27,7 @@
 
       <div class="info-item">
         <span class="info-label">密度</span>
-        <span class="info-value">{{ data.density }} kg/m³</span>
+        <span class="info-value highlight">{{ data.density }} kg/m³</span>
       </div>
 
       <div class="info-item">
@@ -189,7 +189,7 @@ function formatSize(mm) {
 }
 
 .info-value.highlight {
-  color: var(--el-color-primary);
+  color: #409EFF !important;
   font-weight: 600;
 }
 
