@@ -327,17 +327,21 @@ function selectType(moduleId, typeId) {
   .calc-row {
     display: flex;
     flex-direction: column;
+    flex-wrap: nowrap; /* 关键修复：column 布局下 el-col-xs-24 的 flex-basis:100% 会作用于高度，导致第二张卡换行成第二列 */
+    overflow-y: auto; /* 桌面端为 overflow:hidden，移动端允许纵向滚动 */
     margin-left: 0 !important;
     margin-right: 0 !important;
   }
   .calc-row > .el-col {
+    flex: 0 0 auto !important; /* 覆盖栅格 flex-basis:100%，高度由内容决定 */
+    max-width: 100% !important;
+    width: 100%;
     padding-left: 0 !important;
     padding-right: 0 !important;
-    height: auto;
+    height: auto !important;
   }
   .calc-row > .el-col:first-child {
     margin-bottom: 12px;
-    height: auto;
     max-height: 300px;
   }
   .sub-type-list {

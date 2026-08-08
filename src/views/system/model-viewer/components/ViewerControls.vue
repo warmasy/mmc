@@ -6,40 +6,15 @@
     </div>
 
     <div class="control-section">
-      <div class="section-title">坐标系</div>
-      <div class="coord-buttons">
-        <el-button
-          v-for="opt in coordOptions"
-          :key="opt.value"
-          size="small"
-          :type="modelValue === opt.value ? 'primary' : 'default'"
-          @click="emit('update:modelValue', opt.value)"
-        >
-          {{ opt.label }}
-        </el-button>
-      </div>
-    </div>
-
-    <el-divider />
-
-    <div class="control-section">
       <div class="section-title">操作</div>
       <div class="action-buttons">
         <el-button
           size="small"
-          :type="wireframe ? 'primary' : 'default'"
+          :type="wireframe ? 'default' : 'primary'"
           @click="emit('update:wireframe', !wireframe)"
         >
           <el-icon><Connection /></el-icon>
-          {{ wireframe ? '实体模式' : '线框模式' }}
-        </el-button>
-        <el-button
-          size="small"
-          type="default"
-          @click="emit('reset-view')"
-        >
-          <el-icon><RefreshRight /></el-icon>
-          重置视角
+          {{ wireframe ? '线框模式' : '实体模式' }}
         </el-button>
       </div>
     </div>
@@ -47,19 +22,19 @@
     <el-divider />
 
     <div class="control-section">
-      <div class="section-title">材料密度</div>
       <div class="density-row">
-        <el-input-number
-          v-model="localDensity"
-          size="small"
-          :min="100"
-          :max="25000"
-          :step="100"
-          :controls="true"
-          style="width: 120px"
-          @change="emit('update:density', localDensity)"
+        <span class="density-label">材料密度</span>
+        <NumberInput
+          :modelValue="displayDensity"
+          :step="densityUnit === 'kg_m3' ? 100 : 0.1"
+          :min="densityUnit === 'kg_m3' ? 100 : 0.1"
+          :max="densityUnit === 'kg_m3' ? 25000 : 25"
+          :precision="densityUnit === 'kg_m3' ? 0 : 2"
+          width="70"
+          align="center"
+          @update:modelValue="onDensityInput"
         />
-        <span class="density-unit">kg/m³</span>
+        <span class="density-unit" @wheel.prevent="handleDensityUnitWheel" title="滚动切换单位">{{ densityUnitLabel }}</span>
       </div>
       <div class="density-presets">
         <el-tag
@@ -78,8 +53,9 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-import { Setting, Connection, RefreshRight } from '@element-plus/icons-vue'
+import { ref, watch, computed } from 'vue'
+import { Setting, Connection } from '@element-plus/icons-vue'
+import NumberInput from '@/components/NumberInput/index.vue'
 
 const props = defineProps({
   modelValue: { type: String, default: 'y-up' },
@@ -90,15 +66,8 @@ const props = defineProps({
 const emit = defineEmits([
   'update:modelValue',
   'update:wireframe',
-  'update:density',
-  'reset-view'
+  'update:density'
 ])
-
-const coordOptions = [
-  { label: 'Y-up', value: 'y-up' },
-  { label: 'Z-up', value: 'z-up' },
-  { label: 'X-up', value: 'x-up' }
-]
 
 const densityPresets = [
   { name: '钢', value: 7850 },
@@ -109,18 +78,47 @@ const densityPresets = [
   { name: '塑料', value: 1200 }
 ]
 
-const localDensity = ref(props.density)
+// 实际密度值（始终为 kg/m³，用于计算和传给父组件）
+const actualDensity = ref(props.density)
+// 显示单位
+const densityUnit = ref('kg_m3') // kg/m³ 或 g/cm³
 
-watch(() => props.density, (val) => {
-  localDensity.value = val
+// 显示密度值（根据当前单位换算后的值，用于输入框显示）
+const displayDensity = computed(() => {
+  if (densityUnit.value === 'kg_m3') return actualDensity.value
+  return actualDensity.value / 1000
 })
 
+const densityUnitLabel = computed(() => {
+  return densityUnit.value === 'kg_m3' ? 'kg/m³' : 'g/cm³'
+})
+
+watch(() => props.density, (val) => {
+  actualDensity.value = val
+})
+
+// 处理输入框数值变化：根据当前单位解析为实际密度（kg/m³）
+function onDensityInput(val) {
+  if (densityUnit.value === 'kg_m3') {
+    actualDensity.value = val
+  } else {
+    actualDensity.value = val * 1000
+  }
+  emit('update:density', actualDensity.value)
+}
+
+// 单位切换时，数值自动换算，实际密度不变
+function handleDensityUnitWheel(e) {
+  const oldUnit = densityUnit.value
+  densityUnit.value = oldUnit === 'kg_m3' ? 'g_cm3' : 'kg_m3'
+}
+
 function isActivePreset(val) {
-  return Math.abs(localDensity.value - val) < 50
+  return Math.abs(actualDensity.value - val) < 50
 }
 
 function selectPreset(val) {
-  localDensity.value = val
+  actualDensity.value = val
   emit('update:density', val)
 }
 </script>
@@ -158,29 +156,32 @@ function selectPreset(val) {
   font-weight: 500;
 }
 
-.coord-buttons,
-.mode-buttons,
 .action-buttons {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
 }
 
-.coord-buttons .el-button {
-  flex: 1;
-  min-width: 0;
-  padding: 4px 8px;
-}
-
 .density-row {
   display: flex;
   align-items: center;
   gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.density-label {
+  font-size: 13px;
+  color: var(--el-text-color-primary);
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .density-unit {
   font-size: 11px;
   color: var(--el-text-color-secondary);
+  white-space: nowrap;
+  min-width: 48px;
 }
 
 .density-presets {

@@ -16,6 +16,13 @@ export function useThreeScene(containerRef, props) {
   const hudCamera = shallowRef(null)
   const rafId = ref(null)
 
+  // 背景装饰元素引用（方便主题切换时操作）
+  const bgObjects = {
+    stars: null,
+    gridHelper: null,
+    nebula: null
+  }
+
   // 灯光引用，方便后续调整
   const lights = {
     ambient: null,
@@ -35,9 +42,13 @@ export function useThreeScene(containerRef, props) {
     'x-up': { label: 'X-up', up: new THREE.Vector3(1, 0, 0), rotation: new THREE.Euler(0, 0, -Math.PI / 2) }
   }
 
-  function getThemeBgColor() {
-    // 宇宙深蓝背景，比纯黑浅一些，带蓝紫色调
-    return new THREE.Color(0x141b2d)
+  function getThemeBgColor(isDark = true) {
+    if (isDark) {
+      // 宇宙深蓝背景，比纯黑浅一些，带蓝紫色调
+      return new THREE.Color(0x141b2d)
+    }
+    // 亮色主题：柔和浅灰白背景
+    return new THREE.Color(0xf5f7fa)
   }
 
   function getThemeColor() {
@@ -54,6 +65,43 @@ export function useThreeScene(containerRef, props) {
     return 0x409EFF
   }
 
+  /**
+   * 更新主题（亮色/暗色）
+   * @param {boolean} isDark
+   */
+  function updateTheme(isDark) {
+    if (!scene.value) return
+
+    try {
+      // 1. 切换背景色
+      scene.value.background = getThemeBgColor(isDark)
+
+      // 2. 切换星空粒子可见性（暗色才显示）
+      if (bgObjects.stars) {
+        bgObjects.stars.visible = isDark
+      }
+
+      // 3. 切换星云光晕可见性（暗色才显示）
+      if (bgObjects.nebula) {
+        bgObjects.nebula.visible = isDark
+      }
+
+
+
+      // 4. 网格始终隐藏
+      if (bgObjects.gridHelper) {
+        bgObjects.gridHelper.visible = false
+      }
+
+      // 5. 调整环境光强度
+      if (lights.ambient) {
+        lights.ambient.intensity = isDark ? 0.6 : 0.8
+      }
+    } catch (e) {
+      console.warn('updateTheme error:', e)
+    }
+  }
+
   function initThree() {
     const container = containerRef.value
     if (!container) return
@@ -61,12 +109,15 @@ export function useThreeScene(containerRef, props) {
     const width = container.clientWidth
     const height = container.clientHeight
 
+    // 检测当前主题
+    const isDark = document.documentElement.classList.contains('dark')
+
     scene.value = new THREE.Scene()
-    scene.value.background = getThemeBgColor()
+    scene.value.background = getThemeBgColor(isDark)
 
     // ========== 灯光系统（四灯布光：主光+补光+背光+底光）==========
     // 环境光 - 提供基础照明
-    lights.ambient = new THREE.AmbientLight(0xffffff, 0.6)
+    lights.ambient = new THREE.AmbientLight(0xffffff, isDark ? 0.6 : 0.8)
     scene.value.add(lights.ambient)
 
     // 主光（Key Light）- 右上方，产生主要阴影
@@ -99,7 +150,7 @@ export function useThreeScene(containerRef, props) {
     const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.5)
     scene.value.add(hemiLight)
 
-    // ========== 相机 ==========
+    // ========== 透视相机（轴测图用）==========
     camera.value = new THREE.PerspectiveCamera(45, width / height, 0.1, 100000)
     camera.value.position.set(50, 50, 50)
     camera.value.up.copy(COORD_SYSTEMS[props.coordSystem].up)
@@ -128,14 +179,13 @@ export function useThreeScene(containerRef, props) {
 
     // ========== 控制器 ==========
     controls.value = new OrbitControls(camera.value, renderer.value.domElement)
-    controls.value.enableDamping = true
-    controls.value.dampingFactor = 0.05
+    controls.value.enableDamping = false   // 关闭阻尼，鼠标和模型完全同步，最跟手
     controls.value.mouseButtons = {
       LEFT: null,
       MIDDLE: THREE.MOUSE.ROTATE,
       RIGHT: THREE.MOUSE.PAN
     }
-    controls.value.rotateSpeed = 1.2
+    controls.value.rotateSpeed = 1.5       // 旋转灵敏度提高
     controls.value.minPolarAngle = 0.05
     controls.value.maxPolarAngle = Math.PI - 0.05
 
@@ -143,38 +193,45 @@ export function useThreeScene(containerRef, props) {
     scene.value.add(modelGroup.value)
 
     // ========== 宇宙星空背景 ==========
-    // 星空粒子 - 随机分布的星星
+    // 星空粒子 - 随机分布的星星（调大更容易看清）
     const starCount = 2000
     const starGeo = new THREE.BufferGeometry()
     const starPositions = new Float32Array(starCount * 3)
     const starSizes = new Float32Array(starCount)
     for (let i = 0; i < starCount; i++) {
-      // 在球形空间内随机分布
       const r = 800 + Math.random() * 1200
       const theta = Math.random() * Math.PI * 2
       const phi = Math.acos(2 * Math.random() - 1)
       starPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta)
       starPositions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta)
       starPositions[i * 3 + 2] = r * Math.cos(phi)
-      starSizes[i] = Math.random() * 2 + 0.5
+      starSizes[i] = Math.random() * 4 + 2  // 星星更大
     }
     starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3))
     starGeo.setAttribute('size', new THREE.BufferAttribute(starSizes, 1))
     const starMat = new THREE.PointsMaterial({
       color: 0xffffff,
-      size: 1.5,
+      size: 4,
       transparent: true,
-      opacity: 0.6,
+      opacity: 0.85,
       sizeAttenuation: true
     })
     const stars = new THREE.Points(starGeo, starMat)
     stars.name = 'Stars'
+    stars.visible = isDark
+    bgObjects.stars = stars
     scene.value.add(stars)
 
-    // 宇宙网格 - 极淡的蓝紫色坐标网格
-    const gridHelper = new THREE.GridHelper(3000, 60, 0x2a3a5c, 0x1a2538)
+
+
+    // 宇宙网格 - 极淡的蓝紫色坐标网格（亮色主题下改为浅灰）
+    const gridColor1 = isDark ? 0x2a3a5c : 0xc0c4cc
+    const gridColor2 = isDark ? 0x1a2538 : 0xe4e7ed
+    const gridHelper = new THREE.GridHelper(3000, 60, gridColor1, gridColor2)
     gridHelper.position.y = -600
     gridHelper.name = 'GridHelper'
+    gridHelper.visible = false  // 默认不显示网格
+    bgObjects.gridHelper = gridHelper
     scene.value.add(gridHelper)
 
     // 淡淡的星云光晕（远处的大光球）
@@ -188,6 +245,8 @@ export function useThreeScene(containerRef, props) {
     const nebula = new THREE.Mesh(nebulaGeo, nebulaMat)
     nebula.position.set(0, 200, -800)
     nebula.name = 'Nebula'
+    nebula.visible = isDark
+    bgObjects.nebula = nebula
     scene.value.add(nebula)
 
     // ========== HUD 坐标轴指示器 ==========
@@ -273,7 +332,7 @@ export function useThreeScene(containerRef, props) {
     renderer.value.clear()
     renderer.value.render(scene.value, camera.value)
 
-    // HUD 坐标轴 - 左下角
+    // HUD 坐标轴 - 左下角（跟随相机旋转）
     const hudSize = Math.min(120, w * 0.18) * window.devicePixelRatio
     const hudX = 15
     const hudY = 15
@@ -297,7 +356,7 @@ export function useThreeScene(containerRef, props) {
     const h = containerRef.value.clientHeight
     camera.value.aspect = w / h
     camera.value.updateProjectionMatrix()
-    renderer.value.setSize(w, h)
+renderer.value.setSize(w, h)
   }
 
   function disposeThree() {
@@ -321,8 +380,8 @@ export function useThreeScene(containerRef, props) {
     }
 
     // 清理宇宙背景元素
-    const bgObjects = ['Stars', 'GridHelper', 'Nebula']
-    bgObjects.forEach(name => {
+    const bgNames = ['Stars', 'GridHelper', 'Nebula']
+    bgNames.forEach(name => {
       const obj = scene.value?.getObjectByName(name)
       if (obj) {
         if (obj.geometry) obj.geometry.dispose()
@@ -354,6 +413,7 @@ export function useThreeScene(containerRef, props) {
     scene, camera, renderer, controls, modelGroup, hudScene, hudCamera,
     COORD_SYSTEMS, _tempDir,
     getThemeColor, getThemeBgColor,
-    initThree, disposeThree, handleResize
+    initThree, disposeThree, handleResize,
+    updateTheme
   }
 }

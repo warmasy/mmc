@@ -1,32 +1,9 @@
 <template>
   <div class="app-container model-viewer-page">
-    <!-- 顶部标题栏 -->
-    <div class="viewer-header">
-      <div class="header-left">
-        <span class="header-title">模型查看</span>
-        <el-divider direction="vertical" />
-        <span class="header-subtitle">STEP / IGES / BREP 在线预览</span>
-      </div>
-      <div class="header-info">
-        <div class="info-item">
-          <label>标题：</label>
-          <el-input v-model="projectName" placeholder="输入项目名称" size="small" style="width: 160px" />
-        </div>
-        <div class="info-item">
-          <label>编号：</label>
-          <el-input v-model="projectNo" placeholder="NO." size="small" style="width: 280px" readonly @click="initProjectNo" />
-        </div>
-        <div class="info-item">
-          <label>日期：</label>
-          <el-input :value="currentDate" readonly size="small" style="width: 120px" />
-        </div>
-      </div>
-    </div>
-
     <!-- 主体内容 -->
     <el-row :gutter="8" class="viewer-row">
       <!-- 左侧：信息 + 控制 + 说明 -->
-      <el-col :span="4" :xs="24" class="left-col">
+      <el-col :span="5" :xs="24" class="left-col">
         <!-- 上区域：模型信息 -->
         <el-card class="left-card info-card" :body-style="{ padding: '8px', height: '100%' }">
           <ModelInfoPanel
@@ -42,7 +19,7 @@
             v-model="coordSystem"
             v-model:wireframe="wireframe"
             v-model:density="density"
-            @reset-view="handleResetView"
+
           />
         </el-card>
 
@@ -84,7 +61,7 @@
       </el-col>
 
       <!-- 右侧：3D 查看器 -->
-      <el-col :span="20" :xs="24" class="right-col">
+      <el-col :span="19" :xs="24" class="right-col">
         <el-card class="viewer-card" :body-style="{ padding: '0', height: '100%' }">
           <ModelViewer3D
             ref="viewerRef"
@@ -104,26 +81,11 @@
 
 <script setup name="ModelViewer">
 import { ref, watch } from 'vue'
-import { generateUUID } from '@/utils'
 import { ElMessage } from 'element-plus'
 import { InfoFilled, Check, Warning } from '@element-plus/icons-vue'
 import ModelInfoPanel from './components/ModelInfoPanel.vue'
 import ViewerControls from './components/ViewerControls.vue'
 import ModelViewer3D from './components/ModelViewer3D.vue'
-
-// ==================== 公共信息 ====================
-const currentDate = ref(new Date().toLocaleDateString('zh-CN', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric'
-}))
-const projectName = ref('')
-const projectNo = ref('')
-
-function initProjectNo() {
-  projectNo.value = generateUUID()
-}
-initProjectNo()
 
 // ==================== 3D 查看器状态 ====================
 const viewerRef = ref(null)
@@ -148,9 +110,7 @@ const modelInfo = ref({})
 
 // ==================== 事件处理 ====================
 function handleModelLoaded({ fileName }) {
-  if (projectName.value === '') {
-    projectName.value = fileName.replace(/\.[^/.]+$/, '')
-  }
+  // projectName 已移除
 }
 
 function handleModelError(err) {
@@ -163,10 +123,6 @@ function handleVolumeCalculated(data) {
 
 function handleSizeCalculated(data) {
   modelInfo.value = { ...modelInfo.value, ...data }
-}
-
-function handleResetView() {
-  viewerRef.value?.resetView()
 }
 
 function handleClearModel() {
@@ -187,58 +143,6 @@ function triggerFileSelect() {
   overflow: hidden;
   padding: 12px;
   box-sizing: border-box;
-}
-
-// 顶部标题栏
-.viewer-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  background-color: var(--el-bg-color);
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 4px;
-  margin-bottom: 8px;
-  flex-shrink: 0;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.header-title {
-  font-size: 16px;
-  font-weight: bold;
-  color: var(--el-text-color-primary);
-}
-
-.header-subtitle {
-  font-size: 13px;
-  color: var(--el-text-color-secondary);
-}
-
-.header-info {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.info-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: var(--el-text-color-regular);
-
-  label {
-    color: var(--el-text-color-secondary);
-    white-space: nowrap;
-  }
 }
 
 // 主体行
@@ -341,6 +245,7 @@ function triggerFileSelect() {
 
   :deep(.el-card__body) {
     height: 100%;
+    padding: 0 !important;
   }
 }
 

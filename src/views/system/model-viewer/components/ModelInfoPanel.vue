@@ -20,19 +20,25 @@
         <span class="info-value file-name" :title="data.fileName">{{ data.fileName }}</span>
       </div>
 
-      <div class="info-item">
+      <div class="info-item unit-row" @wheel.prevent="handleVolumeWheel" title="滚动切换单位">
         <span class="info-label">体积</span>
-        <span class="info-value highlight">{{ formatVolume(data.volumeMm3) }}</span>
+        <span class="info-value highlight">
+          {{ formatVolume(data.volumeMm3) }} {{ getVolumeUnitLabel() }}
+        </span>
       </div>
 
-      <div class="info-item">
+      <div class="info-item unit-row" @wheel.prevent="handleDensityWheel" title="滚动切换单位">
         <span class="info-label">密度</span>
-        <span class="info-value highlight">{{ data.density }} kg/m³</span>
+        <span class="info-value highlight">
+          {{ formatDensity(data.density) }} {{ getDensityUnitLabel() }}
+        </span>
       </div>
 
-      <div class="info-item">
+      <div class="info-item unit-row" @wheel.prevent="handleMassWheel" title="滚动切换单位">
         <span class="info-label">质量</span>
-        <span class="info-value highlight">{{ formatMass(data.massKg) }}</span>
+        <span class="info-value highlight">
+          {{ formatMass(data.massKg) }} {{ getMassUnitLabel() }}
+        </span>
       </div>
 
       <div class="info-item">
@@ -64,7 +70,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Document, Box, FolderOpened, Delete } from '@element-plus/icons-vue'
 
 const props = defineProps({
@@ -80,19 +86,81 @@ const hasData = computed(() => {
   return props.data && props.data.fileName
 })
 
+// 单位状态（默认：体积cm³，密度g/cm³，质量g）
+const volumeUnit = ref('cm3')
+const densityUnit = ref('g_cm3')
+const massUnit = ref('g')
+
+const volumeUnits = ['mm3', 'cm3', 'dm3', 'm3']
+const densityUnits = ['kg_m3', 'g_cm3']
+const massUnits = ['g', 'kg']
+
+function handleVolumeWheel(e) {
+  const idx = volumeUnits.indexOf(volumeUnit.value)
+  if (e.deltaY > 0) {
+    volumeUnit.value = volumeUnits[(idx + 1) % volumeUnits.length]
+  } else {
+    volumeUnit.value = volumeUnits[(idx - 1 + volumeUnits.length) % volumeUnits.length]
+  }
+}
+
+function handleDensityWheel(e) {
+  const idx = densityUnits.indexOf(densityUnit.value)
+  if (e.deltaY > 0) {
+    densityUnit.value = densityUnits[(idx + 1) % densityUnits.length]
+  } else {
+    densityUnit.value = densityUnits[(idx - 1 + densityUnits.length) % densityUnits.length]
+  }
+}
+
+function handleMassWheel(e) {
+  const idx = massUnits.indexOf(massUnit.value)
+  if (e.deltaY > 0) {
+    massUnit.value = massUnits[(idx + 1) % massUnits.length]
+  } else {
+    massUnit.value = massUnits[(idx - 1 + massUnits.length) % massUnits.length]
+  }
+}
+
+function getVolumeUnitLabel() {
+  const map = { mm3: 'mm³', cm3: 'cm³', dm3: 'dm³', m3: 'm³' }
+  return map[volumeUnit.value]
+}
+
+function getDensityUnitLabel() {
+  const map = { kg_m3: 'kg/m³', g_cm3: 'g/cm³' }
+  return map[densityUnit.value]
+}
+
+function getMassUnitLabel() {
+  const map = { g: 'g', kg: 'kg' }
+  return map[massUnit.value]
+}
+
 function formatVolume(mm3) {
   if (mm3 == null) return '-'
-  if (mm3 >= 1e9) return (mm3 / 1e9).toFixed(6) + ' m³'
-  if (mm3 >= 1e6) return (mm3 / 1e6).toFixed(4) + ' dm³'
-  if (mm3 >= 1e3) return (mm3 / 1e3).toFixed(2) + ' cm³'
-  return mm3.toFixed(2) + ' mm³'
+  const unit = volumeUnit.value
+  if (unit === 'mm3') return mm3.toFixed(2)
+  if (unit === 'cm3') return (mm3 / 1e3).toFixed(2)
+  if (unit === 'dm3') return (mm3 / 1e6).toFixed(4)
+  if (unit === 'm3') return (mm3 / 1e9).toFixed(6)
+  return mm3.toFixed(2)
+}
+
+function formatDensity(kg_m3) {
+  if (kg_m3 == null) return '-'
+  const unit = densityUnit.value
+  if (unit === 'kg_m3') return kg_m3.toFixed(0)
+  if (unit === 'g_cm3') return (kg_m3 / 1000).toFixed(2)
+  return kg_m3.toFixed(0)
 }
 
 function formatMass(kg) {
   if (kg == null) return '-'
-  if (kg >= 1000) return (kg / 1000).toFixed(4) + ' t'
-  if (kg >= 1) return kg.toFixed(4) + ' kg'
-  return (kg * 1000).toFixed(2) + ' g'
+  const unit = massUnit.value
+  if (unit === 'g') return (kg * 1000).toFixed(2)
+  if (unit === 'kg') return kg.toFixed(4)
+  return (kg * 1000).toFixed(2)
 }
 
 function formatSize(mm) {
@@ -204,5 +272,16 @@ function formatSize(mm) {
 .info-actions .el-button {
   flex: 1;
   min-width: 0;
+}
+
+.unit-row {
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.unit-row:hover {
+  background: var(--el-fill-color-light);
+  border-radius: 3px;
 }
 </style>

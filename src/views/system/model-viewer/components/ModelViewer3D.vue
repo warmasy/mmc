@@ -7,12 +7,6 @@
     @dragleave="handleDragleave"
     @drop.prevent="handleDrop"
   >
-    <div v-if="!hasModel" class="empty-state">
-      <el-icon :size="64" class="empty-icon"><component :is="UploadFilled" /></el-icon>
-      <p class="empty-title">拖拽 STEP/STP 文件到此处</p>
-      <p class="empty-hint">支持 .step / .stp / .iges / .igs / .brep</p>
-    </div>
-
     <div v-if="isLoading" class="loading-overlay">
       <el-icon class="is-loading" :size="32"><Loading /></el-icon>
       <span>正在解析模型...</span>
@@ -21,12 +15,12 @@
     <!-- 顶部标准视图工具栏 -->
     <div class="view-toolbar">
       <el-button-group>
-        <el-button size="small" title="前视" @click="wrappedSetStandardView('front')">前视图</el-button>
-        <el-button size="small" title="后视" @click="wrappedSetStandardView('back')">后视图</el-button>
-        <el-button size="small" title="上视" @click="wrappedSetStandardView('top')">上视图</el-button>
-        <el-button size="small" title="下视" @click="wrappedSetStandardView('bottom')">下视图</el-button>
-        <el-button size="small" title="左视" @click="wrappedSetStandardView('left')">左视图</el-button>
-        <el-button size="small" title="右视" @click="wrappedSetStandardView('right')">右视图</el-button>
+        <el-button size="small" :type="currentView === 'front' ? 'primary' : 'default'" title="前视" @click="wrappedSetStandardView('front')">前视图</el-button>
+        <el-button size="small" :type="currentView === 'back' ? 'primary' : 'default'" title="后视" @click="wrappedSetStandardView('back')">后视图</el-button>
+        <el-button size="small" :type="currentView === 'top' ? 'primary' : 'default'" title="上视" @click="wrappedSetStandardView('top')">上视图</el-button>
+        <el-button size="small" :type="currentView === 'bottom' ? 'primary' : 'default'" title="下视" @click="wrappedSetStandardView('bottom')">下视图</el-button>
+        <el-button size="small" :type="currentView === 'left' ? 'primary' : 'default'" title="左视" @click="wrappedSetStandardView('left')">左视图</el-button>
+        <el-button size="small" :type="currentView === 'right' ? 'primary' : 'default'" title="右视" @click="wrappedSetStandardView('right')">右视图</el-button>
         <el-button size="small" :type="currentView === 'iso' ? 'primary' : 'default'" title="等轴测" @click="wrappedSetStandardView('iso')">轴测图</el-button>
       </el-button-group>
       <el-divider direction="vertical" style="margin:0 8px" />
@@ -90,8 +84,9 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { useDark } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
-import { UploadFilled, Loading, Close, Switch } from '@element-plus/icons-vue'
+import { Loading, Close, Switch } from '@element-plus/icons-vue'
 import { useThreeScene } from '../composables/useThreeScene'
 import { useOcctParser } from '../composables/useOcctParser'
 import { useModelBuilder } from '../composables/useModelBuilder'
@@ -119,7 +114,8 @@ const isSettingView = ref(false) // 标记是否正在程序设置视图
 const {
   scene, camera, renderer, controls, modelGroup,
   COORD_SYSTEMS, getThemeColor,
-  initThree, disposeThree, handleResize
+  initThree, disposeThree, handleResize,
+  updateTheme
 } = useThreeScene(containerRef, props)
 
 const { isLoading, loadOcct, parseFile: parseOcctFile, loadDefaultModel: loadDefaultOcctModel } = useOcctParser()
@@ -136,9 +132,17 @@ const { currentView, resetView, setStandardView, applyCoordSystem } = useStandar
 const { dialogX, dialogY, startDrag } = useDragDialog(containerRef)
 
 // ==================== 生命周期 ====================
+// 主题监听
+const isDark = useDark()
+watch(isDark, (dark) => {
+  updateTheme(dark)
+}, { immediate: false })
+
 onMounted(() => {
   window.addEventListener('resize', handleResize)
   initThree()
+  // 初始化时应用当前主题
+  updateTheme(isDark.value)
   // 监听用户手动旋转/缩放，取消标准视图高亮
   if (controls.value) {
     controls.value.addEventListener('change', () => {
@@ -165,7 +169,18 @@ watch(() => props.coordSystem, (val) => {
 watch(() => props.wireframe, (val) => {
   if (!modelGroup.value) return
   modelGroup.value.children.forEach(child => {
-    if (child.isMesh && child.material) child.material.wireframe = val
+    if (child.isMesh && child.material) {
+      // 工程图模式：mesh 半透明，显示可见边（实线）和隐藏边（虚线）
+      child.material.transparent = val
+      child.material.opacity = val ? 0.15 : 1.0
+      child.material.depthWrite = !val
+    }
+    if (child.name && child.name.endsWith('_visibleEdges')) {
+      child.visible = val
+    }
+    if (child.name && child.name.endsWith('_hiddenEdges')) {
+      child.visible = val
+    }
   })
 })
 
@@ -268,13 +283,6 @@ defineExpose({
   border-color: var(--el-color-primary); background-color: var(--el-color-primary-light-9);
 }
 .model-viewer-3d :deep(canvas) { display: block; width: 100%; height: 100%; }
-.empty-state {
-  position: absolute; inset: 0; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; pointer-events: none; z-index: 1;
-}
-.empty-icon { color: var(--el-text-color-secondary); opacity: 0.4; margin-bottom: 16px; }
-.empty-title { font-size: 16px; color: var(--el-text-color-regular); margin-bottom: 8px; }
-.empty-hint { font-size: 12px; color: var(--el-text-color-placeholder); margin-bottom: 4px; }
 .loading-overlay {
   position: absolute; inset: 0; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 12px;

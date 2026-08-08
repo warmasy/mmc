@@ -83,13 +83,12 @@ export function useModelBuilder(scene, modelGroup, camera, controls, props, getT
       // ========== 材质优化：使用 MeshPhysicalMaterial 增加质感 ==========
       const material = new THREE.MeshPhysicalMaterial({
         color,
-        metalness: 0.15,
-        roughness: 0.35,
-        clearcoat: 0.3,
-        clearcoatRoughness: 0.25,
-        reflectivity: 0.5,
+        metalness: 0.4,
+        roughness: 0.2,
+        clearcoat: 0.6,
+        clearcoatRoughness: 0.15,
+        reflectivity: 0.8,
         side: THREE.DoubleSide,
-        wireframe: props.wireframe,
         flatShading: false
       })
 
@@ -99,17 +98,39 @@ export function useModelBuilder(scene, modelGroup, camera, controls, props, getT
       mesh.receiveShadow = true
       modelGroup.value.add(mesh)
 
-      // ========== 轮廓线：添加 EdgesGeometry 让边缘更清晰 ==========
-      const edgesGeo = new THREE.EdgesGeometry(geometry, 20) // 20度阈值，只显示明显边缘
-      const edgesMat = new THREE.LineBasicMaterial({
-        color: 0x2a2a2a,
+      // ========== 工程图线框：可见边（实线）+ 隐藏边（虚线）==========
+      const edgesGeo = new THREE.EdgesGeometry(geometry, 15)
+
+      // 可见轮廓线：实线，深色，正常深度测试
+      const visibleEdgesMat = new THREE.LineBasicMaterial({
+        color: 0x333333,
+        depthTest: true,
+        depthWrite: false,
         transparent: true,
-        opacity: 0.6,
-        linewidth: 1
+        opacity: 0.9
       })
-      const edgesLine = new THREE.LineSegments(edgesGeo, edgesMat)
-      edgesLine.name = meshData.name + '_edges' || 'Edges'
-      modelGroup.value.add(edgesLine)
+      const visibleEdges = new THREE.LineSegments(edgesGeo, visibleEdgesMat)
+      visibleEdges.name = (meshData.name || 'Mesh') + '_visibleEdges'
+      visibleEdges.visible = false  // 默认隐藏，线框模式时显示
+      modelGroup.value.add(visibleEdges)
+
+      // 隐藏轮廓线：虚线，灰色，只显示被遮挡的边
+      const hiddenEdgesMat = new THREE.LineDashedMaterial({
+        color: 0xaaaaaa,
+        dashSize: 0.8,
+        gapSize: 0.5,
+        depthTest: true,
+        depthFunc: THREE.GreaterEqualDepth,
+        depthWrite: false,
+        transparent: true,
+        opacity: 0.5
+      })
+      const hiddenEdges = new THREE.LineSegments(edgesGeo.clone(), hiddenEdgesMat)
+      hiddenEdges.name = (meshData.name || 'Mesh') + '_hiddenEdges'
+      hiddenEdges.visible = false  // 默认隐藏，线框模式时显示
+      // 计算虚线距离
+      hiddenEdges.computeLineDistances()
+      modelGroup.value.add(hiddenEdges)
 
       totalVertices += posArray.length / 3
       totalFaces += indexArray.length / 3

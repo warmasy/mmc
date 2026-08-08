@@ -225,6 +225,18 @@ defineEmits(['calculate', 'reset', 'help'])
 
 /* 响应式 */
 @media (max-width: 768px) {
-  .calc-row { flex-direction: column; }
+  .calc-row {
+    flex-direction: column;
+    flex-wrap: nowrap; /* 关键修复：column 布局下 el-col-xs-24 的 flex-basis:100% 会作用于高度，导致结果卡换行成第二列被裁掉 */
+    overflow-y: auto; /* 桌面端为 overflow:hidden，移动端允许纵向滚动 */
+  }
+  .calc-row > .el-col {
+    flex: 0 0 auto !important; /* 覆盖栅格 flex-basis:100%，高度由内容决定 */
+    max-width: 100% !important;
+    width: 100%;
+    height: auto !important;
+    margin-bottom: 12px;
+  }
+  .calc-card { height: auto; }
 }
 </style>

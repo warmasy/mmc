@@ -45,21 +45,15 @@
                </template>
                <el-tabs v-model="selectedTab">
                   <el-tab-pane label="所有网站" name="websites">
-                     <el-table :data="websiteList" class="site-table">
-                        <el-table-column type="index" label="序号" width="80" align="center" />
-                        <el-table-column label="网址" min-width="150" align="center">
-                           <template #default="scope">
-                              <span class="table-url">{{ scope.row.url }}</span>
-                           </template>
-                        </el-table-column>
-                        <el-table-column label="平台" prop="platform" width="200" align="center" />
-                        <el-table-column label="操作" width="200" align="center">
-                           <template #default="scope">
-                              <el-button type="primary" link size="small" icon="CopyDocument" @click="copyUrl(scope.row.url, scope.row.platform)">复制</el-button>
-                              <el-button type="success" link size="small" icon="TopRight" @click="openWebsite(scope.row.url)">跳转</el-button>
-                           </template>
-                        </el-table-column>
-                     </el-table>
+                     <base-table :data="websiteList" :columns="columns">
+                        <template #url="{ row }">
+                           <span class="table-url">{{ row.url }}</span>
+                        </template>
+                        <template #action="{ row }">
+                           <el-button type="primary" link size="small" icon="CopyDocument" @click="copyUrl(row.url, row.platform)">复制</el-button>
+                           <el-button type="success" link size="small" icon="TopRight" @click="openWebsite(row.url)">跳转</el-button>
+                        </template>
+                     </base-table>
                   </el-tab-pane>
                   <el-tab-pane label="图片" name="image">
                      <div class="image-full">
@@ -106,6 +100,14 @@ const websiteList = ref([
   { url: 'https://blog.3139822.xyz', platform: 'netlify' },
 
 ])
+
+// 表格列配置
+const columns = [
+  { type: 'index', label: '序号', width: 80 },
+  { label: '网址', minWidth: 150, slot: 'url' },
+  { label: '平台', prop: 'platform', width: 200 },
+  { label: '操作', width: 200, slot: 'action' }
+]
 
 function openWebsite(url) {
   if (url) {
@@ -214,17 +216,6 @@ function copyUrl(url, name) {
   overflow-y: auto;
 }
 
-/* 表格样式（无 hover） */
-.site-table {
-  width: 100%;
-}
-.site-table :deep(.el-table__header-wrapper th) {
-  font-weight: 500;
-}
-.site-table :deep(.el-table__row td) {
-  border-bottom: 1px solid var(--el-border-color-lighter);
-}
-
 /* 图片铺满 */
 .image-full {
   width: 100%;
@@ -246,5 +237,31 @@ function copyUrl(url, name) {
   font-size: 13px;
   color: var(--el-text-color-secondary);
   text-align: center;
+}
+
+/* 移动端适配：卡片高度由内容决定，自然纵向堆叠 */
+@media screen and (max-width: 768px) {
+  .profile-page,
+  .profile-row,
+  .profile-row > .el-col {
+    height: auto;
+  }
+  .profile-row > .el-col {
+    margin-bottom: 12px;
+  }
+  .info-card,
+  .tab-card {
+    height: auto;
+  }
+  .tab-card :deep(.el-card__body) {
+    height: auto;
+  }
+  .tab-card :deep(.el-tabs__content) {
+    height: auto;
+    overflow-y: visible;
+  }
+  .image-full {
+    min-height: 260px;
+  }
 }
 </style>
