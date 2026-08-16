@@ -20,7 +20,6 @@ export const projectNotice = [
     updatedAt: "几天前",
     member: "北京 方便面",
     href: "https://3139822.xyz/",
-    memberLink: "https://3139822.xyz/",
   },
   {
     id: "0002",
@@ -30,7 +29,6 @@ export const projectNotice = [
     updatedAt: "几秒前",
     member: "苏北 地锅鸡",
     href: "https://myblog.3139822.xyz/",
-    memberLink: "https://myblog.3139822.xyz/",
   },
   {
     id: "0003",
@@ -40,7 +38,6 @@ export const projectNotice = [
     updatedAt: "几天前",
     member: "武汉 热干面",
     href: "http://memos.3139822.xyz/",
-    memberLink: "http://memos.3139822.xyz/",
   },
 ];
 
