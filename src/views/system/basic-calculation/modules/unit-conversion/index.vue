@@ -2,42 +2,114 @@
   <div class="unit-conversion-panel">
     <div class="param-fieldset">
       <div class="param-fieldset-title">{{ currentType.name }}</div>
-      <div class="convert-input-section">
-        <div class="input-row">
-        <div class="input-group">
-          <span class="input-label">输入数值</span>
-          <NumberInput v-model="inputValue" :step="1" :precision="6" :width="100" :min="0" @change="handleConvert" />
-        </div>
-        <div class="input-group">
-          <span class="input-label">源单位</span>
-          <el-select v-model="sourceUnit" placeholder="选择单位" size="small" style="width: 100px" @change="handleConvert" class="no-arrow-select" @wheel.prevent="handleWheelSource">
-            <el-option v-for="(unit, key) in currentType.units" :key="key" :label="unit.symbol" :value="key">
-              <span>{{ unit.symbol }}({{ unit.name }})</span>
-            </el-option>
-          </el-select>
-        </div>
-        <div class="input-group">
-          <span class="input-label">目标单位</span>
-          <el-select v-model="targetUnit" placeholder="选择单位" size="small" style="width: 100px" @change="handleConvert" class="no-arrow-select" @wheel.prevent="handleWheelTarget">
-            <el-option v-for="(unit, key) in currentType.units" :key="key" :label="unit.symbol" :value="key">
-              <span>{{ unit.symbol }}({{ unit.name }})</span>
-            </el-option>
-          </el-select>
-        </div>
-        <div class="input-group">
-          <span class="input-label">转换结果</span>
-          <el-input v-model="resultDisplay" readonly size="small" style="width: 100px" class="center-input" />
-        </div>
-        <div class="input-group formula-group">
-          <span class="input-label">&nbsp;</span>
-          <el-tag v-if="convertResult !== null" type="info" effect="plain" size="small">
-            {{ inputValue }} {{ currentType.units[sourceUnit]?.symbol }} = {{ formatResult(convertResult) }} {{ currentType.units[targetUnit]?.symbol }}
-          </el-tag>
-        </div>
-      </div>
-      </div>
+
+      <table class="unit-table">
+        <thead>
+          <tr>
+            <th class="th-input">输入数值</th>
+            <th class="th-unit">源单位</th>
+            <th class="th-unit">目标单位</th>
+            <th class="th-result">转换结果</th>
+            <th class="th-formula">换算关系</th>
+            <th class="th-empty"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 第一行：包含跨行的输入数值和源单位 -->
+          <tr>
+            <td class="td-input" :rowspan="rows.length">
+              <NumberInput
+                v-model="sharedInputValue"
+                :step="1"
+                :precision="6"
+                :width="90"
+                :min="0"
+                @change="calculateAll"
+              />
+            </td>
+            <td class="td-unit" :rowspan="rows.length">
+              <el-select
+                v-model="sharedSourceUnit"
+                size="small"
+                class="no-arrow-select"
+                @wheel.prevent="handleWheelSource"
+              >
+                <el-option
+                  v-for="(unit, key) in currentType.units"
+                  :key="key"
+                  :label="unit.symbol"
+                  :value="key"
+                >
+                  <span>{{ unit.symbol }}({{ unit.name }})</span>
+                </el-option>
+              </el-select>
+            </td>
+            <td class="td-unit">
+              <el-input
+                :value="currentType.units[rows[0].targetUnit]?.symbol"
+                readonly
+                size="small"
+                class="center-input target-unit-input"
+                :title="currentType.units[rows[0].targetUnit]?.name + ' (' + currentType.units[rows[0].targetUnit]?.symbol + ')'"
+              />
+            </td>
+            <td class="td-result">
+              <el-input
+                :value="formatResult(rows[0].result)"
+                readonly
+                size="small"
+                class="center-input"
+              />
+            </td>
+            <td class="td-formula">
+              <el-tag
+                v-if="rows[0].result !== null"
+                type="info"
+                effect="plain"
+                size="small"
+                class="formula-tag"
+              >
+                {{ formatResult(sharedInputValue) }} {{ currentType.units[sharedSourceUnit]?.symbol }} = {{ formatResult(rows[0].result) }} {{ currentType.units[rows[0].targetUnit]?.symbol }}
+              </el-tag>
+            </td>
+            <td class="td-empty" :rowspan="rows.length"></td>
+          </tr>
+          <!-- 后续行（只有3列） -->
+          <tr v-for="(row, index) in rows.slice(1)" :key="row.id">
+            <td class="td-unit">
+              <el-input
+                :value="currentType.units[row.targetUnit]?.symbol"
+                readonly
+                size="small"
+                class="center-input target-unit-input"
+                :title="currentType.units[row.targetUnit]?.name + ' (' + currentType.units[row.targetUnit]?.symbol + ')'"
+              />
+            </td>
+            <td class="td-result">
+              <el-input
+                :value="formatResult(row.result)"
+                readonly
+                size="small"
+                class="center-input"
+              />
+            </td>
+            <td class="td-formula">
+              <el-tag
+                v-if="row.result !== null"
+                type="info"
+                effect="plain"
+                size="small"
+                class="formula-tag"
+              >
+                {{ formatResult(sharedInputValue) }} {{ currentType.units[sharedSourceUnit]?.symbol }} = {{ formatResult(row.result) }} {{ currentType.units[row.targetUnit]?.symbol }}
+              </el-tag>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
+    <!-- 全部单位对照表 -->
     <div class="convert-table-section">
       <div class="section-header">
         <span class="section-title">全部单位对照表</span>
@@ -64,15 +136,23 @@
       </div>
       <div class="convert-table">
         <div class="table-header">
-          <span class="col-unit">单位名称</span>
+          <span class="col-unit-name">单位名称</span>
           <span class="col-symbol">符号</span>
           <span class="col-formula">换算关系</span>
           <span class="col-base-formula">基本换算</span>
         </div>
         <div class="table-body">
-          <div v-for="(unit, key) in currentType.units" :key="key" :class="['table-row', { highlight: key === targetUnit }]">
-            <span class="col-unit">{{ unit.name }}</span>
-            <span class="col-symbol"><span :class="['symbol-text', { 'base-active': key === sourceUnit }]">{{ unit.symbol }}</span></span>
+          <div
+            v-for="(unit, key) in currentType.units"
+            :key="key"
+            :class="['table-row', { highlight: key === sharedSourceUnit }]"
+          >
+            <span class="col-unit-name">{{ unit.name }}</span>
+            <span class="col-symbol">
+              <span :class="['symbol-text', { 'base-active': key === selectedBaseUnit }]">
+                {{ unit.symbol }}
+              </span>
+            </span>
             <span class="col-formula">{{ getInputConversionFormula(key) }}</span>
             <span class="col-base-formula">{{ getConversionFormula(key) }}</span>
           </div>
@@ -97,53 +177,45 @@ const emit = defineEmits(['update:status'])
 const currentTypeId = ref(props.activeTypeId || getDefaultConversionType().id)
 const currentType = computed(() => getConversionTypeById(currentTypeId.value))
 
-const inputValue = ref(1)
-const sourceUnit = ref('')
-const targetUnit = ref('')
-const convertResult = ref(null)
+const sharedInputValue = ref(1)
+const sharedSourceUnit = ref('')
 const selectedBaseUnit = ref('')
 
-const resultDisplay = computed(() => {
-  if (convertResult.value === null || convertResult.value === undefined) return ''
-  return formatResult(convertResult.value)
-})
+const rows = ref([])
+let rowIdCounter = 0
 
-watch(() => props.activeTypeId, (id) => {
-  if (id && id !== currentTypeId.value) {
-    currentTypeId.value = id
+function initRows() {
+  rows.value = []
+  rowIdCounter = 0
+  const unitKeys = Object.keys(currentType.value.units || {})
+  for (let i = 0; i < unitKeys.length; i++) {
+    rows.value.push({
+      id: rowIdCounter++,
+      targetUnit: unitKeys[i],
+      result: null
+    })
   }
-}, { immediate: true })
+}
 
-watch(() => currentType.value, (type) => {
-  if (!type || !type.units) return
-  const defaultSource = type.sourceUnit || Object.keys(type.units)[0]
-  const defaultTarget = type.targetUnit || Object.keys(type.units)[0]
-  const defaultBase = type.defaultBaseUnit || Object.keys(type.units).find(key => type.units[key].isDatum) || Object.keys(type.units)[0]
-
-  if (!sourceUnit.value || !type.units[sourceUnit.value]) {
-    sourceUnit.value = defaultSource
-  }
-  if (!targetUnit.value || !type.units[targetUnit.value]) {
-    targetUnit.value = defaultTarget
-  }
-  if (!selectedBaseUnit.value || !type.units[selectedBaseUnit.value]) {
-    selectedBaseUnit.value = defaultBase
-  }
-  handleConvert()
-  emit('update:status', '已切换类型，等待输入...')
-}, { immediate: true })
-
-function handleConvert() {
-  if (!inputValue.value || !sourceUnit.value || !targetUnit.value) {
-    convertResult.value = null
+function calculateRow(index) {
+  const row = rows.value[index]
+  if (!row) return
+  if (sharedInputValue.value === null || sharedInputValue.value === undefined || sharedInputValue.value === '') {
+    row.result = null
     return
   }
-  const source = currentType.value.units[sourceUnit.value]
-  const target = currentType.value.units[targetUnit.value]
-  if (!source || !target) return
-  const baseValue = (inputValue.value + (source.offset || 0)) * source.factor
-  convertResult.value = baseValue / target.factor - (target.offset || 0)
-  emit('update:status', '转换完成')
+  const source = currentType.value.units[sharedSourceUnit.value]
+  const target = currentType.value.units[row.targetUnit]
+  if (!source || !target) {
+    row.result = null
+    return
+  }
+  const baseValue = (parseFloat(sharedInputValue.value) + (source.offset || 0)) * source.factor
+  row.result = baseValue / target.factor - (target.offset || 0)
+}
+
+function calculateAll() {
+  rows.value.forEach((_, index) => calculateRow(index))
 }
 
 function getConversionFormula(unitKey) {
@@ -155,32 +227,24 @@ function getConversionFormula(unitKey) {
 }
 
 function getInputConversionFormula(unitKey) {
-  if (!currentType.value || !currentType.value.units[unitKey] || !currentType.value.units[sourceUnit.value]) return ''
-  const inputVal = parseFloat(inputValue.value)
-  if (isNaN(inputVal)) return ''
-  const sourceUnitObj = currentType.value.units[sourceUnit.value]
+  if (!currentType.value || !currentType.value.units[unitKey]) return ''
+  const refValue = parseFloat(sharedInputValue.value)
+  if (isNaN(refValue)) return ''
   const targetUnit = currentType.value.units[unitKey]
-  const ratio = sourceUnitObj.factor / targetUnit.factor
-  const result = inputVal * ratio
-  return `${formatResult(inputVal)} ${sourceUnitObj.symbol} = ${formatResult(result)} ${targetUnit.symbol}`
+  const baseUnitKey = selectedBaseUnit.value
+  const baseUnit = currentType.value.units[baseUnitKey]
+  if (!baseUnit) return ''
+  const ratio = baseUnit.factor / targetUnit.factor
+  const result = refValue * ratio
+  return `${formatResult(refValue)} ${baseUnit.symbol} = ${formatResult(result)} ${targetUnit.symbol}`
 }
 
 function handleWheelSource(e) {
   const keys = Object.keys(currentType.value.units)
-  const idx = keys.indexOf(sourceUnit.value)
+  const idx = keys.indexOf(sharedSourceUnit.value)
   if (idx === -1) return
   const newIdx = e.deltaY > 0 ? (idx + 1) % keys.length : (idx - 1 + keys.length) % keys.length
-  sourceUnit.value = keys[newIdx]
-  handleConvert()
-}
-
-function handleWheelTarget(e) {
-  const keys = Object.keys(currentType.value.units)
-  const idx = keys.indexOf(targetUnit.value)
-  if (idx === -1) return
-  const newIdx = e.deltaY > 0 ? (idx + 1) % keys.length : (idx - 1 + keys.length) % keys.length
-  targetUnit.value = keys[newIdx]
-  handleConvert()
+  sharedSourceUnit.value = keys[newIdx]
 }
 
 function handleWheelBaseUnit(e) {
@@ -190,6 +254,28 @@ function handleWheelBaseUnit(e) {
   const newIdx = e.deltaY > 0 ? (idx + 1) % keys.length : (idx - 1 + keys.length) % keys.length
   selectedBaseUnit.value = keys[newIdx]
 }
+
+watch(() => props.activeTypeId, (id) => {
+  if (id && id !== currentTypeId.value) {
+    currentTypeId.value = id
+  }
+}, { immediate: true })
+
+watch(() => currentType.value, (type) => {
+  if (!type || !type.units) return
+  const unitKeys = Object.keys(type.units)
+  sharedSourceUnit.value = type.sourceUnit || unitKeys[0]
+  selectedBaseUnit.value = type.defaultBaseUnit || unitKeys.find(key => type.units[key].isDatum) || unitKeys[0]
+  sharedInputValue.value = 1
+  initRows()
+  calculateAll()
+  emit('update:status', '已切换类型，等待输入...')
+}, { immediate: true })
+
+watch(sharedSourceUnit, () => {
+  calculateAll()
+  emit('update:status', '源单位已更新')
+})
 </script>
 
 <style scoped lang="less">
@@ -221,59 +307,117 @@ function handleWheelBaseUnit(e) {
   padding: 0 6px;
   background-color: #ffffff;
   line-height: 18px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-.convert-input-section {
-  padding: 2px 0 0 0;
-  flex-shrink: 0;
-}
-
-.input-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 4px;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.input-label {
+/* ==================== 原生 Table + rowspan ==================== */
+.unit-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--el-border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #ffffff;
   font-size: 13px;
+}
+
+.unit-table thead tr {
+  background-color: #ffffff;
+}
+
+.unit-table th {
+  height: 40px;
+  border-bottom: 1px solid var(--el-border-color);
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  text-align: center;
+  vertical-align: middle;
+  padding: 0 8px;
+}
+
+.unit-table td {
+  height: 44px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0 8px;
+}
+
+.unit-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* 行之间无线 */
+.unit-table tbody tr + tr td {
+  border-top: none;
+}
+
+/* 列宽 */
+.th-input, .td-input {
+  width: 110px;
+  min-width: 110px;
+}
+
+.th-unit, .td-unit {
+  width: 100px;
+  min-width: 100px;
+}
+
+.th-result, .td-result {
+  width: 110px;
+  min-width: 110px;
+}
+
+.th-formula, .td-formula {
+  width: 200px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.th-empty, .td-empty {
+  width: 100%;
+  border: none;
+  padding: 0;
+}
+
+/* 目标单位只读框 */
+.target-unit-input {
+  width: 100%;
+}
+.target-unit-input :deep(.el-input__wrapper) {
+  background-color: #ffffff;
+  box-shadow: 0 0 0 1px var(--el-border-color) inset;
+}
+.target-unit-input :deep(.el-input__inner) {
   color: #000000;
-  font-weight: 500;
+  cursor: help;
   text-align: center;
 }
 
-.formula-group {
-  min-height: 36px;
-  justify-content: flex-end;
-}
-
-.formula-group :deep(.el-tag) {
+/* 换算关系标签 */
+.formula-tag {
   height: 24px;
   line-height: 22px;
-  padding: 0 3px;
+  padding: 0 8px;
   font-size: 12px;
-  background-color: var(--el-fill-color-light) !important;
-  border-color: #000000 !important;
-  color: #000000 !important;
+  background-color: var(--el-fill-color-light);
+  border-color: #000000;
+  color: #000000;
   font-weight: 600;
   border-radius: 4px;
-  transition: none;
+  white-space: nowrap;
+  min-width: 170px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* ==================== 下方单位对照表 ==================== */
 .convert-table-section {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  contain: layout;
+  margin-top: 4px;
 }
 
 .section-header {
@@ -288,7 +432,6 @@ function handleWheelBaseUnit(e) {
   font-size: 13px;
   font-weight: bold;
   color: var(--el-text-color-primary);
-  flex-shrink: 0;
 }
 
 .base-unit-selector {
@@ -308,10 +451,6 @@ function handleWheelBaseUnit(e) {
   background-color: #ffffff;
   transition: all 0.3s ease;
   min-width: 80px;
-  width: auto;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .base-unit-btn:hover {
@@ -328,11 +467,10 @@ function handleWheelBaseUnit(e) {
   background-color: #ffffff;
 }
 
-.table-header {
+.convert-table .table-header {
   display: flex;
   padding: 0 3px;
   height: 40px;
-  min-height: 40px;
   background-color: #ffffff;
   border-bottom: 1px solid var(--el-border-color-light);
   font-size: 13px;
@@ -340,64 +478,61 @@ function handleWheelBaseUnit(e) {
   position: sticky;
   top: 0;
   z-index: 1;
-  box-sizing: border-box;
+  align-items: center;
 }
 
-.table-header > span {
+.convert-table .table-header > span {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.table-header > .col-unit,
-.table-header > .col-formula,
-.table-header > .col-base-formula {
+.convert-table .table-header > .col-unit-name,
+.convert-table .table-header > .col-formula,
+.convert-table .table-header > .col-base-formula {
   justify-content: flex-start;
 }
 
-.table-row {
+.convert-table .table-body .table-row {
   display: flex;
   padding: 0 3px;
   height: 40px;
-  min-height: 40px;
   border-bottom: 1px solid var(--el-border-color-light);
   font-size: 13px;
   color: #000000;
-  transition: background-color 0.2s;
   align-items: center;
-  box-sizing: border-box;
+  transition: background-color 0.2s;
 }
 
-.table-row > span {
+.convert-table .table-body .table-row > span {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.table-row > .col-unit,
-.table-row > .col-formula,
-.table-row > .col-base-formula {
+.convert-table .table-body .table-row > .col-unit-name,
+.convert-table .table-body .table-row > .col-formula,
+.convert-table .table-body .table-row > .col-base-formula {
   justify-content: flex-start;
 }
 
-.table-row:last-child {
+.convert-table .table-body .table-row:last-child {
   border-bottom: none;
 }
 
-.table-row:hover {
+.convert-table .table-body .table-row:hover {
   background-color: #ffffff;
 }
 
-.table-row.highlight {
+.convert-table .table-body .table-row.highlight {
   background-color: #ffffff;
   color: #000000;
   font-weight: 500;
   border-left: 3px solid #000000;
   padding-left: 4px;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-.col-unit {
+.convert-table .col-unit-name {
   width: 22%;
   min-width: 70px;
   white-space: nowrap;
@@ -405,13 +540,28 @@ function handleWheelBaseUnit(e) {
   text-overflow: ellipsis;
 }
 
-.col-symbol {
+.convert-table .col-symbol {
   width: 15%;
   min-width: 40px;
   color: #000000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+}
+
+.convert-table .col-formula {
+  width: 28%;
+  min-width: 100px;
+  color: #000000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.convert-table .col-base-formula {
+  width: 35%;
+  min-width: 120px;
+  color: #000000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .symbol-text.base-active {
@@ -425,55 +575,28 @@ function handleWheelBaseUnit(e) {
   transition: all 0.3s ease;
 }
 
-.col-formula {
-  width: 28%;
-  min-width: 100px;
-  color: #000000;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.col-base-formula {
-  width: 35%;
-  min-width: 120px;
-  color: #000000;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .no-arrow-select :deep(.el-input__suffix),
 .no-arrow-select :deep(.el-select__suffix),
 .no-arrow-select :deep(.el-input__suffix-inner),
 .no-arrow-select :deep(.el-select__caret),
 .no-arrow-select :deep(.el-icon-arrow-down),
 .no-arrow-select :deep(.el-select .el-input__icon) {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  width: 0 !important;
-  height: 0 !important;
-  overflow: hidden !important;
+  display: none;
+  visibility: hidden;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 .no-arrow-select :deep(.el-input__inner) {
-  text-align: center !important;
-  padding-right: 4px !important;
-  padding-left: 4px !important;
+  text-align: center;
+  padding-right: 4px;
+  padding-left: 4px;
 }
 .no-arrow-select :deep(.el-input__wrapper) {
-  padding-right: 0 !important;
-  padding-left: 0 !important;
+  padding-right: 0;
+  padding-left: 0;
   justify-content: center;
-}
-.no-arrow-select :deep(.el-select__wrapper) {
-  text-align: center !important;
-}
-.no-arrow-select :deep(.el-select .el-input) {
-  text-align: center;
-}
-.no-arrow-select :deep(.el-select .el-input__inner) {
-  text-align: center !important;
 }
 
 .center-input :deep(.el-input__inner) {
@@ -481,18 +604,9 @@ function handleWheelBaseUnit(e) {
 }
 
 @media screen and (max-width: 768px) {
-  .input-row {
-    flex-wrap: wrap;
-    gap: 3px;
-  }
-  .formula-group {
-    width: 100%;
+  .unit-table th,
+  .unit-table td {
+    padding: 0 4px;
   }
 }
-.el-table {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-
 </style>
