@@ -48,16 +48,30 @@
   position: absolute;
 }
 
-/* ========== 主题切换圆形过渡动画（暗/亮 一收一放） ==========
- * View Transition 快照层级由 html.dark 类决定（z-index 分层）：
- *   - 亮色模式（无 .dark）：new（新快照）在上层，做圆形扩散 → 亮色从点击点放出
- *   - 暗色模式（有 .dark）：old（旧快照）在上层，做圆形收缩 → 亮色收回、暗色露出
- * 点击点坐标与半径由 JS 注入 --theme-x / --theme-y / --theme-r。
+/* ========== 主题切换圆形过渡动画 ==========
+ * View Transition 中 ::view-transition-new 快照天然渲染在 old 之上
+ * （new 是切换后的新状态），因此两个方向统一让 new 从点击点圆形扩散：
+ *   暗→亮 = 新亮色扩散，覆盖暗色（暗色被推走/收回）
+ *   亮→暗 = 新暗色扩散，覆盖亮色（暗色放出）
+ * 点击点与半径由 JS 注入 --theme-x / --theme-y / --theme-r。
+ *
+ * 关键点：
+ * 1. 覆盖 UA 默认 mix-blend-mode: plus-lighter（image-pair 上），
+ *    避免两个快照加法混合过度曝光 → 闪白
+ * 2. old 快照完全静止（animation: none + clip-path: none）
+ * 3. new 用 CSS 动画 + fill-mode: both + 静态初始 clip-path: circle(0)，
+ *    动画在伪元素创建瞬间生效，无 JS 时序窗口
  */
+::view-transition-group(root),
+::view-transition-image-pair(root),
+::view-transition-old(root),
+::view-transition-new(root) {
+  mix-blend-mode: normal !important;
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none !important;
-  mix-blend-mode: normal !important;
   backface-visibility: hidden;
   position: fixed;
   top: 0;
@@ -66,26 +80,17 @@
   bottom: 0;
 }
 
-/* 亮色模式：新快照在上层，从点击点圆形扩散（放） */
+/* 旧快照完全静止，位于下层 */
+::view-transition-old(root) {
+  z-index: 1;
+  clip-path: none !important;
+}
+
+/* 新快照在上层（天然层级），从点击点圆形扩散 */
 ::view-transition-new(root) {
   z-index: 2147483646;
   clip-path: circle(0px at var(--theme-x, 50%) var(--theme-y, 50%));
   animation: theme-circle-reveal 650ms cubic-bezier(0.4, 0, 0.2, 1) both !important;
-}
-
-::view-transition-old(root) {
-  z-index: 1;
-}
-
-/* 暗色模式：旧快照在上层，向点击点圆形收缩（收） */
-.dark::view-transition-old(root) {
-  z-index: 2147483646;
-  clip-path: circle(var(--theme-r, 100vmax) at var(--theme-x, 50%) var(--theme-y, 50%));
-  animation: theme-circle-collapse 650ms cubic-bezier(0.4, 0, 0.2, 1) both !important;
-}
-
-.dark::view-transition-new(root) {
-  z-index: 1;
 }
 
 @keyframes theme-circle-reveal {
@@ -94,14 +99,5 @@
   }
   to {
     clip-path: circle(var(--theme-r, 100vmax) at var(--theme-x, 50%) var(--theme-y, 50%));
-  }
-}
-
-@keyframes theme-circle-collapse {
-  from {
-    clip-path: circle(var(--theme-r, 100vmax) at var(--theme-x, 50%) var(--theme-y, 50%));
-  }
-  to {
-    clip-path: circle(0px at var(--theme-x, 50%) var(--theme-y, 50%));
   }
 }
