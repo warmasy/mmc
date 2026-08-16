@@ -18,40 +18,45 @@
           <!-- 第一行：包含跨行的输入数值和源单位 -->
           <tr>
             <td class="td-input" :rowspan="rows.length">
-              <NumberInput
-                v-model="sharedInputValue"
-                :step="1"
-                :precision="6"
-                :width="90"
-                :min="0"
-                @change="calculateAll"
-              />
+              <div class="cell-center">
+                <NumberInput
+                  v-model="sharedInputValue"
+                  :step="1"
+                  :precision="6"
+                  :width="90"
+                  :min="0"
+                  @change="calculateAll"
+                />
+              </div>
             </td>
             <td class="td-unit" :rowspan="rows.length">
-              <el-select
-                v-model="sharedSourceUnit"
-                size="small"
-                class="no-arrow-select"
-                @wheel.prevent="handleWheelSource"
-              >
-                <el-option
-                  v-for="(unit, key) in currentType.units"
-                  :key="key"
-                  :label="unit.symbol"
-                  :value="key"
+              <div class="cell-center">
+                <el-select
+                  v-model="sharedSourceUnit"
+                  size="small"
+                  class="no-arrow-select"
+                  @wheel.prevent="handleWheelSource"
                 >
-                  <span>{{ unit.symbol }}({{ unit.name }})</span>
-                </el-option>
-              </el-select>
+                  <el-option
+                    v-for="(unit, key) in currentType.units"
+                    :key="key"
+                    :label="unit.symbol"
+                    :value="key"
+                  >
+                    <span>{{ unit.symbol }}({{ unit.name }})</span>
+                  </el-option>
+                </el-select>
+              </div>
             </td>
             <td class="td-unit">
-              <el-input
-                :value="currentType.units[rows[0].targetUnit]?.symbol"
-                readonly
-                size="small"
-                class="center-input target-unit-input"
-                :title="currentType.units[rows[0].targetUnit]?.name + ' (' + currentType.units[rows[0].targetUnit]?.symbol + ')'"
-              />
+              <el-tooltip :content="currentType.units[rows[0].targetUnit]?.name" placement="right" :show-after="0">
+                <el-input
+                  :value="currentType.units[rows[0].targetUnit]?.symbol"
+                  readonly
+                  size="small"
+                  class="center-input target-unit-input"
+                />
+              </el-tooltip>
             </td>
             <td class="td-result">
               <el-input
@@ -77,13 +82,14 @@
           <!-- 后续行（只有3列） -->
           <tr v-for="(row, index) in rows.slice(1)" :key="row.id">
             <td class="td-unit">
-              <el-input
-                :value="currentType.units[row.targetUnit]?.symbol"
-                readonly
-                size="small"
-                class="center-input target-unit-input"
-                :title="currentType.units[row.targetUnit]?.name + ' (' + currentType.units[row.targetUnit]?.symbol + ')'"
-              />
+              <el-tooltip :content="currentType.units[row.targetUnit]?.name" placement="right" :show-after="0">
+                <el-input
+                  :value="currentType.units[row.targetUnit]?.symbol"
+                  readonly
+                  size="small"
+                  class="center-input target-unit-input"
+                />
+              </el-tooltip>
             </td>
             <td class="td-result">
               <el-input
@@ -292,7 +298,7 @@ watch(sharedSourceUnit, () => {
   border-radius: 4px;
   padding: 8px 6px 6px 6px;
   margin: 6px 0 4px 0;
-  background-color: #ffffff;
+  background-color: var(--el-bg-color);
   flex-shrink: 0;
   position: relative;
 }
@@ -305,7 +311,6 @@ watch(sharedSourceUnit, () => {
   color: var(--el-text-color-primary);
   font-size: 13px;
   padding: 0 6px;
-  background-color: #ffffff;
   line-height: 18px;
 }
 
@@ -316,12 +321,11 @@ watch(sharedSourceUnit, () => {
   border: 1px solid var(--el-border-color);
   border-radius: 4px;
   overflow: hidden;
-  background-color: #ffffff;
   font-size: 13px;
 }
 
 .unit-table thead tr {
-  background-color: #ffffff;
+  background-color: transparent;
 }
 
 .unit-table th {
@@ -339,6 +343,7 @@ watch(sharedSourceUnit, () => {
   text-align: center;
   vertical-align: middle;
   padding: 0 8px;
+  color: var(--el-text-color-primary);
 }
 
 .unit-table tbody tr:last-child td {
@@ -348,6 +353,21 @@ watch(sharedSourceUnit, () => {
 /* 行之间无线 */
 .unit-table tbody tr + tr td {
   border-top: none;
+}
+
+/* rowspan 单元格内容垂直居中 */
+.unit-table td[rowspan] {
+  vertical-align: middle;
+}
+
+/* rowspan 单元格内部 flex 居中 */
+.cell-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background: transparent;
 }
 
 /* 列宽 */
@@ -382,12 +402,7 @@ watch(sharedSourceUnit, () => {
 .target-unit-input {
   width: 100%;
 }
-.target-unit-input :deep(.el-input__wrapper) {
-  background-color: #ffffff;
-  box-shadow: 0 0 0 1px var(--el-border-color) inset;
-}
 .target-unit-input :deep(.el-input__inner) {
-  color: #000000;
   cursor: help;
   text-align: center;
 }
@@ -399,8 +414,8 @@ watch(sharedSourceUnit, () => {
   padding: 0 8px;
   font-size: 12px;
   background-color: var(--el-fill-color-light);
-  border-color: #000000;
-  color: #000000;
+  border-color: var(--el-text-color-primary);
+  color: var(--el-text-color-primary);
   font-weight: 600;
   border-radius: 4px;
   white-space: nowrap;
@@ -442,20 +457,19 @@ watch(sharedSourceUnit, () => {
 
 .base-unit-label {
   font-size: 13px;
-  color: #000000;
+  color: var(--el-text-color-primary);
 }
 
 .base-unit-btn {
   color: var(--el-text-color-primary);
   border-color: var(--el-border-color);
-  background-color: #ffffff;
   transition: all 0.3s ease;
   min-width: 80px;
 }
 
 .base-unit-btn:hover {
-  color: #000000;
-  border-color: #000000;
+  color: var(--el-text-color-primary);
+  border-color: var(--el-text-color-primary);
   background-color: var(--el-fill-color);
 }
 
@@ -464,14 +478,14 @@ watch(sharedSourceUnit, () => {
   overflow-y: auto;
   border: 1px solid var(--el-border-color);
   border-radius: 4px;
-  background-color: #ffffff;
+  background-color: var(--el-bg-color);
 }
 
 .convert-table .table-header {
   display: flex;
   padding: 0 3px;
   height: 40px;
-  background-color: #ffffff;
+  background-color: var(--el-bg-color);
   border-bottom: 1px solid var(--el-border-color-light);
   font-size: 13px;
   color: var(--el-text-color-primary);
@@ -493,13 +507,17 @@ watch(sharedSourceUnit, () => {
   justify-content: flex-start;
 }
 
+.convert-table .table-body {
+  background-color: var(--el-bg-color);
+}
+
 .convert-table .table-body .table-row {
   display: flex;
   padding: 0 3px;
   height: 40px;
   border-bottom: 1px solid var(--el-border-color-light);
   font-size: 13px;
-  color: #000000;
+  color: var(--el-text-color-primary);
   align-items: center;
   transition: background-color 0.2s;
 }
@@ -521,14 +539,14 @@ watch(sharedSourceUnit, () => {
 }
 
 .convert-table .table-body .table-row:hover {
-  background-color: #ffffff;
+  background-color: var(--el-fill-color);
 }
 
 .convert-table .table-body .table-row.highlight {
-  background-color: #ffffff;
-  color: #000000;
+  background-color: var(--el-fill-color);
+  color: var(--el-text-color-primary);
   font-weight: 500;
-  border-left: 3px solid #000000;
+  border-left: 3px solid var(--el-text-color-primary);
   padding-left: 4px;
 }
 
@@ -543,13 +561,13 @@ watch(sharedSourceUnit, () => {
 .convert-table .col-symbol {
   width: 15%;
   min-width: 40px;
-  color: #000000;
+  color: var(--el-text-color-primary);
 }
 
 .convert-table .col-formula {
   width: 28%;
   min-width: 100px;
-  color: #000000;
+  color: var(--el-text-color-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -558,16 +576,16 @@ watch(sharedSourceUnit, () => {
 .convert-table .col-base-formula {
   width: 35%;
   min-width: 120px;
-  color: #000000;
+  color: var(--el-text-color-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .symbol-text.base-active {
-  color: #000000;
+  color: var(--el-text-color-primary);
   font-weight: 600;
-  border: 1px solid #000000;
+  border: 1px solid var(--el-border-color);
   border-radius: 3px;
   padding: 0 1px;
   display: inline-block;
@@ -597,6 +615,12 @@ watch(sharedSourceUnit, () => {
   padding-right: 0;
   padding-left: 0;
   justify-content: center;
+}
+.no-arrow-select :deep(.el-select__selection) {
+  justify-content: center;
+}
+.no-arrow-select :deep(.el-select__selected-item) {
+  text-align: center;
 }
 
 .center-input :deep(.el-input__inner) {
