@@ -122,7 +122,7 @@ aside {
 
 //main-container全局样式
 .app-container {
-  padding: 20px;
+  padding: 6px;
 }
 
 .components-container {
@@ -176,4 +176,26 @@ aside {
     vertical-align: middle;
     margin-bottom: 10px;
   }
+}
+
+
+/* 全局覆盖 Element Plus 灰色文字为黑色 */
+.el-table,
+.el-table .cell,
+.el-table th.el-table__cell,
+.el-table td.el-table__cell {
+  color: #000000 !important;
+}
+
+.el-input.is-disabled .el-input__inner,
+.el-input__inner[disabled],
+.el-input__inner[readonly] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+.el-select .el-input__inner,
+.el-select .el-select__selected-item {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
 }

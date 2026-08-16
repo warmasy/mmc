@@ -1,5 +1,5 @@
 <template>
-  <el-card class="calendar-card" style="margin-top: 16px;">
+  <el-card class="calendar-card" style="margin-top: 2px;">
     <template #header>
       <div class="card-header"><span>日历</span></div>
     </template>
@@ -152,29 +152,30 @@ function goToday() { currentMonth.value = new Date(); selectedDate.value = new D
 <style scoped lang="less">
 .card-header { display: flex; justify-content: space-between; align-items: center; font-weight: 500; }
 
-.compact-calendar { padding: 8px 12px; }
-.calendar-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; }
+.compact-calendar { padding: 2px 4px; }
+.calendar-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 4px; }
 .calendar-year-month { display: flex; align-items: center; gap: 4px; }
 .calendar-year-text, .calendar-month-text {
-  font-size: 13px; font-weight: 500; color: var(--el-text-color-regular); cursor: pointer; user-select: none;
+  font-size: 13px; font-weight: 500; color: #000000; cursor: pointer; user-select: none;
   padding: 4px 10px; border-radius: 4px; transition: all 0.2s; line-height: 1;
   background-color: transparent; border: none; outline: none; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; vertical-align: middle;
-  &:hover { color: var(--el-color-primary); background-color: var(--el-fill-color-light); }
+  &:hover { color: #000000; background-color: #ffffff; }
 }
 .year-picker, .month-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 4px; }
 .picker-item { text-align: center; padding: 6px 0; font-size: 13px; border-radius: 4px; cursor: pointer; transition: all 0.2s; color: var(--el-text-color-primary); }
-.picker-item:hover { background-color: var(--el-fill-color-light); color: var(--el-color-primary); }
-.picker-item.active { background-color: var(--el-color-primary); color: #fff; }
+.picker-item:hover { background-color: #ffffff; color: #000000; }
+.picker-item.active { background-color: #000000; color: #fff; }
 .calendar-btns { display: flex; gap: 4px; }
 .calendar-btns .el-button { padding: 4px 10px; font-size: 13px; }
 
 .compact-calendar-table { width: 100%; border-collapse: separate; border-spacing: 2px; table-layout: fixed; }
-.compact-calendar-table th { text-align: center; font-size: 13px; color: var(--el-text-color-secondary); padding: 4px 2px; font-weight: 500; }
+.compact-calendar-table th { text-align: center; font-size: 13px; color: #000000; padding: 4px 2px; font-weight: 500; }
 .compact-calendar-table td { text-align: center; padding: 2px; cursor: pointer; vertical-align: middle; }
-.compact-calendar-table td.week-col { font-size: 13px; color: var(--el-text-color-secondary); width: 36px; cursor: default; vertical-align: middle; font-weight: 500; background-color: var(--el-color-primary-light-9); border-radius: 4px; }
+.compact-calendar-table td.week-col { font-size: 13px; color: #000000; width: 36px; cursor: default; vertical-align: middle; font-weight: 500; background-color: var(--el-color-primary-light-9); border-radius: 4px; }
 .day-circle { width: 32px; height: 32px; line-height: 32px; border-radius: 50%; margin: 0 auto; font-size: 13px; color: var(--el-text-color-primary); transition: all 0.2s; }
 .compact-calendar-table td:hover .day-circle { background-color: var(--el-color-primary-light-9); }
-.compact-calendar-table td.is-today .day-circle { color: var(--el-color-primary); font-weight: 700; }
-.compact-calendar-table td.is-selected .day-circle { background-color: var(--el-color-primary); color: #fff; }
-.compact-calendar-table td.other-month .day-circle { color: var(--el-text-color-placeholder); }
+.compact-calendar-table td.is-today .day-circle { color: #000000; font-weight: 700; }
+.compact-calendar-table td.is-selected .day-circle { background-color: #000000; color: #fff; }
+.compact-calendar-table td.other-month .day-circle { color: #000000; }
+.calendar-card { border-radius: 0; box-shadow: none; }
 </style>

@@ -3,7 +3,7 @@
     <WelcomeCard />
 
     <div class="main-content">
-      <el-row :gutter="16" class="dashboard-row">
+      <el-row :gutter="2" class="dashboard-row">
         <el-col :span="16" :xs="24" :sm="24" :md="16" class="left-col">
           <ProjectList />
           <WebTable />
@@ -30,16 +30,18 @@ defineOptions({ name: "DashBoard" });
 </script>
 
 <style scoped lang="less">
+.dashboard-wrapper :deep(.el-card) { box-shadow: none !important; }
 .dashboard-wrapper {
   width: 100%;
-  padding: 16px 20px;
+  padding: 6px;
   box-sizing: border-box;
 }
 .main-content { padding: 0; }
 
 /* 小屏幕：卡片按列纵向堆叠 */
 @media screen and (max-width: 768px) {
-  .dashboard-wrapper { padding: 16px 12px; }
+  .dashboard-wrapper :deep(.el-card) { box-shadow: none !important; }
+.dashboard-wrapper { padding: 4px; }
   .dashboard-row {
     display: flex; flex-direction: column;
     margin-left: 0 !important; margin-right: 0 !important;

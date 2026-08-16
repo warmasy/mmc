@@ -114,8 +114,7 @@ initProjectNo()
 
 <style scoped>
 .motor-selection-page {
-  padding: 16px;
-  background-color: var(--el-bg-color-page);
+  background-color: #ffffff;
   height: calc(100vh - 132px);  /* 84px(Navbar+TagsView) + 48px(底部版权栏) */
   overflow: hidden;
   display: flex;
@@ -128,11 +127,11 @@ initProjectNo()
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
-  padding: 8px 0;
-  border-bottom: 2px solid var(--el-border-color-darker);
+  margin-bottom: 2px;
+  padding: 1px 0;
+  border-bottom: 2px solid #e8e8e8;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
@@ -150,7 +149,7 @@ initProjectNo()
   color: var(--el-text-color-primary);
   line-height: 32px;
   height: 32px;
-  padding: 0 8px;
+  padding: 0 2px;
   border-radius: 4px;
   background: transparent;
   border: 1px solid transparent;
@@ -165,8 +164,8 @@ initProjectNo()
 }
 
 .model-selector:hover {
-  color: var(--el-color-primary);
-  background: var(--el-color-primary-light-9);
+  color: #000000;
+  background: transparent;
 }
 
 .model-name {
@@ -177,19 +176,19 @@ initProjectNo()
 /* 竖杠分隔线 */
 .header-left .el-divider--vertical {
   height: 20px;
-  margin: 0 4px;
-  border-left: 2px solid var(--el-border-color);
+  margin: 0 1px;
+  border-left: 2px solid #e8e8e8;
 }
 
 .model-arrow {
-  color: var(--el-text-color-placeholder);
+  color: #000000;
   font-size: 12px;
 }
 
 /* 公共信息栏 */
 .header-info {
   display: flex;
-  gap: 20px;
+  gap: 1px;
   align-items: center;
   flex-wrap: wrap;
 }
@@ -197,13 +196,13 @@ initProjectNo()
 .info-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 1px;
   font-size: 13px;
 }
 
 .info-item label {
   white-space: nowrap;
-  color: var(--el-text-color-secondary);
+  color: #000000;
 }
 
 /* 模型容器 */
@@ -231,23 +230,23 @@ initProjectNo()
 /* 下拉菜单样式 */
 .model-dropdown .el-dropdown-menu {
   min-width: 220px;
-  padding: 6px 0;
+  padding: 2px 0;
 }
 
 .model-dropdown .el-dropdown-menu__item {
-  padding: 8px 16px;
+  padding: 1px 2px;
   line-height: normal;
 }
 
 .model-dropdown .el-dropdown-menu__item.is-active {
-  background-color: var(--el-color-primary-light-9);
-  color: var(--el-color-primary);
+  background-color: transparent;
+  color: #000000;
 }
 
 .dropdown-item-content {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .dropdown-icon {
@@ -268,6 +267,6 @@ initProjectNo()
 
 .dropdown-subtitle {
   font-size: 11px;
-  color: var(--el-text-color-secondary);
+  color: #000000;
 }
 </style>

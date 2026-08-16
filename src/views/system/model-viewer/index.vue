@@ -1,11 +1,11 @@
 <template>
   <div class="app-container model-viewer-page">
     <!-- 主体内容 -->
-    <el-row :gutter="8" class="viewer-row">
+    <el-row :gutter="2" class="viewer-row">
       <!-- 左侧：信息 + 控制 + 说明 -->
       <el-col :span="5" :xs="24" class="left-col">
         <!-- 上区域：模型信息 -->
-        <el-card class="left-card info-card" :body-style="{ padding: '8px', height: '100%' }">
+        <el-card class="left-card info-card" :body-style="{ padding: '2px', height: '100%' }">
           <ModelInfoPanel
             :data="modelInfo"
             @select-file="triggerFileSelect"
@@ -14,7 +14,7 @@
         </el-card>
 
         <!-- 中区域：参数调整 -->
-        <el-card class="left-card control-card" :body-style="{ padding: '8px', height: '100%' }">
+        <el-card class="left-card control-card" :body-style="{ padding: '2px', height: '100%' }">
           <ViewerControls
             v-model="coordSystem"
             v-model:wireframe="wireframe"
@@ -24,7 +24,7 @@
         </el-card>
 
         <!-- 下区域：说明 -->
-        <el-card class="left-card note-card" :body-style="{ padding: '8px', height: '100%' }">
+        <el-card class="left-card note-card" :body-style="{ padding: '2px', height: '100%' }">
           <div class="note-panel">
             <div class="note-header">
               <el-icon :size="14"><InfoFilled /></el-icon>
@@ -141,7 +141,6 @@ function triggerFileSelect() {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 12px;
   box-sizing: border-box;
 }
 
@@ -158,7 +157,7 @@ function triggerFileSelect() {
 .left-col {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 1px;
   height: 100%;
   overflow-y: auto;
   scrollbar-width: none;
@@ -169,6 +168,7 @@ function triggerFileSelect() {
 }
 
 .left-card {
+  border-radius: 0;
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
@@ -176,7 +176,7 @@ function triggerFileSelect() {
   :deep(.el-card__body) {
     flex: 1;
     overflow: hidden;
-    padding: 8px !important;
+    padding: 2px !important;
   }
 }
 
@@ -203,13 +203,13 @@ function triggerFileSelect() {
 .note-header {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 1px;
   font-size: 13px;
   font-weight: 600;
   color: var(--el-text-color-primary);
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--el-border-color-lighter);
-  margin-bottom: 6px;
+  padding-bottom: 1px;
+  border-bottom: 1px solid #e8e8e8;
+  margin-bottom: 1px;
   flex-shrink: 0;
 }
 
@@ -218,22 +218,22 @@ function triggerFileSelect() {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .note-item {
   display: flex;
   align-items: flex-start;
-  gap: 5px;
+  gap: 1px;
   font-size: 11px;
-  color: var(--el-text-color-regular);
+  color: #000000;
   line-height: 1.4;
 }
 
 .note-icon {
   flex-shrink: 0;
   margin-top: 1px;
-  color: var(--el-color-primary);
+  color: #000000;
 }
 
 .right-col {
@@ -241,6 +241,8 @@ function triggerFileSelect() {
 }
 
 .viewer-card {
+  border-radius: 0;
+  box-shadow: none;
   height: 100%;
 
   :deep(.el-card__body) {
@@ -259,7 +261,7 @@ function triggerFileSelect() {
   .left-col {
     height: auto;
     min-height: 300px;
-    margin-bottom: 10px;
+    margin-bottom: 2px;
   }
 
   .viewer-row {

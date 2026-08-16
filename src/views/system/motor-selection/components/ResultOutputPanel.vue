@@ -44,24 +44,24 @@ const props = defineProps({
 </script>
 
 <style scoped>
-.result-panel { display: flex; flex-direction: column; gap: 12px; }
+.result-panel { display: flex; flex-direction: column; gap: 4px; }
 
 /* 分组框 */
-.calc-fieldset { border: 1px solid var(--el-border-color); border-radius: 4px; padding: 10px 12px; background-color: var(--el-bg-color); margin: 0; }
+.calc-fieldset { border: 1px solid #e8e8e8; border-radius: 4px; padding: 6px 8px; background-color: #ffffff; margin: 0; }
 .calc-fieldset legend { font-weight: bold; color: var(--el-text-color-primary); padding: 0 6px; font-size: 13px; }
 
 /* 参数网格 */
-.param-grid { display: flex; flex-direction: column; gap: 8px; }
-.param-row { display: flex; flex-wrap: wrap; gap: 8px 0; }
-.param-group { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 200px; margin-bottom: 4px; }
-.param-label { min-width: 90px; text-align: right; font-size: 13px; color: var(--el-text-color-regular); white-space: nowrap; cursor: help; }
-.param-unit { font-size: 13px; color: var(--el-text-color-secondary); min-width: 24px; white-space: nowrap; }
+.param-grid { display: flex; flex-direction: column; gap: 2px; }
+.param-row { display: flex; flex-wrap: wrap; gap: 2px 0; }
+.param-group { display: flex; align-items: center; gap: 2px; flex: 1; min-width: 200px; margin-bottom: 2px; }
+.param-label { min-width: 90px; text-align: right; font-size: 13px; color: #000000; white-space: nowrap; cursor: help; }
+.param-unit { font-size: 13px; color: #000000; min-width: 24px; white-space: nowrap; }
 
 /* 选型结果 */
-.result-list { display: flex; flex-direction: column; gap: 6px; }
-.result-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px dotted var(--el-border-color-light); }
+.result-list { display: flex; flex-direction: column; gap: 2px; }
+.result-row { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; border-bottom: 1px dotted #e8e8e8; }
 .result-row:last-child { border-bottom: none; }
-.result-label { font-size: 13px; color: var(--el-text-color-regular); cursor: help; }
+.result-label { font-size: 13px; color: #000000; cursor: help; }
 .result-value { font-weight: bold; color: var(--el-color-danger); font-family: Consolas, monospace; font-size: 13px; }
 
 @media (max-width: 1200px) { .param-group { min-width: 180px; } }

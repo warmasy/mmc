@@ -22,7 +22,7 @@
       </div>
     </div>
 
-    <el-row :gutter="16" class="calc-row">
+    <el-row :gutter="2" class="calc-row">
       <el-col :span="7" :xs="24">
         <el-card class="calc-card type-card" :body-style="{ padding: '0', display: 'flex', flexDirection: 'column', height: '100%' }">
           <template #header>
@@ -53,7 +53,7 @@
       </el-col>
 
       <el-col :span="17" :xs="24">
-        <el-card class="calc-card" :body-style="{ padding: '16px 16px 0px 16px', display: 'flex', flexDirection: 'column', height: '100%', gap: '0px' }">
+        <el-card class="calc-card" :body-style="{ padding: '4px 4px 0px 4px', display: 'flex', flexDirection: 'column', height: '100%', gap: '0px' }">
           <template #header>
             <div class="card-header">
               <span>计算卡</span>
@@ -129,20 +129,20 @@ function selectType(moduleId, typeId) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  background-color: var(--el-bg-color);
-  border: 1px solid var(--el-border-color-light);
+  padding: 3px 6px;
+  background-color: #ffffff;
+  border: 1px solid #e8e8e8;
   border-radius: 4px;
-  margin-bottom: 12px;
+  margin-bottom: 2px;
   flex-shrink: 0;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 4px;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 4px;
 }
 
 .header-title {
@@ -153,26 +153,26 @@ function selectType(moduleId, typeId) {
 
 .header-subtitle {
   font-size: 14px;
-  color: var(--el-text-color-regular);
+  color: #000000;
 }
 
 .header-info {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 4px;
   flex-wrap: wrap;
 }
 
 .info-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
   font-size: 13px;
-  color: var(--el-text-color-regular);
+  color: #000000;
 }
 
 .info-item label {
-  color: var(--el-text-color-secondary);
+  color: #000000;
   white-space: nowrap;
 }
 
@@ -193,12 +193,14 @@ function selectType(moduleId, typeId) {
 }
 
 .calc-card :deep(.el-card) {
+  border-radius: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-color: var(--el-border-color-light);
-  background-color: var(--el-bg-color);
+  border-color: #e8e8e8;
+  background-color: #ffffff;
+  box-shadow: none;
 }
 
 .calc-card :deep(.el-card__body) {
@@ -206,16 +208,19 @@ function selectType(moduleId, typeId) {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 0px !important;
-  background-color: var(--el-bg-color);
-  padding: 16px 16px 0px 16px !important;
+  gap: 2px !important;
+  background-color: #ffffff;
+  padding: 4px 4px 0px 4px !important;
   contain: layout;
 }
 
 .calc-card :deep(.el-card__header) {
-  padding: 10px 16px;
-  background-color: var(--el-fill-color-light);
-  border-bottom: 1px solid var(--el-border-color-light);
+  padding: 12px 16px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e8e8e8;
+  line-height: 20px;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 .card-header {
@@ -227,6 +232,7 @@ function selectType(moduleId, typeId) {
   justify-content: space-between;
 }
 
+.type-card :deep(.el-card) { border-radius: 0; }
 .type-card :deep(.el-card__body) {
   padding: 0 !important;
   overflow-y: auto;
@@ -238,24 +244,25 @@ function selectType(moduleId, typeId) {
 
 .calc-collapse {
   border: none;
-  margin: 8px 8px 0 8px;
+  margin: 2px 2px 0 2px;
   border-radius: 4px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 2px;
 }
 
 .calc-collapse :deep(.el-collapse-item__header) {
+  color: #000000 !important;
   font-size: 12px !important;
   font-weight: 600 !important;
-  padding: 0 8px !important;
-  height: 35px !important;
-  min-height: 35px !important;
-  line-height: 35px !important;
-  background: var(--el-fill-color-light) !important;
-  border-bottom: 1px solid var(--el-border-color-light) !important;
-  color: var(--el-color-primary) !important;
+  padding: 0 6px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  line-height: 40px !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid #e8e8e8 !important;
+  color: #000000 !important;
   display: flex;
   align-items: center;
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
@@ -279,16 +286,16 @@ function selectType(moduleId, typeId) {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5px 8px;
+  padding: 3px 6px;
   cursor: pointer;
   transition: all 0.15s;
   border: none;
   border-radius: 0;
-  min-height: 28px;
+  min-height: 32px;
 }
 
 .type-item:hover {
-  background-color: var(--el-fill-color-light);
+  background-color: #ffffff;
 }
 
 .type-item.active {
@@ -304,7 +311,7 @@ function selectType(moduleId, typeId) {
 }
 
 .type-item.active .type-name {
-  color: var(--el-color-primary);
+  color: #000000;
   font-weight: 600;
 }
 
@@ -318,7 +325,7 @@ function selectType(moduleId, typeId) {
 
 @media screen and (max-width: 768px) {
   .calc-header {
-    padding: 10px 12px;
+    padding: 3px 4px;
   }
   .header-info {
     width: 100%;
@@ -341,7 +348,7 @@ function selectType(moduleId, typeId) {
     height: auto !important;
   }
   .calc-row > .el-col:first-child {
-    margin-bottom: 12px;
+    margin-bottom: 2px;
     max-height: 300px;
   }
   .sub-type-list {

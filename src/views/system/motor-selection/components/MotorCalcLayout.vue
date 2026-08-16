@@ -1,9 +1,9 @@
 <template>
   <div class="model-page">
-    <el-row :gutter="16" class="calc-row">
+    <el-row :gutter="2" class="calc-row">
       <!-- 左侧参数填写卡片 -->
       <el-col :span="12" :xs="24">
-        <el-card class="calc-card" :body-style="{ padding: '16px 16px 0px 16px', display: 'flex', flexDirection: 'column', height: '100%', gap: '0px' }">
+        <el-card class="calc-card" :body-style="{ padding: '6px 6px 0px 6px', display: 'flex', flexDirection: 'column', height: '100%', gap: '0px' }">
           <template #header>
             <div class="card-header">
               <span>参数填写</span>
@@ -30,7 +30,7 @@
 
       <!-- 右侧计算结果展示卡片 -->
       <el-col :span="12" :xs="24">
-        <el-card class="calc-card" :body-style="{ padding: '16px 16px 0px 16px', display: 'flex', flexDirection: 'column', height: '100%', gap: '0px' }">
+        <el-card class="calc-card" :body-style="{ padding: '6px 6px 0px 6px', display: 'flex', flexDirection: 'column', height: '100%', gap: '0px' }">
           <template #header>
             <div class="card-header">计算结果展示</div>
           </template>
@@ -90,12 +90,14 @@ defineEmits(['calculate', 'reset', 'help'])
 }
 
 .calc-card :deep(.el-card) {
+  border-radius: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-color: var(--el-border-color-light);
-  background-color: var(--el-bg-color);
+  border-color: #e8e8e8;
+  background-color: #ffffff;
+  box-shadow: none;
 }
 
 .calc-card :deep(.el-card__body) {
@@ -104,14 +106,14 @@ defineEmits(['calculate', 'reset', 'help'])
   display: flex;
   flex-direction: column;
   gap: 0px !important;
-  background-color: var(--el-bg-color);
-  padding: 16px 16px 0px 16px !important;
+  background-color: #ffffff;
+  padding: 6px 6px 0px 6px !important;
 }
 
 .calc-card :deep(.el-card__header) {
-  padding: 10px 16px;
-  background-color: var(--el-fill-color-light);
-  border-bottom: 1px solid var(--el-border-color-light);
+  padding: 6px 10px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e8e8e8;
 }
 
 .card-header {
@@ -127,7 +129,7 @@ defineEmits(['calculate', 'reset', 'help'])
 .header-status {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   max-width: 65%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -137,7 +139,7 @@ defineEmits(['calculate', 'reset', 'help'])
 .header-status .status-tag {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
+  padding: 2px 4px;
   font-size: 11px;
   font-weight: 500;
   color: #fff;
@@ -160,11 +162,11 @@ defineEmits(['calculate', 'reset', 'help'])
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1px;
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
-  padding-right: 20px;
+  padding-right: 2px;
 }
 
 .card-content::-webkit-scrollbar {
@@ -174,7 +176,7 @@ defineEmits(['calculate', 'reset', 'help'])
 .card-content::-webkit-scrollbar-track {
   background: transparent;
   border-radius: 3px;
-  margin: 4px 0;
+  margin: 2px 0;
 }
 
 .card-content::-webkit-scrollbar-thumb {
@@ -190,14 +192,14 @@ defineEmits(['calculate', 'reset', 'help'])
 /* 卡片底部 */
 .card-footer {
   flex-shrink: 0;
-  padding: 8px 0;
+  padding: 1px 0;
 }
 
 /* 按钮 */
 .btn-group {
   display: flex;
   flex-direction: row;
-  gap: 8px;
+  gap: 2px;
   align-items: center;
 }
 
@@ -206,7 +208,7 @@ defineEmits(['calculate', 'reset', 'help'])
   justify-content: center;
   height: 32px;
   font-size: 13px;
-  padding: 0 12px;
+  padding: 0 4px;
   border-radius: 3px;
 }
 

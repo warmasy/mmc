@@ -1,5 +1,5 @@
 <template>
-  <el-card :body-style="{ padding: '16px' }">
+  <el-card :body-style="{ padding: '2px' }">
     <template #header>
       <div class="card-header">
         <span class="quote-title" @click="refreshQuote" style="cursor: pointer">今日一言</span>
@@ -29,8 +29,9 @@ function refreshQuote() {
 
 <style scoped lang="less">
 .card-header { display: flex; justify-content: space-between; align-items: center; font-weight: 500; }
+:deep(.el-card) { border-radius: 0; box-shadow: none; }
 .daily-quote { text-align: left; }
-.quote-title { cursor: pointer; user-select: none; &:hover { color: var(--el-color-primary); } }
-.quote-text { font-size: 15px; line-height: 1.8; color: var(--el-text-color-primary); margin-bottom: 10px; font-family: inherit; letter-spacing: 0.3px; }
-.quote-author { font-size: 13px; color: var(--el-text-color-secondary); text-align: right; font-family: inherit; }
+.quote-title { cursor: pointer; user-select: none; &:hover { color: #000000; } }
+.quote-text { font-size: 15px; line-height: 1.8; color: var(--el-text-color-primary); margin-bottom: 4px; font-family: inherit; letter-spacing: 0.3px; }
+.quote-author { font-size: 13px; color: #000000; text-align: right; font-family: inherit; }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <el-card class="activeCard" :body-style="{ padding: '0px' }" style="margin-top: 16px;">
+  <el-card class="activeCard" :body-style="{ padding: '0px' }" style="margin-top: 2px;">
     <template #header>
       <div class="card-header"><span>当前网址</span></div>
     </template>
@@ -49,4 +49,5 @@ function copyUrl(url, name) {
 
 <style scoped lang="less">
 .card-header { display: flex; justify-content: space-between; align-items: center; font-weight: 500; }
+.activeCard { border-radius: 0; box-shadow: none; }
 </style>

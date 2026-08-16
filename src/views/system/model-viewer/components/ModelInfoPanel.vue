@@ -180,13 +180,13 @@ function formatSize(mm) {
 .panel-header {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
   font-size: 13px;
   font-weight: 600;
   color: var(--el-text-color-primary);
-  padding-bottom: 6px;
+  padding-bottom: 2px;
   border-bottom: 1px solid var(--el-border-color-lighter);
-  margin-bottom: 6px;
+  margin-bottom: 2px;
   flex-shrink: 0;
 }
 
@@ -196,8 +196,8 @@ function formatSize(mm) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: var(--el-text-color-placeholder);
-  gap: 6px;
+  color: #000000;
+  gap: 2px;
 }
 
 .no-data-icon {
@@ -215,7 +215,7 @@ function formatSize(mm) {
 }
 
 .no-data-btn {
-  margin-top: 8px;
+  margin-top: 2px;
 }
 
 .info-list {
@@ -236,9 +236,9 @@ function formatSize(mm) {
 }
 
 .info-label {
-  color: var(--el-text-color-secondary);
+  color: #000000;
   flex-shrink: 0;
-  margin-right: 6px;
+  margin-right: 2px;
   white-space: nowrap;
   padding-top: 1px;
 }
@@ -263,9 +263,9 @@ function formatSize(mm) {
 
 .info-actions {
   margin-top: auto;
-  padding-top: 4px;
+  padding-top: 1px;
   display: flex;
-  gap: 6px;
+  gap: 2px;
   flex-wrap: wrap;
 }
 

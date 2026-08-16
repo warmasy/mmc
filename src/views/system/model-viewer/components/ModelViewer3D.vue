@@ -23,7 +23,7 @@
         <el-button size="small" :type="currentView === 'right' ? 'primary' : 'default'" title="右视" @click="wrappedSetStandardView('right')">右视图</el-button>
         <el-button size="small" :type="currentView === 'iso' ? 'primary' : 'default'" title="等轴测" @click="wrappedSetStandardView('iso')">轴测图</el-button>
       </el-button-group>
-      <el-divider direction="vertical" style="margin:0 8px" />
+      <el-divider direction="vertical" style="margin:0 2px" />
       <el-button
         size="small"
         :type="isClipping ? 'danger' : 'default'"
@@ -277,15 +277,15 @@ defineExpose({
 .model-viewer-3d {
   width: 100%; height: 100%; position: relative; overflow: hidden;
   border-radius: 4px; background-color: var(--el-bg-color-page);
-  border: 1px dashed var(--el-border-color); transition: border-color 0.3s;
+  border: 1px dashed #e8e8e8; transition: border-color 0.3s;
 }
 .model-viewer-3d.is-dragover {
-  border-color: var(--el-color-primary); background-color: var(--el-color-primary-light-9);
+  border-color: #000000; background-color: var(--el-color-primary-light-9);
 }
 .model-viewer-3d :deep(canvas) { display: block; width: 100%; height: 100%; }
 .loading-overlay {
   position: absolute; inset: 0; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 12px;
+  align-items: center; justify-content: center; gap: 3px;
   background: rgba(0,0,0,0.5); z-index: 10; color: #fff; font-size: 14px;
 }
 
@@ -296,7 +296,7 @@ defineExpose({
   right: 10px;
   width: 220px;
   background: var(--el-bg-color-overlay);
-  border: 1px solid var(--el-border-color);
+  border: 1px solid #e8e8e8;
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.15);
   z-index: 20;
@@ -306,7 +306,7 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 2px 4px;
   background: var(--el-fill-color-light);
   border-bottom: 1px solid var(--el-border-color-lighter);
   cursor: move;
@@ -314,10 +314,10 @@ defineExpose({
 }
 .clip-title { font-size: 13px; font-weight: 600; }
 .clip-close { padding: 2px; }
-.clip-dialog-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
-.clip-form-row { display: flex; flex-direction: column; gap: 4px; }
+.clip-dialog-body { padding: 3px; display: flex; flex-direction: column; gap: 2px; }
+.clip-form-row { display: flex; flex-direction: column; gap: 2px; }
 .clip-form-label { font-size: 12px; color: var(--el-text-color-secondary); }
-.clip-slider-wrap { display: flex; align-items: center; gap: 8px; }
+.clip-slider-wrap { display: flex; align-items: center; gap: 2px; }
 .clip-slider-wrap .el-slider { flex: 1; }
-.clip-pos-value { font-size: 12px; color: var(--el-color-primary); font-weight: 600; min-width: 36px; text-align: right; }
+.clip-pos-value { font-size: 12px; color: #000000; font-weight: 600; min-width: 36px; text-align: right; }
 </style>

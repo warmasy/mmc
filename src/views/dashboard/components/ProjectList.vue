@@ -4,7 +4,7 @@
       <div class="card-header">
         <span>进行中的项目</span>
         <a href="" target="_blank" rel="noopener noreferrer">
-          <span style="color: var(--el-color-primary)">全部项目</span>
+          <span style="color: #000000">全部项目</span>
         </a>
       </div>
     </template>
@@ -36,28 +36,29 @@ import { projectNotice } from '../data';
 .card-header { display: flex; justify-content: space-between; align-items: center; font-weight: 500; }
 
 .projectList {
+  border-radius: 0;
   .project-grid-wrapper {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    border-top: 1px solid var(--el-border-color-lighter);
-    border-left: 1px solid var(--el-border-color-lighter);
+    border-top: 1px solid #e8e8e8;
+    border-left: 1px solid #e8e8e8;
   }
   .projectGrid {
-    border-right: 1px solid var(--el-border-color-lighter);
-    border-bottom: 1px solid var(--el-border-color-lighter);
+    border-right: 1px solid #e8e8e8;
+    border-bottom: 1px solid #e8e8e8;
     box-sizing: border-box;
   }
-  .grid-inner { padding: 20px; }
-  .meta-description { height: 44px; overflow: hidden; color: var(--el-text-color-secondary); line-height: 22px; margin-top: 8px; }
+  .grid-inner { padding: 6px; }
+  .meta-description { height: 44px; overflow: hidden; color: #000000; line-height: 22px; margin-top: 4px; }
   .cardTitle {
     font-size: 0;
     :deep(.el-avatar) { background-color: #ffffff !important; }
-    a { display: inline-block; height: 24px; margin-left: 12px; color: var(--el-text-color-primary); font-size: 14px; line-height: 24px; vertical-align: top; &:hover { color: var(--el-color-primary); } }
+    a { display: inline-block; height: 24px; margin-left: 12px; color: var(--el-text-color-primary); font-size: 14px; line-height: 24px; vertical-align: top; &:hover { color: #000000; } }
   }
   .projectItemContent {
-    display: flex; flex-basis: 100%; height: 20px; margin-top: 16px; overflow: hidden; font-size: 12px; line-height: 20px;
-    a { display: inline-block; flex: 1 1 0; color: var(--el-text-color-secondary); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; word-break: break-all; &:hover { color: var(--el-color-primary); } }
-    .datetime { flex: 0 0 auto; float: right; color: var(--el-text-color-placeholder); }
+    display: flex; flex-basis: 100%; height: 20px; margin-top: 4px; overflow: hidden; font-size: 12px; line-height: 20px;
+    a { display: inline-block; flex: 1 1 0; color: #000000; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; word-break: break-all; &:hover { color: #000000; } }
+    .datetime { flex: 0 0 auto; float: right; color: #000000; }
   }
 }
 

@@ -35,7 +35,7 @@ defineEmits(['update:modelValue'])
   padding: 6px 14px;
   font-size: 13px;
   font-weight: 500;
-  color: var(--el-text-color-regular);
+  color: #000000;
   cursor: pointer;
   border: 1px solid var(--el-border-color-light);
   border-radius: 4px;

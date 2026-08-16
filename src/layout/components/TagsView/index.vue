@@ -241,7 +241,7 @@ function handleScroll() {
 
 <style lang="scss" scoped>
 .tags-view-container {
-  height: 34px;
+  height: 30px;
   width: 100%;
   background: var(--tags-bg, #fff);
   border-bottom: 1px solid var(--tags-item-border, #d8dce5);
@@ -255,22 +255,22 @@ function handleScroll() {
       display: inline-block;
       position: relative;
       cursor: pointer;
-      height: 26px;
-      line-height: 26px;
+      height: 22px;
+      line-height: 22px;
       border: 1px solid var(--tags-item-border, #d8dce5);
       color: var(--tags-item-text, #495060);
       background: var(--tags-item-bg, #fff);
-      padding: 0 8px;
+      padding: 0 6px;
       font-size: 12px;
-      margin-left: 5px;
-      margin-top: 4px;
+      margin-left: 3px;
+      margin-top: 2px;
 
       &:first-of-type {
-        margin-left: 15px;
+        margin-left: 8px;
       }
 
       &:last-of-type {
-        margin-right: 15px;
+        margin-right: 8px;
       }
 
       &.active {

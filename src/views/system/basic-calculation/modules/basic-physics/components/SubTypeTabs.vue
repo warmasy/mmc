@@ -33,37 +33,37 @@ function handleWheel(e) {
 <style scoped lang="less">
 .sub-type-tabs {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   flex-shrink: 0;
   flex-wrap: wrap;
   max-height: 80px;
   overflow-y: auto;
-  border-bottom: 1px solid var(--el-border-color-light);
-  padding-bottom: 8px;
-  margin-bottom: 4px;
+  border-bottom: 1px solid #e8e8e8;
+  padding-bottom: 2px;
+  margin-bottom: 2px;
 }
 
 .sub-type-tab {
-  padding: 4px 10px;
+  padding: 1px 2px;
   font-size: 12px;
   font-weight: 500;
-  color: var(--el-text-color-regular);
+  color: #000000;
   cursor: pointer;
-  border: 1px solid var(--el-border-color-light);
+  border: 1px solid #e8e8e8;
   border-radius: 4px;
   transition: all 0.2s;
   white-space: nowrap;
 }
 
 .sub-type-tab:hover {
-  border-color: var(--el-color-primary);
-  color: var(--el-color-primary);
+  border-color: #000000;
+  color: #000000;
 }
 
 .sub-type-tab.active {
-  background-color: var(--el-fill-color-light);
-  border-color: var(--el-color-primary);
-  color: var(--el-color-primary);
+  background-color: #ffffff;
+  border-color: #000000;
+  color: #000000;
 }
 
 @media screen and (max-width: 768px) {

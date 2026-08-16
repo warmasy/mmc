@@ -50,11 +50,11 @@ defineEmits(['change', 'update:modelValue', 'calculate'])
 
 <style scoped lang="less">
 .param-fieldset {
-  border: 1px solid var(--el-border-color);
+  border: 1px solid #e8e8e8;
   border-radius: 4px;
-  padding: 6px 12px 0 12px;
+  padding: 2px 4px 0 4px;
   margin: 0;
-  background-color: var(--el-bg-color);
+  background-color: #ffffff;
   flex-shrink: 0;
   position: relative;
 }
@@ -62,16 +62,16 @@ defineEmits(['change', 'update:modelValue', 'calculate'])
 .param-fieldset legend {
   font-weight: bold;
   color: var(--el-text-color-primary);
-  padding: 0 6px;
+  padding: 0 2px;
   font-size: 13px;
 }
 
 .legend-title {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
-  background-color: var(--el-fill-color-light);
-  border: 1px solid var(--el-border-color-light);
+  padding: 1px 2px;
+  background-color: #ffffff;
+  border: 1px solid #e8e8e8;
   border-radius: 4px;
   font-size: 13px;
   font-weight: 600;
@@ -85,13 +85,13 @@ defineEmits(['change', 'update:modelValue', 'calculate'])
   transform: translateY(-30%);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 10px;
+  gap: 2px;
+  padding: 1px 3px;
   font-size: 12px;
   font-weight: 500;
-  color: var(--el-color-primary);
-  background-color: var(--el-fill-color-light);
-  border: 1px solid var(--el-color-primary-light-7);
+  color: #000000;
+  background-color: #ffffff;
+  border: 1px solid #000000;
   border-radius: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -104,7 +104,7 @@ defineEmits(['change', 'update:modelValue', 'calculate'])
   display: inline-block;
   width: 6px;
   height: 6px;
-  background-color: var(--el-color-primary);
+  background-color: #000000;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -117,21 +117,21 @@ defineEmits(['change', 'update:modelValue', 'calculate'])
 .param-row {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-right: 20px;
-  margin-bottom: 6px;
+  gap: 2px;
+  margin-right: 2px;
+  margin-bottom: 2px;
 }
 
 .param-label {
   font-size: 13px;
-  color: var(--el-text-color-regular);
+  color: #000000;
   font-weight: 500;
   white-space: nowrap;
 }
 
 .param-unit {
   font-size: 12px;
-  color: var(--el-text-color-secondary);
+  color: #000000;
   white-space: nowrap;
 }
 
@@ -139,14 +139,14 @@ defineEmits(['change', 'update:modelValue', 'calculate'])
   display: flex;
   justify-content: flex-end;
   padding-top: 2px;
-  padding-right: 4px;
+  padding-right: 2px;
   margin-bottom: -8px;
 }
 
 .bottom-calc-btn {
   display: inline-flex;
   align-items: center;
-  padding: 1px 6px;
+  padding: 1px 3px;
   font-size: 12px;
   font-weight: 600;
   border-radius: 4px;
@@ -155,7 +155,7 @@ defineEmits(['change', 'update:modelValue', 'calculate'])
 }
 
 .bottom-calc-btn :deep(.el-icon) {
-  margin-right: 3px;
+  margin-right: 2px;
 }
 
 @media screen and (max-width: 768px) {

@@ -134,20 +134,20 @@ function selectPreset(val) {
 .panel-header {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
   font-size: 13px;
   font-weight: 600;
   color: var(--el-text-color-primary);
-  padding-bottom: 6px;
+  padding-bottom: 2px;
   border-bottom: 1px solid var(--el-border-color-lighter);
-  margin-bottom: 6px;
+  margin-bottom: 2px;
   flex-shrink: 0;
 }
 
 .control-section {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 2px;
 }
 
 .section-title {
@@ -158,14 +158,14 @@ function selectPreset(val) {
 
 .action-buttons {
   display: flex;
-  gap: 6px;
+  gap: 2px;
   flex-wrap: wrap;
 }
 
 .density-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
   cursor: pointer;
   user-select: none;
 }
@@ -187,13 +187,13 @@ function selectPreset(val) {
 .density-presets {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 2px;
 }
 
 .density-tag {
   cursor: pointer;
   transition: all 0.2s;
-  padding: 0 6px;
+  padding: 0 3px;
   height: 22px;
   line-height: 20px;
 }
@@ -203,6 +203,6 @@ function selectPreset(val) {
 }
 
 .viewer-controls :deep(.el-divider) {
-  margin: 5px 0;
+  margin: 2px 0;
 }
 </style>

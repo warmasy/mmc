@@ -20,25 +20,30 @@
 
 <style scoped>
 .about-content {
-  line-height: 1.8;
+  line-height: 1.6;
   color: #333;
+  padding: 2px;
 }
 .about-content h3 {
   margin-top: 0;
   color: #409EFF;
 }
 .about-content h4 {
-  margin-top: 16px;
+  margin-top: 4px;
   color: #606266;
 }
 .about-content ul {
-  padding-left: 20px;
+  padding-left: 16px;
 }
 .about-content li {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 .card-header {
   font-weight: bold;
   font-size: 16px;
+}
+.box-card {
+  border-radius: 0;
+  box-shadow: none;
 }
 </style>

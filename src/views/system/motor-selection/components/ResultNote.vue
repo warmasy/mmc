@@ -14,7 +14,7 @@ const props = defineProps({
 
 <style scoped>
 .result-note {
-  padding: 8px 0;
+  padding: 1px 0;
   background: transparent;
   border: none;
   flex-shrink: 0;
@@ -22,9 +22,9 @@ const props = defineProps({
 }
 
 .note-box {
-  padding: 0 12px;
+  padding: 0 2px;
   background: var(--el-fill-color-light);
-  border: 1px solid var(--el-border-color-light);
+  border: 1px solid #e8e8e8;
   border-radius: 4px;
   min-height: 32px;
   height: 32px;

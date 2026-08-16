@@ -41,7 +41,7 @@ function addIframe() {
   width: 100%;
   position: relative;
   overflow: hidden;
-  padding-bottom: 36px;
+  padding-bottom: 20px;
 }
 
 .fixed-header + .app-main {
@@ -49,7 +49,7 @@ function addIframe() {
   scrollbar-gutter: auto;
   height: calc(100vh - 50px);
   min-height: 0px;
-  padding-bottom: 36px;
+  padding-bottom: 20px;
 }
 
 .fixed-header + .app-main {
@@ -59,14 +59,14 @@ function addIframe() {
 .hasTagsView {
   .app-main {
     min-height: calc(100vh - 84px);
-    padding-bottom: 36px;
+    padding-bottom: 20px;
   }
 
   .fixed-header + .app-main {
     margin-top: 84px;
     height: calc(100vh - 84px);
     min-height: 0px;
-    padding-bottom: 36px;
+    padding-bottom: 20px;
   }
 }
 

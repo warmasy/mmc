@@ -1,5 +1,5 @@
 <template>
-  <el-card class="welcome-card" :body-style="{ padding: '16px 24px' }">
+  <el-card class="welcome-card" :body-style="{ padding: '2px 4px' }">
     <div class="pageHeaderContent">
       <div class="avatar">
         <el-avatar size="large" :src="currentUser.avatar" />
@@ -26,7 +26,7 @@ function openWebsite(url) {
 </script>
 
 <style scoped lang="less">
-.welcome-card { margin-bottom: 16px; }
+.welcome-card { margin-bottom: 2px; border-radius: 0; box-shadow: none; }
 
 .pageHeaderContent {
   display: flex;
@@ -37,12 +37,12 @@ function openWebsite(url) {
   }
   .content {
     position: relative; top: 4px;
-    flex: 1 1 auto; margin-left: 24px;
-    color: var(--el-text-color-secondary); line-height: 22px;
-    .contentTitle { margin-bottom: 12px; color: var(--el-text-color-primary); font-weight: 500; font-size: 20px; line-height: 28px; }
+    flex: 1 1 auto; margin-left: 12px;
+    color: #000000; line-height: 22px;
+    .contentTitle { margin-bottom: 6px; color: var(--el-text-color-primary); font-weight: 500; font-size: 20px; line-height: 28px; }
   }
   .blog-link {
-    display: flex; align-items: center; margin-left: auto; cursor: pointer; padding: 0 16px;
+    display: flex; align-items: center; margin-left: auto; cursor: pointer; padding: 0 8px;
     & > span { display: block; width: 72px; height: 72px; border-radius: 72px; background-color: #ffffff !important; }
   }
 }

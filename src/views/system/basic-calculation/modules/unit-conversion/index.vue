@@ -204,34 +204,36 @@ function handleWheelBaseUnit(e) {
 .param-fieldset {
   border: 1px solid var(--el-border-color);
   border-radius: 4px;
-  padding: 16px 12px 12px 12px;
-  margin: 8px 0 16px 0;
-  background-color: var(--el-bg-color);
+  padding: 8px 6px 6px 6px;
+  margin: 6px 0 4px 0;
+  background-color: #ffffff;
   flex-shrink: 0;
   position: relative;
 }
 
 .param-fieldset-title {
   position: absolute;
-  top: -9px;
+  top: -8px;
   left: 12px;
   font-weight: bold;
   color: var(--el-text-color-primary);
   font-size: 13px;
   padding: 0 6px;
-  background-color: var(--el-bg-color);
+  background-color: #ffffff;
   line-height: 18px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .convert-input-section {
-  padding: 4px 0 0 0;
+  padding: 2px 0 0 0;
   flex-shrink: 0;
 }
 
 .input-row {
   display: flex;
   align-items: flex-end;
-  gap: 20px;
+  gap: 4px;
 }
 
 .input-group {
@@ -242,7 +244,7 @@ function handleWheelBaseUnit(e) {
 
 .input-label {
   font-size: 13px;
-  color: var(--el-text-color-regular);
+  color: #000000;
   font-weight: 500;
   text-align: center;
 }
@@ -255,11 +257,11 @@ function handleWheelBaseUnit(e) {
 .formula-group :deep(.el-tag) {
   height: 24px;
   line-height: 22px;
-  padding: 0 10px;
+  padding: 0 3px;
   font-size: 12px;
   background-color: var(--el-fill-color-light) !important;
-  border-color: var(--el-color-primary) !important;
-  color: var(--el-color-primary) !important;
+  border-color: #000000 !important;
+  color: #000000 !important;
   font-weight: 600;
   border-radius: 4px;
   transition: none;
@@ -279,7 +281,7 @@ function handleWheelBaseUnit(e) {
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
-  margin-bottom: 8px;
+  margin-bottom: 2px;
 }
 
 .section-title {
@@ -292,18 +294,18 @@ function handleWheelBaseUnit(e) {
 .base-unit-selector {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .base-unit-label {
   font-size: 13px;
-  color: var(--el-text-color-regular);
+  color: #000000;
 }
 
 .base-unit-btn {
   color: var(--el-text-color-primary);
   border-color: var(--el-border-color);
-  background-color: var(--el-fill-color-light);
+  background-color: #ffffff;
   transition: all 0.3s ease;
   min-width: 80px;
   width: auto;
@@ -313,8 +315,8 @@ function handleWheelBaseUnit(e) {
 }
 
 .base-unit-btn:hover {
-  color: var(--el-color-primary);
-  border-color: var(--el-color-primary);
+  color: #000000;
+  border-color: #000000;
   background-color: var(--el-fill-color);
 }
 
@@ -323,15 +325,15 @@ function handleWheelBaseUnit(e) {
   overflow-y: auto;
   border: 1px solid var(--el-border-color);
   border-radius: 4px;
-  background-color: var(--el-bg-color);
+  background-color: #ffffff;
 }
 
 .table-header {
   display: flex;
-  padding: 0 12px;
-  height: 36px;
-  min-height: 36px;
-  background-color: var(--el-fill-color-light);
+  padding: 0 3px;
+  height: 40px;
+  min-height: 40px;
+  background-color: #ffffff;
   border-bottom: 1px solid var(--el-border-color-light);
   font-size: 13px;
   color: var(--el-text-color-primary);
@@ -355,12 +357,12 @@ function handleWheelBaseUnit(e) {
 
 .table-row {
   display: flex;
-  padding: 0 12px;
-  height: 36px;
-  min-height: 36px;
+  padding: 0 3px;
+  height: 40px;
+  min-height: 40px;
   border-bottom: 1px solid var(--el-border-color-light);
   font-size: 13px;
-  color: var(--el-text-color-regular);
+  color: #000000;
   transition: background-color 0.2s;
   align-items: center;
   box-sizing: border-box;
@@ -383,15 +385,15 @@ function handleWheelBaseUnit(e) {
 }
 
 .table-row:hover {
-  background-color: var(--el-fill-color-light);
+  background-color: #ffffff;
 }
 
 .table-row.highlight {
-  background-color: var(--el-fill-color-light);
-  color: var(--el-color-primary);
+  background-color: #ffffff;
+  color: #000000;
   font-weight: 500;
-  border-left: 3px solid var(--el-color-primary);
-  padding-left: 9px;
+  border-left: 3px solid #000000;
+  padding-left: 4px;
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -406,18 +408,18 @@ function handleWheelBaseUnit(e) {
 .col-symbol {
   width: 15%;
   min-width: 40px;
-  color: var(--el-text-color-secondary);
+  color: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .symbol-text.base-active {
-  color: var(--el-color-primary);
+  color: #000000;
   font-weight: 600;
-  border: 1px solid var(--el-color-primary);
+  border: 1px solid #000000;
   border-radius: 3px;
-  padding: 0 2px;
+  padding: 0 1px;
   display: inline-block;
   line-height: 1.2;
   transition: all 0.3s ease;
@@ -426,7 +428,7 @@ function handleWheelBaseUnit(e) {
 .col-formula {
   width: 28%;
   min-width: 100px;
-  color: var(--el-text-color-secondary);
+  color: #000000;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -435,7 +437,7 @@ function handleWheelBaseUnit(e) {
 .col-base-formula {
   width: 35%;
   min-width: 120px;
-  color: var(--el-text-color-secondary);
+  color: #000000;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -456,8 +458,8 @@ function handleWheelBaseUnit(e) {
 }
 .no-arrow-select :deep(.el-input__inner) {
   text-align: center !important;
-  padding-right: 11px !important;
-  padding-left: 11px !important;
+  padding-right: 4px !important;
+  padding-left: 4px !important;
 }
 .no-arrow-select :deep(.el-input__wrapper) {
   padding-right: 0 !important;
@@ -481,10 +483,16 @@ function handleWheelBaseUnit(e) {
 @media screen and (max-width: 768px) {
   .input-row {
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 3px;
   }
   .formula-group {
     width: 100%;
   }
 }
+.el-table {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
 </style>
