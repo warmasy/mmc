@@ -156,26 +156,44 @@ function goToday() { currentMonth.value = new Date(); selectedDate.value = new D
 .calendar-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 4px; }
 .calendar-year-month { display: flex; align-items: center; gap: 4px; }
 .calendar-year-text, .calendar-month-text {
-  font-size: 13px; font-weight: 500; color: #000000; cursor: pointer; user-select: none;
+  font-size: 13px; font-weight: 500; color: var(--el-text-color-primary); cursor: pointer; user-select: none;
   padding: 4px 10px; border-radius: 4px; transition: all 0.2s; line-height: 1;
   background-color: transparent; border: none; outline: none; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; vertical-align: middle;
-  &:hover { color: #000000; background-color: #ffffff; }
+  &:hover { color: var(--el-color-primary); background-color: var(--el-fill-color-light); }
 }
 .year-picker, .month-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 4px; }
 .picker-item { text-align: center; padding: 6px 0; font-size: 13px; border-radius: 4px; cursor: pointer; transition: all 0.2s; color: var(--el-text-color-primary); }
-.picker-item:hover { background-color: #ffffff; color: #000000; }
-.picker-item.active { background-color: #000000; color: #fff; }
+.picker-item:hover { background-color: var(--el-fill-color-light); color: var(--el-color-primary); }
+.picker-item.active { background-color: var(--el-color-primary); color: #fff; }
 .calendar-btns { display: flex; gap: 4px; }
 .calendar-btns .el-button { padding: 4px 10px; font-size: 13px; }
 
 .compact-calendar-table { width: 100%; border-collapse: separate; border-spacing: 2px; table-layout: fixed; }
-.compact-calendar-table th { text-align: center; font-size: 13px; color: #000000; padding: 4px 2px; font-weight: 500; }
+.compact-calendar-table th { text-align: center; font-size: 13px; color: var(--el-text-color-primary); padding: 4px 2px; font-weight: 500; }
 .compact-calendar-table td { text-align: center; padding: 2px; cursor: pointer; vertical-align: middle; }
-.compact-calendar-table td.week-col { font-size: 13px; color: #000000; width: 36px; cursor: default; vertical-align: middle; font-weight: 500; background-color: var(--el-color-primary-light-9); border-radius: 4px; }
+.compact-calendar-table td.week-col {
+  font-size: 13px; color: var(--el-text-color-primary); width: 36px; cursor: default; vertical-align: middle; font-weight: 500;
+  /* 与选中框同色系（主色浅色版），跟随主题色变化；不使用 primary-light-N（会被主题工具覆盖成近白色） */
+  background-color: rgba(64, 158, 255, 0.20);
+  background-color: color-mix(in srgb, var(--el-color-primary) 22%, #f5f7fa);
+  border-radius: 4px;
+}
+html.dark .compact-calendar-table td.week-col {
+  background-color: rgba(64, 158, 255, 0.55);
+  background-color: color-mix(in srgb, var(--el-color-primary) 60%, #3a3f45);
+  color: #e6ebf2;
+}
 .day-circle { width: 32px; height: 32px; line-height: 32px; border-radius: 50%; margin: 0 auto; font-size: 13px; color: var(--el-text-color-primary); transition: all 0.2s; }
-.compact-calendar-table td:hover .day-circle { background-color: var(--el-color-primary-light-9); }
-.compact-calendar-table td.is-today .day-circle { color: #000000; font-weight: 700; }
-.compact-calendar-table td.is-selected .day-circle { background-color: #000000; color: #fff; }
-.compact-calendar-table td.other-month .day-circle { color: #000000; }
+.compact-calendar-table td:hover .day-circle {
+  background-color: rgba(64, 158, 255, 0.20);
+  background-color: color-mix(in srgb, var(--el-color-primary) 22%, #f5f7fa);
+}
+html.dark .compact-calendar-table td:hover .day-circle {
+  background-color: rgba(64, 158, 255, 0.55);
+  background-color: color-mix(in srgb, var(--el-color-primary) 60%, #3a3f45);
+}
+.compact-calendar-table td.is-today .day-circle { color: var(--el-color-primary); font-weight: 700; }
+.compact-calendar-table td.is-selected .day-circle { background-color: var(--el-color-primary); color: #fff; }
+.compact-calendar-table td.other-month .day-circle { color: var(--el-text-color-secondary); }
 .calendar-card { border-radius: 0; box-shadow: none; }
 </style>

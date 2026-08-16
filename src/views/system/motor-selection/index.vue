@@ -115,7 +115,7 @@ initProjectNo()
 <style scoped>
 .motor-selection-page {
   background-color: var(--el-bg-color);
-  height: calc(100vh - 132px);  /* 84px(Navbar+TagsView) + 48px(底部版权栏) */
+  height: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;

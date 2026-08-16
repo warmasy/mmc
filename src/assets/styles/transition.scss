@@ -48,9 +48,16 @@
   position: absolute;
 }
 
-/* 黑暗模式下过渡效果 */
-::view-transition-new(root), ::view-transition-old(root) {
+/* ========== 主题切换圆形过渡动画（暗/亮 一收一放） ==========
+ * View Transition 快照层级由 html.dark 类决定（z-index 分层）：
+ *   - 亮色模式（无 .dark）：new（新快照）在上层，做圆形扩散 → 亮色从点击点放出
+ *   - 暗色模式（有 .dark）：old（旧快照）在上层，做圆形收缩 → 亮色收回、暗色露出
+ * 点击点坐标与半径由 JS 注入 --theme-x / --theme-y / --theme-r。
+ */
+::view-transition-old(root),
+::view-transition-new(root) {
   animation: none !important;
+  mix-blend-mode: normal !important;
   backface-visibility: hidden;
   position: fixed;
   top: 0;
@@ -59,22 +66,42 @@
   bottom: 0;
 }
 
-.dark::view-transition-old(root) {
+/* 亮色模式：新快照在上层，从点击点圆形扩散（放） */
+::view-transition-new(root) {
   z-index: 2147483646;
-  background: var(--bg-color-dark); 
-}
-
-.dark::view-transition-new(root) {
-  z-index: 1;
-  background: var(--bg-color);
+  clip-path: circle(0px at var(--theme-x, 50%) var(--theme-y, 50%));
+  animation: theme-circle-reveal 650ms cubic-bezier(0.4, 0, 0.2, 1) both !important;
 }
 
 ::view-transition-old(root) {
   z-index: 1;
-  background: var(--bg-color);
 }
 
-::view-transition-new(root) {
+/* 暗色模式：旧快照在上层，向点击点圆形收缩（收） */
+.dark::view-transition-old(root) {
   z-index: 2147483646;
-  background: var(--bg-color-dark);
+  clip-path: circle(var(--theme-r, 100vmax) at var(--theme-x, 50%) var(--theme-y, 50%));
+  animation: theme-circle-collapse 650ms cubic-bezier(0.4, 0, 0.2, 1) both !important;
+}
+
+.dark::view-transition-new(root) {
+  z-index: 1;
+}
+
+@keyframes theme-circle-reveal {
+  from {
+    clip-path: circle(0px at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
+  to {
+    clip-path: circle(var(--theme-r, 100vmax) at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
+}
+
+@keyframes theme-circle-collapse {
+  from {
+    clip-path: circle(var(--theme-r, 100vmax) at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
+  to {
+    clip-path: circle(0px at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
 }

@@ -38,7 +38,7 @@ function openWebsite(url) {
   .content {
     position: relative; top: 4px;
     flex: 1 1 auto; margin-left: 12px;
-    color: #000000; line-height: 22px;
+    color: var(--el-text-color-primary); line-height: 22px;
     .contentTitle { margin-bottom: 6px; color: var(--el-text-color-primary); font-weight: 500; font-size: 20px; line-height: 28px; }
   }
   .blog-link {

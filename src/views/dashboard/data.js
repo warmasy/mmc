@@ -44,14 +44,6 @@ export const projectNotice = [
   },
 ];
 
-// 当前网址/网址列表（用于首页"当前网址"表格）
-export const webNotice = [
-  {
-    url: "http://mmbc.3139822.xyz/",
-    lab: "ESA",
-  },
-];
-
 // 我的博客头像（点击跳转到博客）
 export const blogAvatar = {
   url: "/wblogavatar.ico",

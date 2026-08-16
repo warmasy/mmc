@@ -99,9 +99,6 @@
                 <span v-if="!(monitorData.supportedKids || []).length">-</span>
               </div>
             </el-descriptions-item>
-            <el-descriptions-item label="失败原因种类">
-              {{ failureReasonRows.length }}
-            </el-descriptions-item>
             <el-descriptions-item label="聚合说明" :span="2">
               {{ monitorScopeDescription }}
             </el-descriptions-item>
@@ -194,108 +191,12 @@
       </el-col>
     </el-row>
 
-    <el-row :gutter="16" class="mb16">
-      <el-col :xs="24" :lg="10">
-        <el-card shadow="never">
-          <template #header>
-            <div class="card-header">
-              <span>失败原因统计</span>
-              <div class="card-actions compact-actions">
-                <span class="card-subtitle">按 Redis 聚合口径统计</span>
-                <el-tag v-if="selectedFailureReason" type="danger" effect="plain" closable @close="clearFailureReasonSelection">
-                  {{ selectedFailureReason }}
-                </el-tag>
-              </div>
-            </div>
-          </template>
-
-          <div v-if="failureReasonRows.length" ref="failureReasonChartRef" class="chart-panel" />
-          <el-empty v-else description="暂无失败记录" :image-size="88" class="chart-empty" />
-
-          <div class="table-title">明细数据</div>
-          <el-table
-            :data="displayedFailureReasonRows"
-            empty-text="暂无失败记录"
-            max-height="260"
-            :row-class-name="getFailureReasonRowClassName"
-            @row-click="handleFailureReasonRowClick"
-          >
-            <el-table-column label="失败原因" prop="reason" min-width="180">
-              <template #default="scope">
-                <el-tag :type="getFailureTagType(scope.row.reason)" effect="plain">
-                  {{ scope.row.reason }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column label="次数" prop="count" width="100" align="center" />
-            <el-table-column label="占比" width="120" align="center">
-              <template #default="scope">
-                {{ formatPercent(scope.row.count, totalFailureReasonCount) }}
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
-      </el-col>
-
-      <el-col :xs="24" :lg="14">
-        <el-card shadow="never">
-          <template #header>
-            <div class="card-header">
-              <span>密钥版本统计</span>
-              <div class="card-actions compact-actions">
-                <span class="card-subtitle">观察不同 kid 的运行状态</span>
-                <el-tag v-if="selectedKid" type="success" effect="plain" closable @close="clearKidSelection">
-                  {{ selectedKid }}
-                </el-tag>
-              </div>
-            </div>
-          </template>
-
-          <div v-if="kidStatRows.length" ref="kidStatsChartRef" class="chart-panel" />
-          <el-empty v-else description="暂无密钥统计数据" :image-size="88" class="chart-empty" />
-
-          <div class="table-title">明细数据</div>
-          <el-table
-            :data="displayedKidStatRows"
-            empty-text="暂无数据"
-            max-height="260"
-            :row-class-name="getKidStatRowClassName"
-            @row-click="handleKidStatRowClick"
-          >
-            <el-table-column label="密钥版本" prop="kid" min-width="140">
-              <template #default="scope">
-                <el-tag :type="scope.row.kid === monitorData.currentKid ? 'success' : 'info'">
-                  {{ scope.row.kid || '-' }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column label="加密请求" prop="encryptedRequests" min-width="110" align="center" />
-            <el-table-column label="解密成功" prop="decryptSuccess" min-width="110" align="center" />
-            <el-table-column label="解密失败" prop="decryptFailure" min-width="110" align="center" />
-            <el-table-column label="加密响应" prop="encryptedResponses" min-width="110" align="center" />
-            <el-table-column label="成功率" min-width="120" align="center">
-              <template #default="scope">
-                {{ formatRate(scope.row.decryptSuccess, scope.row.decryptSuccess + scope.row.decryptFailure) }}
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
-      </el-col>
-    </el-row>
-
     <el-card shadow="never">
       <template #header>
         <div class="card-header">
           <span>最近失败记录</span>
           <div class="card-actions compact-actions">
             <span class="card-subtitle">最近 {{ displayedRecentFailures.length }} 条</span>
-            <el-tag
-              v-if="selectedFailureReason || selectedKid"
-              type="info"
-              effect="plain"
-            >
-              已按当前选择联动筛选
-            </el-tag>
           </div>
         </div>
       </template>
@@ -332,16 +233,11 @@
 <script setup name="TransportCryptoMonitor">
 import { getTransportCryptoMonitor } from '@/api/monitor/transportCrypto'
 import { parseTime } from '@/utils/ruoyi'
-import * as echarts from 'echarts'
 
 const { proxy } = getCurrentInstance()
 
 const loading = ref(false)
 const autoRefresh = ref(true)
-const failureReasonChartRef = ref(null)
-const kidStatsChartRef = ref(null)
-const selectedFailureReason = ref('')
-const selectedKid = ref('')
 const monitorData = ref({
   supportedKids: [],
   enabledPaths: [],
@@ -353,8 +249,6 @@ const monitorData = ref({
 })
 
 let refreshTimer = null
-let failureReasonChartInstance = null
-let kidStatsChartInstance = null
 
 const modeLabelMap = {
   required: '强制加密',
@@ -385,55 +279,8 @@ const monitorScopeDescription = computed(() => {
   return '当前展示传输加密运行状态与统计信息。'
 })
 
-const failureReasonRows = computed(() => {
-  const failureReasons = monitorData.value.failureReasons || {}
-  return Object.keys(failureReasons)
-    .map(key => ({
-      reason: key,
-      count: failureReasons[key]
-    }))
-    .sort((a, b) => b.count - a.count)
-})
-
-const totalFailureReasonCount = computed(() =>
-  failureReasonRows.value.reduce((total, item) => total + Number(item.count || 0), 0)
-)
-
-const displayedFailureReasonRows = computed(() => {
-  if (!selectedFailureReason.value) {
-    return failureReasonRows.value
-  }
-  return failureReasonRows.value.filter(item => item.reason === selectedFailureReason.value)
-})
-
-const kidStatRows = computed(() =>
-  [...(monitorData.value.kidStats || [])].sort((a, b) => {
-    const currentKid = monitorData.value.currentKid
-    if (a.kid === currentKid && b.kid !== currentKid) {
-      return -1
-    }
-    if (b.kid === currentKid && a.kid !== currentKid) {
-      return 1
-    }
-    const aTotal = Number(a.encryptedRequests || 0) + Number(a.decryptSuccess || 0) + Number(a.decryptFailure || 0)
-    const bTotal = Number(b.encryptedRequests || 0) + Number(b.decryptSuccess || 0) + Number(b.decryptFailure || 0)
-    return bTotal - aTotal
-  })
-)
-
-const displayedKidStatRows = computed(() => {
-  if (!selectedKid.value) {
-    return kidStatRows.value
-  }
-  return kidStatRows.value.filter(item => item.kid === selectedKid.value)
-})
-
 const displayedRecentFailures = computed(() => {
-  return (monitorData.value.recentFailures || []).filter(item => {
-    const matchesReason = !selectedFailureReason.value || item.reason === selectedFailureReason.value
-    const matchesKid = !selectedKid.value || item.kid === selectedKid.value
-    return matchesReason && matchesKid
-  })
+  return monitorData.value.recentFailures || []
 })
 
 const decryptSuccessRate = computed(() =>
@@ -542,10 +389,6 @@ function loadMonitorData(showLoading = true) {
       failureReasons: {},
       ...response.data
     }
-    nextTick(() => {
-      renderFailureReasonChart()
-      renderKidStatsChart()
-    })
   }).finally(() => {
     loading.value = false
     if (showLoading) {
@@ -570,17 +413,6 @@ function formatCount(value) {
   return Number(value || 0)
 }
 
-function formatPercent(value, total) {
-  if (!total) {
-    return '0.0%'
-  }
-  return `${((Number(value || 0) / total) * 100).toFixed(1)}%`
-}
-
-function formatRate(success, total) {
-  return `${getRate(success, total).toFixed(1)}%`
-}
-
 function getRate(numerator, denominator) {
   if (!denominator) {
     return 0
@@ -601,293 +433,13 @@ function getFailureTagType(reason) {
   return 'info'
 }
 
-function getFailureChartColor(reason) {
-  const tagType = getFailureTagType(reason)
-  if (tagType === 'danger') {
-    return '#f56c6c'
-  }
-  if (tagType === 'warning') {
-    return '#e6a23c'
-  }
-  return '#409eff'
-}
-
-function buildKidChartBarData(item, value, color) {
-  const isSelected = !selectedKid.value || selectedKid.value === item.kid
-  return {
-    value: Number(value || 0),
-    itemStyle: {
-      color,
-      opacity: isSelected ? 1 : 0.3
-    }
-  }
-}
-
-function bindFailureReasonChartEvents(chartInstance) {
-  chartInstance.off('click')
-  chartInstance.on('click', params => {
-    const targetReason = failureReasonRows.value[params?.dataIndex]?.reason
-    if (!targetReason) {
-      return
-    }
-    selectedFailureReason.value = selectedFailureReason.value === targetReason ? '' : targetReason
-  })
-}
-
-function bindKidStatsChartEvents(chartInstance) {
-  chartInstance.off('click')
-  chartInstance.on('click', params => {
-    const targetKid = kidStatRows.value[params?.dataIndex]?.kid
-    if (!targetKid) {
-      return
-    }
-    selectedKid.value = selectedKid.value === targetKid ? '' : targetKid
-  })
-}
-
-function initFailureReasonChart() {
-  if (!failureReasonChartRef.value) {
-    if (failureReasonChartInstance) {
-      failureReasonChartInstance.dispose()
-      failureReasonChartInstance = null
-    }
-    return null
-  }
-  if (!failureReasonChartInstance) {
-    failureReasonChartInstance = echarts.init(failureReasonChartRef.value)
-    bindFailureReasonChartEvents(failureReasonChartInstance)
-  }
-  return failureReasonChartInstance
-}
-
-function initKidStatsChart() {
-  if (!kidStatsChartRef.value) {
-    if (kidStatsChartInstance) {
-      kidStatsChartInstance.dispose()
-      kidStatsChartInstance = null
-    }
-    return null
-  }
-  if (!kidStatsChartInstance) {
-    kidStatsChartInstance = echarts.init(kidStatsChartRef.value)
-    bindKidStatsChartEvents(kidStatsChartInstance)
-  }
-  return kidStatsChartInstance
-}
-
-function renderFailureReasonChart() {
-  if (!failureReasonRows.value.length) {
-    if (failureReasonChartInstance) {
-      failureReasonChartInstance.dispose()
-      failureReasonChartInstance = null
-    }
-    return
-  }
-  const chartInstance = initFailureReasonChart()
-  if (!chartInstance) {
-    return
-  }
-
-  chartInstance.setOption({
-    animationDuration: 400,
-    color: failureReasonRows.value.map(item => getFailureChartColor(item.reason)),
-    grid: {
-      top: 16,
-      left: 120,
-      right: 24,
-      bottom: 16,
-      containLabel: true
-    },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      },
-      formatter(params) {
-        const currentItem = params?.[0]
-        if (!currentItem) {
-          return ''
-        }
-        const currentRow = failureReasonRows.value[currentItem.dataIndex]
-        return `${currentRow.reason}<br/>次数：${currentRow.count}<br/>占比：${formatPercent(currentRow.count, totalFailureReasonCount.value)}`
-      }
-    },
-    xAxis: {
-      type: 'value',
-      splitLine: {
-        lineStyle: {
-          type: 'dashed'
-        }
-      }
-    },
-    yAxis: {
-      type: 'category',
-      data: failureReasonRows.value.map(item => item.reason),
-      axisTick: {
-        show: false
-      }
-    },
-    series: [
-      {
-        name: '失败次数',
-        type: 'bar',
-        barMaxWidth: 22,
-        data: failureReasonRows.value.map(item => ({
-          value: Number(item.count || 0),
-          itemStyle: {
-            color: getFailureChartColor(item.reason),
-            opacity: !selectedFailureReason.value || selectedFailureReason.value === item.reason ? 1 : 0.35,
-            borderRadius: [0, 6, 6, 0]
-          }
-        })),
-        label: {
-          show: true,
-          position: 'right'
-        }
-      }
-    ]
-  })
-}
-
-function renderKidStatsChart() {
-  if (!kidStatRows.value.length) {
-    if (kidStatsChartInstance) {
-      kidStatsChartInstance.dispose()
-      kidStatsChartInstance = null
-    }
-    return
-  }
-  const chartInstance = initKidStatsChart()
-  if (!chartInstance) {
-    return
-  }
-
-  chartInstance.setOption({
-    animationDuration: 400,
-    color: ['#409eff', '#67c23a', '#f56c6c', '#909399'],
-    legend: {
-      top: 0
-    },
-    grid: {
-      top: 48,
-      left: 24,
-      right: 24,
-      bottom: 32,
-      containLabel: true
-    },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      }
-    },
-    xAxis: {
-      type: 'category',
-      axisLabel: {
-        interval: 0,
-        rotate: kidStatRows.value.length > 4 ? 20 : 0
-      },
-      data: kidStatRows.value.map(item => item.kid || '-')
-    },
-    yAxis: {
-      type: 'value',
-      splitLine: {
-        lineStyle: {
-          type: 'dashed'
-        }
-      }
-    },
-    series: [
-      {
-        name: '加密请求',
-        type: 'bar',
-        barMaxWidth: 18,
-        data: kidStatRows.value.map(item => buildKidChartBarData(item, item.encryptedRequests, '#409eff'))
-      },
-      {
-        name: '解密成功',
-        type: 'bar',
-        barMaxWidth: 18,
-        data: kidStatRows.value.map(item => buildKidChartBarData(item, item.decryptSuccess, '#67c23a'))
-      },
-      {
-        name: '解密失败',
-        type: 'bar',
-        barMaxWidth: 18,
-        data: kidStatRows.value.map(item => buildKidChartBarData(item, item.decryptFailure, '#f56c6c'))
-      },
-      {
-        name: '加密响应',
-        type: 'bar',
-        barMaxWidth: 18,
-        data: kidStatRows.value.map(item => buildKidChartBarData(item, item.encryptedResponses, '#909399'))
-      }
-    ]
-  })
-}
-
-function resizeCharts() {
-  failureReasonChartInstance?.resize()
-  kidStatsChartInstance?.resize()
-}
-
-function destroyCharts() {
-  if (failureReasonChartInstance) {
-    failureReasonChartInstance.dispose()
-    failureReasonChartInstance = null
-  }
-  if (kidStatsChartInstance) {
-    kidStatsChartInstance.dispose()
-    kidStatsChartInstance = null
-  }
-}
-
-function clearFailureReasonSelection() {
-  selectedFailureReason.value = ''
-}
-
-function clearKidSelection() {
-  selectedKid.value = ''
-}
-
-function handleFailureReasonRowClick(row) {
-  const targetReason = row?.reason || ''
-  selectedFailureReason.value = selectedFailureReason.value === targetReason ? '' : targetReason
-}
-
-function handleKidStatRowClick(row) {
-  const targetKid = row?.kid || ''
-  selectedKid.value = selectedKid.value === targetKid ? '' : targetKid
-}
-
-function getFailureReasonRowClassName({ row }) {
-  return selectedFailureReason.value && row.reason === selectedFailureReason.value ? 'selected-table-row' : ''
-}
-
-function getKidStatRowClassName({ row }) {
-  return selectedKid.value && row.kid === selectedKid.value ? 'selected-table-row' : ''
-}
-
 watch(autoRefresh, () => {
   resetRefreshTimer()
-})
-
-watch(selectedFailureReason, () => {
-  nextTick(() => {
-    renderFailureReasonChart()
-  })
-})
-
-watch(selectedKid, () => {
-  nextTick(() => {
-    renderKidStatsChart()
-  })
 })
 
 onMounted(() => {
   loadMonitorData()
   resetRefreshTimer()
-  window.addEventListener('resize', resizeCharts)
 })
 
 onBeforeUnmount(() => {
@@ -895,8 +447,6 @@ onBeforeUnmount(() => {
     clearInterval(refreshTimer)
     refreshTimer = null
   }
-  window.removeEventListener('resize', resizeCharts)
-  destroyCharts()
 })
 </script>
 
@@ -987,27 +537,6 @@ onBeforeUnmount(() => {
   font-size: 13px;
 }
 
-.chart-panel {
-  width: 100%;
-  height: 300px;
-  margin-bottom: 16px;
-}
-
-.chart-empty {
-  padding: 16px 0 8px;
-}
-
-.table-title {
-  margin-bottom: 12px;
-  color: var(--el-text-color-secondary);
-  font-size: 12px;
-  font-weight: 500;
-}
-
-:deep(.selected-table-row) {
-  --el-table-tr-bg-color: var(--el-color-primary-light-9);
-}
-
 @media (max-width: 768px) {
   .summary-card {
     height: auto;
@@ -1025,10 +554,6 @@ onBeforeUnmount(() => {
 
   .compact-actions {
     justify-content: space-between;
-  }
-
-  .chart-panel {
-    height: 260px;
   }
 }
 </style>

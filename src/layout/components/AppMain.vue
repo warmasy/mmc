@@ -1,5 +1,5 @@
 <template>
-  <section class="app-main">
+  <section class="app-main" :style="mainStyle">
     <router-view v-slot="{ Component, route }">
       <transition name="fade-transform" mode="out-in">
         <keep-alive :include="tagsViewStore.cachedViews">
@@ -16,9 +16,17 @@
 import copyright from "./Copyright/index"
 import iframeToggle from "./IframeToggle/index"
 import useTagsViewStore from '@/store/modules/tagsView'
+import useSettingsStore from '@/store/modules/settings'
 
 const route = useRoute()
 const tagsViewStore = useTagsViewStore()
+const settingsStore = useSettingsStore()
+
+// 页脚显示时预留其高度（48px + 余量），隐藏时恢复正常内边距，避免固定页脚遮挡页面内容
+const mainStyle = computed(() => {
+  const footerHeight = settingsStore.footerVisible ? '52px' : '20px'
+  return { '--app-main-pb': footerHeight }
+})
 
 onMounted(() => {
   addIframe()
@@ -41,7 +49,7 @@ function addIframe() {
   width: 100%;
   position: relative;
   overflow: hidden;
-  padding-bottom: 20px;
+  padding-bottom: var(--app-main-pb, 20px);
 }
 
 .fixed-header + .app-main {
@@ -49,7 +57,7 @@ function addIframe() {
   scrollbar-gutter: auto;
   height: calc(100vh - 50px);
   min-height: 0px;
-  padding-bottom: 20px;
+  padding-bottom: var(--app-main-pb, 20px);
 }
 
 .fixed-header + .app-main {
@@ -59,25 +67,25 @@ function addIframe() {
 .hasTagsView {
   .app-main {
     min-height: calc(100vh - 84px);
-    padding-bottom: 20px;
+    padding-bottom: var(--app-main-pb, 20px);
   }
 
   .fixed-header + .app-main {
     margin-top: 84px;
     height: calc(100vh - 84px);
     min-height: 0px;
-    padding-bottom: 20px;
+    padding-bottom: var(--app-main-pb, 20px);
   }
 }
 
 @media screen and (max-width: 991px) {
   .fixed-header + .app-main {
-    padding-bottom: max(60px, calc(constant(safe-area-inset-bottom) + 40px));
+    padding-bottom: max(var(--app-main-pb, 20px), 60px);
     overscroll-behavior-y: none;
   }
 
   .hasTagsView .fixed-header + .app-main {
-    padding-bottom: max(60px, calc(constant(safe-area-inset-bottom) + 40px));
+    padding-bottom: max(var(--app-main-pb, 20px), 60px);
     overscroll-behavior-y: none;
   }
 }
@@ -85,13 +93,13 @@ function addIframe() {
 @supports (-webkit-touch-callout: none) {
   @media screen and (max-width: 991px) {
     .fixed-header + .app-main {
-      padding-bottom: max(17px, calc(constant(safe-area-inset-bottom) + 10px));
+      padding-bottom: max(var(--app-main-pb, 20px), 17px);
       height: calc(100svh - 50px);
       height: calc(100dvh - 50px);
     }
 
     .hasTagsView .fixed-header + .app-main {
-      padding-bottom: max(17px, calc(constant(safe-area-inset-bottom) + 10px));
+      padding-bottom: max(var(--app-main-pb, 20px), 17px);
       height: calc(100svh - 84px);
       height: calc(100dvh - 84px);
     }

@@ -137,7 +137,7 @@ function triggerFileSelect() {
 
 <style scoped lang="less">
 .model-viewer-page {
-  height: calc(100vh - 84px - 48px); /* 减去 Navbar+TagsView + 底部版权 */
+  height: 100%; /* 高度由 AppMain 底部内边距统一预留页脚空间 */
   display: flex;
   flex-direction: column;
   overflow: hidden;

@@ -6,7 +6,6 @@
       <el-row :gutter="2" class="dashboard-row">
         <el-col :span="16" :xs="24" :sm="24" :md="16" class="left-col">
           <ProjectList />
-          <WebTable />
         </el-col>
 
         <el-col :span="8" :xs="24" :sm="24" :md="8" class="right-col">
@@ -22,7 +21,6 @@
 import { defineOptions } from 'vue';
 import WelcomeCard from './components/WelcomeCard.vue';
 import ProjectList from './components/ProjectList.vue';
-import WebTable from './components/WebTable.vue';
 import DailyQuote from './components/DailyQuote.vue';
 import CalendarCard from './components/CalendarCard.vue';
 
@@ -49,6 +47,6 @@ defineOptions({ name: "DashBoard" });
   .dashboard-row > .el-col { padding-left: 0 !important; padding-right: 0 !important; }
   .dashboard-row .right-col { order: 1; margin-bottom: 16px; }
   .dashboard-row .left-col { order: 2; }
-  .activeCard, .calendar-card { display: none !important; }
+  .calendar-card { display: none !important; }
 }
 </style>
