@@ -79,19 +79,6 @@ export const mockDeptList = [
   { deptId: 109, parentId: 101, deptName: '自动化测试组', orderNum: 1, status: '0', createTime: '2024-02-20 11:00:00', ancestors: '0,101', leader: '李四', phone: '13800138003', email: 'zdhceshi@ruoyi.com' },
 ]
 
-export const mockPostList = [
-  { postId: 1, postCode: 'CEO', postName: '首席执行官', postSort: 1, status: '0', createTime: '2024-01-01 00:00:00', remark: '公司最高管理者' },
-  { postId: 2, postCode: 'CTO', postName: '首席技术官', postSort: 2, status: '0', createTime: '2024-01-05 10:00:00', remark: '技术负责人' },
-  { postId: 3, postCode: 'DEV', postName: '开发工程师', postSort: 3, status: '0', createTime: '2024-01-10 09:00:00', remark: '软件开发' },
-  { postId: 4, postCode: 'TEST', postName: '测试工程师', postSort: 4, status: '0', createTime: '2024-01-15 14:00:00', remark: '软件测试' },
-  { postId: 5, postCode: 'OPS', postName: '运维工程师', postSort: 5, status: '0', createTime: '2024-01-20 11:00:00', remark: '系统运维' },
-  { postId: 6, postCode: 'PM', postName: '产品经理', postSort: 6, status: '0', createTime: '2024-01-25 08:30:00', remark: '产品设计' },
-  { postId: 7, postCode: 'UI', postName: 'UI设计师', postSort: 7, status: '0', createTime: '2024-02-01 10:00:00', remark: '界面设计' },
-  { postId: 8, postCode: 'HR', postName: '人事专员', postSort: 8, status: '0', createTime: '2024-02-05 09:00:00', remark: '人事管理' },
-  { postId: 9, postCode: 'FIN', postName: '财务专员', postSort: 9, status: '0', createTime: '2024-02-10 14:00:00', remark: '财务管理' },
-  { postId: 10, postCode: 'MKT', postName: '市场专员', postSort: 10, status: '0', createTime: '2024-02-15 11:00:00', remark: '市场推广' },
-]
-
 export const mockConfigList = [
   { configId: 1, configName: '系统名称', configKey: 'sys.name', configValue: '地球online', configType: 'Y', remark: '系统显示名称', createTime: '2024-01-01 00:00:00' },
   { configId: 2, configName: '系统版本', configKey: 'sys.version', configValue: 'v1.9.0', configType: 'Y', remark: '当前系统版本', createTime: '2024-01-05 10:00:00' },
@@ -116,12 +103,6 @@ export const mockNoticeList = [
   { noticeId: 8, noticeTitle: '团建活动通知', noticeType: '2', status: '0', createBy: 'admin', createTime: '2024-11-01 13:00:00', noticeContent: '<p>公司将于11月15日组织团建活动，请报名参加。</p>' },
   { noticeId: 9, noticeTitle: '服务器维护公告', noticeType: '1', status: '0', createBy: 'admin', createTime: '2024-12-05 16:00:00', noticeContent: '<p>服务器将于今晚22:00进行例行维护，预计2小时。</p>' },
   { noticeId: 10, noticeTitle: '春节放假通知', noticeType: '2', status: '0', createBy: 'admin', createTime: '2024-12-25 10:00:00', noticeContent: '<p>2025年春节放假时间为1月28日至2月4日，共8天。</p>' },
-]
-
-export const mockOperlogList = [
-  { operId: 4, title: '岗位管理', businessType: 1, method: 'com.ruoyi.system.controller.SysPostController.add()', requestMethod: 'POST', operName: 'admin', operUrl: '/system/post', operIp: '192.168.1.101', operLocation: '内网IP', operParam: '{"postName":"新岗位"}', jsonResult: '{"code":200}', status: 0, costTime: 60, operTime: '2024-12-01 14:20:00', errorMsg: '' },
-  { operId: 6, title: '通知公告', businessType: 1, method: 'com.ruoyi.system.controller.SysNoticeController.add()', requestMethod: 'POST', operName: 'admin', operUrl: '/system/notice', operIp: '192.168.1.102', operLocation: '内网IP', operParam: '{"noticeTitle":"新公告"}', jsonResult: '{"code":200}', status: 0, costTime: 50, operTime: '2024-12-02 10:30:00', errorMsg: '' },
-  { operId: 10, title: '登录认证', businessType: 4, method: 'com.ruoyi.system.controller.SysLoginController.login()', requestMethod: 'POST', operName: 'zhangsan', operUrl: '/login', operIp: '192.168.1.104', operLocation: '内网IP', operParam: '{"username":"zhangsan"}', jsonResult: '{"code":200}', status: 0, costTime: 200, operTime: '2024-12-03 15:00:00', errorMsg: '' },
 ]
 
 export const mockLogininforList = [
@@ -149,61 +130,6 @@ export const mockOnlineList = [
   { tokenId: 'vwx901yzu234', userName: 'wushi', deptName: '产品部门', ipaddr: '192.168.1.108', loginLocation: '西安', os: 'Windows 11', browser: 'Chrome 120', loginTime: '2024-12-02 11:00:00' },
   { tokenId: 'abc567def890', userName: 'zhengyi', deptName: '研发部门', ipaddr: '192.168.1.109', loginLocation: '重庆', os: 'macOS 14', browser: 'Safari 17', loginTime: '2024-12-02 14:00:00' },
 ]
-
-export const mockJobList = [
-  { jobId: 1, jobName: '系统数据备份', jobGroup: 'DEFAULT', invokeTarget: 'ryTask.ryNoParams', cronExpression: '0 0 2 * * ?', nextValidTime: '2024-12-02 02:00:00', misfirePolicy: '1', concurrent: '1', status: '0', createTime: '2024-01-01 00:00:00', remark: '每天凌晨2点备份数据库' },
-  { jobId: 2, jobName: '清理临时文件', jobGroup: 'DEFAULT', invokeTarget: 'ryTask.cleanTemp', cronExpression: '0 0 3 * * ?', nextValidTime: '2024-12-02 03:00:00', misfirePolicy: '1', concurrent: '1', status: '0', createTime: '2024-01-05 10:00:00', remark: '每天凌晨3点清理临时文件' },
-  { jobId: 3, jobName: '发送日报邮件', jobGroup: 'DEFAULT', invokeTarget: 'ryTask.sendDailyReport', cronExpression: '0 30 8 * * ?', nextValidTime: '2024-12-02 08:30:00', misfirePolicy: '1', concurrent: '1', status: '0', createTime: '2024-01-10 09:00:00', remark: '每天早上8:30发送日报' },
-  { jobId: 4, jobName: '同步用户数据', jobGroup: 'DEFAULT', invokeTarget: 'ryTask.syncUser', cronExpression: '0 0/30 * * * ?', nextValidTime: '2024-12-01 15:30:00', misfirePolicy: '1', concurrent: '1', status: '0', createTime: '2024-01-15 14:00:00', remark: '每30分钟同步一次用户数据' },
-  { jobId: 5, jobName: '检查服务健康', jobGroup: 'DEFAULT', invokeTarget: 'ryTask.healthCheck', cronExpression: '0 0/5 * * * ?', nextValidTime: '2024-12-01 15:05:00', misfirePolicy: '1', concurrent: '1', status: '0', createTime: '2024-01-20 11:00:00', remark: '每5分钟检查服务健康状态' },
-  { jobId: 6, jobName: '生成统计报表', jobGroup: 'DEFAULT', invokeTarget: 'ryTask.genReport', cronExpression: '0 0 1 * * ?', nextValidTime: '2024-12-02 01:00:00', misfirePolicy: '1', concurrent: '1', status: '1', createTime: '2024-01-25 08:30:00', remark: '每天凌晨1点生成统计报表' },
-  { jobId: 7, jobName: '清理日志文件', jobGroup: 'DEFAULT', invokeTarget: 'ryTask.cleanLog', cronExpression: '0 0 4 * * ?', nextValidTime: '2024-12-02 04:00:00', misfirePolicy: '1', concurrent: '1', status: '0', createTime: '2024-02-01 10:00:00', remark: '每天凌晨4点清理过期日志' },
-  { jobId: 8, jobName: '更新缓存数据', jobGroup: 'DEFAULT', invokeTarget: 'ryTask.updateCache', cronExpression: '0 0/10 * * * ?', nextValidTime: '2024-12-01 15:10:00', misfirePolicy: '1', concurrent: '1', status: '0', createTime: '2024-02-05 09:00:00', remark: '每10分钟更新缓存数据' },
-  { jobId: 9, jobName: '备份配置文件', jobGroup: 'DEFAULT', invokeTarget: 'ryTask.backupConfig', cronExpression: '0 0 5 * * ?', nextValidTime: '2024-12-02 05:00:00', misfirePolicy: '1', concurrent: '1', status: '0', createTime: '2024-02-10 14:00:00', remark: '每天凌晨5点备份配置文件' },
-  { jobId: 10, jobName: '发送周报邮件', jobGroup: 'DEFAULT', invokeTarget: 'ryTask.sendWeeklyReport', cronExpression: '0 0 9 ? * MON', nextValidTime: '2024-12-02 09:00:00', misfirePolicy: '1', concurrent: '1', status: '0', createTime: '2024-02-15 11:00:00', remark: '每周一早上9点发送周报' },
-]
-
-export const mockServerData = {
-  cpu: { cpuNum: 8, used: 15.2, sys: 8.5, free: 76.3 },
-  mem: { total: 32, used: 12.8, free: 19.2, usage: 40.0 },
-  py: { name: 'Python', version: '3.11.6', home: '/usr/local/python3', startTime: '2024-11-01 08:00:00', runTime: '30天12小时', total: 16, used: 6.4, free: 9.6, usage: 40.0 },
-  sys: { computerName: 'ruoyi-server', osName: 'CentOS Linux 7', osArch: 'x86_64', computerIp: '192.168.1.10', userDir: '/home/ruoyi' },
-  sysFiles: [
-    { dirName: '/', sysTypeName: 'ext4', typeName: '本地磁盘', total: '500G', free: '320G', used: '180G', usage: 36.0 },
-    { dirName: '/data', sysTypeName: 'ext4', typeName: '本地磁盘', total: '1T', free: '750G', used: '250G', usage: 25.0 },
-    { dirName: '/backup', sysTypeName: 'ext4', typeName: '本地磁盘', total: '2T', free: '1.8T', used: '200G', usage: 10.0 },
-  ]
-}
-
-export const mockCacheData = {
-  info: {
-    redis_version: '7.2.4',
-    redis_mode: 'standalone',
-    tcp_port: 6379,
-    connected_clients: 42,
-    uptime_in_days: 120,
-    used_memory_human: '256.5M',
-    maxmemory_human: '1G',
-    used_cpu_user_children: 15.2,
-    instantaneous_input_kbps: 125.5,
-    instantaneous_output_kbps: 98.3,
-    rdb_last_bgsave_status: 'ok',
-    aof_enabled: 'yes',
-  },
-  dbSize: 12580,
-  commandStats: [
-    { name: 'get', value: 852340 },
-    { name: 'set', value: 425120 },
-    { name: 'del', value: 12500 },
-    { name: 'hget', value: 320450 },
-    { name: 'hset', value: 180230 },
-    { name: 'lpush', value: 45000 },
-    { name: 'lrange', value: 32000 },
-    { name: 'zadd', value: 15000 },
-    { name: 'zrange', value: 22000 },
-    { name: 'expire', value: 8500 },
-  ]
-}
 
 export const mockTransportCryptoData = {
   transportCryptoEnabled: true,
@@ -248,19 +174,6 @@ export const mockTransportCryptoData = {
     { reason: 'decryption_error', count: 55 },
   ]
 }
-
-export const mockModelList = [
-  { modelId: 1, modelCode: 'gpt-4o', modelName: 'GPT-4o', provider: 'OpenAI', supportReasoning: 'Y', supportImages: 'Y', status: '0', createTime: '2024-05-01 10:00:00', modelSort: 1, apiKey: 'sk-****1234', temperature: 0.7, maxTokens: 4096, contextLength: 128000 },
-  { modelId: 2, modelCode: 'gpt-4o-mini', modelName: 'GPT-4o Mini', provider: 'OpenAI', supportReasoning: 'Y', supportImages: 'Y', status: '0', createTime: '2024-07-01 09:00:00', modelSort: 2, apiKey: 'sk-****5678', temperature: 0.7, maxTokens: 4096, contextLength: 128000 },
-  { modelId: 3, modelCode: 'claude-3-5-sonnet', modelName: 'Claude 3.5 Sonnet', provider: 'Anthropic', supportReasoning: 'Y', supportImages: 'Y', status: '0', createTime: '2024-06-15 14:00:00', modelSort: 3, apiKey: 'sk-****9012', temperature: 0.7, maxTokens: 8192, contextLength: 200000 },
-  { modelId: 4, modelCode: 'claude-3-haiku', modelName: 'Claude 3 Haiku', provider: 'Anthropic', supportReasoning: 'Y', supportImages: 'N', status: '0', createTime: '2024-03-10 11:00:00', modelSort: 4, apiKey: 'sk-****3456', temperature: 0.7, maxTokens: 4096, contextLength: 200000 },
-  { modelId: 5, modelCode: 'gemini-1-5-pro', modelName: 'Gemini 1.5 Pro', provider: 'Google', supportReasoning: 'Y', supportImages: 'Y', status: '0', createTime: '2024-05-20 08:30:00', modelSort: 5, apiKey: 'AI****7890', temperature: 0.7, maxTokens: 8192, contextLength: 1000000 },
-  { modelId: 6, modelCode: 'qwen-max', modelName: '通义千问-Max', provider: 'Alibaba', supportReasoning: 'Y', supportImages: 'Y', status: '0', createTime: '2024-04-01 10:00:00', modelSort: 6, apiKey: 'sk-****abcd', temperature: 0.7, maxTokens: 4096, contextLength: 32000 },
-  { modelId: 7, modelCode: 'qwen-turbo', modelName: '通义千问-Turbo', provider: 'Alibaba', supportReasoning: 'Y', supportImages: 'N', status: '0', createTime: '2024-04-15 14:00:00', modelSort: 7, apiKey: 'sk-****efgh', temperature: 0.7, maxTokens: 4096, contextLength: 32000 },
-  { modelId: 8, modelCode: 'deepseek-chat', modelName: 'DeepSeek-V3', provider: 'DeepSeek', supportReasoning: 'Y', supportImages: 'N', status: '0', createTime: '2024-09-01 09:00:00', modelSort: 8, apiKey: 'sk-****ijkl', temperature: 0.7, maxTokens: 4096, contextLength: 64000 },
-  { modelId: 9, modelCode: 'deepseek-reasoner', modelName: 'DeepSeek-R1', provider: 'DeepSeek', supportReasoning: 'Y', supportImages: 'N', status: '0', createTime: '2024-10-01 11:00:00', modelSort: 9, apiKey: 'sk-****mnop', temperature: 0.7, maxTokens: 4096, contextLength: 64000 },
-  { modelId: 10, modelCode: 'llama-3-1-70b', modelName: 'Llama 3.1 70B', provider: 'Meta', supportReasoning: 'Y', supportImages: 'N', status: '1', createTime: '2024-07-20 15:00:00', modelSort: 10, apiKey: 'sk-****qrst', temperature: 0.7, maxTokens: 4096, contextLength: 128000 },
-]
 
 export const mockDictTypeList = [
   { dictId: 1, dictName: '用户性别', dictType: 'sys_user_sex', status: '0', createTime: '2024-01-01 00:00:00', remark: '用户性别列表' },

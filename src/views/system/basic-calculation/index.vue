@@ -130,8 +130,8 @@ function selectType(moduleId, typeId) {
   align-items: center;
   justify-content: space-between;
   padding: 3px 6px;
-  background-color: #ffffff;
-  border: 1px solid #e8e8e8;
+  background-color: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 4px;
   margin-bottom: 2px;
   flex-shrink: 0;
@@ -153,7 +153,7 @@ function selectType(moduleId, typeId) {
 
 .header-subtitle {
   font-size: 14px;
-  color: #000000;
+  color: var(--el-text-color-primary);
 }
 
 .header-info {
@@ -168,11 +168,11 @@ function selectType(moduleId, typeId) {
   align-items: center;
   gap: 2px;
   font-size: 13px;
-  color: #000000;
+  color: var(--el-text-color-primary);
 }
 
 .info-item label {
-  color: #000000;
+  color: var(--el-text-color-primary);
   white-space: nowrap;
 }
 
@@ -198,8 +198,8 @@ function selectType(moduleId, typeId) {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-color: #e8e8e8;
-  background-color: #ffffff;
+  border-color: var(--el-border-color-light);
+  background-color: var(--el-bg-color);
   box-shadow: none;
 }
 
@@ -209,15 +209,15 @@ function selectType(moduleId, typeId) {
   display: flex;
   flex-direction: column;
   gap: 2px !important;
-  background-color: #ffffff;
+  background-color: var(--el-bg-color);
   padding: 4px 4px 0px 4px !important;
   contain: layout;
 }
 
 .calc-card :deep(.el-card__header) {
   padding: 12px 16px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e8e8e8;
+  background-color: var(--el-bg-color);
+  border-bottom: 1px solid var(--el-border-color-light);
   line-height: 20px;
   min-height: 44px;
   box-sizing: border-box;
@@ -253,16 +253,16 @@ function selectType(moduleId, typeId) {
 }
 
 .calc-collapse :deep(.el-collapse-item__header) {
-  color: #000000 !important;
+  color: var(--el-text-color-primary) !important;
   font-size: 12px !important;
   font-weight: 600 !important;
   padding: 0 6px !important;
   height: 40px !important;
   min-height: 40px !important;
   line-height: 40px !important;
-  background: #ffffff !important;
-  border-bottom: 1px solid #e8e8e8 !important;
-  color: #000000 !important;
+  background: var(--el-bg-color) !important;
+  border-bottom: 1px solid var(--el-border-color-light) !important;
+  color: var(--el-text-color-primary) !important;
   display: flex;
   align-items: center;
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
@@ -295,7 +295,7 @@ function selectType(moduleId, typeId) {
 }
 
 .type-item:hover {
-  background-color: #ffffff;
+  background-color: var(--el-bg-color);
 }
 
 .type-item.active {
@@ -311,8 +311,7 @@ function selectType(moduleId, typeId) {
 }
 
 .type-item.active .type-name {
-  color: #000000;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .module-panel {

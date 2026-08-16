@@ -44,75 +44,16 @@ const MOCK_ROUTERS = [
     ]
   },
   {
-    "name": "Ai",
-    "path": "/ai",
-    "hidden": false,
-    "redirect": "noRedirect",
-    "component": "Layout",
-    "alwaysShow": true,
-    "meta": { "title": "AI 管理", "icon": "bug", "noCache": false },
-    "children": [
-      { "name": "Model", "path": "model", "hidden": false, "component": "ai/model/index", "meta": { "title": "模型管理", "icon": "form", "noCache": false } },
-      { "name": "Chat", "path": "chat", "hidden": false, "component": "ai/chat/index", "meta": { "title": "AI 对话", "icon": "wechat", "noCache": false } }
-    ]
-  },
-  {
-    "name": "Log",
-    "path": "/log",
-    "hidden": false,
-    "redirect": "noRedirect",
-    "component": "Layout",
-    "alwaysShow": true,
-    "meta": { "title": "日志管理", "icon": "log", "noCache": false },
-    "children": [
-      { "name": "Druid", "path": "druid", "hidden": false, "component": "monitor/druid/index", "meta": { "title": "数据监控", "icon": "druid", "noCache": false } },
-      { "name": "TransportCrypto", "path": "transportCrypto", "hidden": false, "component": "monitor/transportCrypto/index", "meta": { "title": "传输加密", "icon": "chart", "noCache": false } },
-      { "name": "Operlog", "path": "operlog", "hidden": false, "component": "monitor/operlog/index", "meta": { "title": "操作日志", "icon": "form", "noCache": false } },
-      { "name": "Logininfor", "path": "logininfor", "hidden": false, "component": "monitor/logininfor/index", "meta": { "title": "登录日志", "icon": "logininfor", "noCache": false } }
-    ]
-  },
-  {
-    "name": "Other",
-    "path": "/other",
-    "hidden": false,
-    "redirect": "noRedirect",
-    "component": "Layout",
-    "alwaysShow": true,
-    "meta": { "title": "其它", "icon": "tool", "noCache": false },
-    "children": [
-      { "name": "Post", "path": "post", "hidden": false, "component": "system/post/index", "meta": { "title": "岗位管理", "icon": "post", "noCache": false } },
-      { "name": "Notice", "path": "notice", "hidden": false, "component": "system/notice/index", "meta": { "title": "通知公告", "icon": "message", "noCache": false } },
-      { "name": "Online", "path": "online", "hidden": false, "component": "monitor/online/index", "meta": { "title": "在线用户", "icon": "online", "noCache": false } },
-      { "name": "Server", "path": "server", "hidden": false, "component": "monitor/server/index", "meta": { "title": "服务监控", "icon": "server", "noCache": false } },
-      { "name": "Cache", "path": "cache", "hidden": false, "component": "monitor/cache/index", "meta": { "title": "缓存监控", "icon": "redis", "noCache": false } },
-      { "name": "CacheList", "path": "cacheList", "hidden": false, "component": "monitor/cache/list", "meta": { "title": "缓存列表", "icon": "redis-list", "noCache": false } }
-    ]
-  },
-  {
-    "name": "About",
-    "path": "/about",
+    "name": "Notice",
+    "path": "/notice",
     "hidden": false,
     "component": "Layout",
-    "meta": { "title": "关于项目", "icon": "dict", "noCache": false },
+    "meta": { "title": "通知公告", "icon": "message", "noCache": false },
     "children": [
-      { "name": "AboutPage", "path": "index", "hidden": false, "component": "about/index", "meta": { "title": "关于项目", "icon": "dict", "noCache": false } }
+      { "name": "NoticePage", "path": "index", "hidden": false, "component": "system/notice/index", "meta": { "title": "通知公告", "icon": "message", "noCache": false } }
     ]
   }
 ]
-
-// 根据环境变量过滤菜单
-function filterMenuByEnv(routes) {
-  const showAi = import.meta.env.VITE_SHOW_AI_MENU !== 'false'
-  const showLog = import.meta.env.VITE_SHOW_LOG_MENU !== 'false'
-  const showOther = import.meta.env.VITE_SHOW_OTHER_MENU !== 'false'
-
-  return routes.filter(route => {
-    if (route.name === 'Ai' && !showAi) return false
-    if (route.name === 'Log' && !showLog) return false
-    if (route.name === 'Other' && !showOther) return false
-    return true
-  })
-}
 
 const usePermissionStore = defineStore(
   'permission',
@@ -140,11 +81,10 @@ const usePermissionStore = defineStore(
       },
       generateRoutes(roles) {
         return new Promise(resolve => {
-          const filteredRouters = filterMenuByEnv(MOCK_ROUTERS)
-          const resData = JSON.parse(JSON.stringify(filteredRouters))
-          const sdata = JSON.parse(JSON.stringify(filteredRouters))
-          const rdata = JSON.parse(JSON.stringify(filteredRouters))
-          const defaultData = JSON.parse(JSON.stringify(filteredRouters))
+          const resData = JSON.parse(JSON.stringify(MOCK_ROUTERS))
+          const sdata = JSON.parse(JSON.stringify(MOCK_ROUTERS))
+          const rdata = JSON.parse(JSON.stringify(MOCK_ROUTERS))
+          const defaultData = JSON.parse(JSON.stringify(MOCK_ROUTERS))
           const sidebarRoutes = filterAsyncRouter(sdata)
           const rewriteRoutes = filterAsyncRouter(rdata, false, true)
           const defaultRoutes = filterAsyncRouter(defaultData)

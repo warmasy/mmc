@@ -38,7 +38,7 @@ function handleWheel(e) {
   flex-wrap: wrap;
   max-height: 80px;
   overflow-y: auto;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 2px;
   margin-bottom: 2px;
 }
@@ -47,23 +47,24 @@ function handleWheel(e) {
   padding: 1px 2px;
   font-size: 12px;
   font-weight: 500;
-  color: #000000;
+  color: var(--el-text-color-primary);
   cursor: pointer;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--el-border-color-light);
   border-radius: 4px;
   transition: all 0.2s;
   white-space: nowrap;
 }
 
 .sub-type-tab:hover {
-  border-color: #000000;
-  color: #000000;
+  border-color: var(--el-color-primary);
+  color: var(--el-color-primary);
 }
 
 .sub-type-tab.active {
-  background-color: #ffffff;
-  border-color: #000000;
-  color: #000000;
+  font-weight: 700;
+  border-color: var(--el-color-primary, #409eff);
+  color: var(--el-color-primary, #409eff);
+  background-color: transparent;
 }
 
 @media screen and (max-width: 768px) {

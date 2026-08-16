@@ -179,23 +179,23 @@ aside {
 }
 
 
-/* 全局覆盖 Element Plus 灰色文字为黑色 */
+/* 全局覆盖 Element Plus 灰色文字为正文色（自动跟随亮/暗主题） */
 .el-table,
 .el-table .cell,
 .el-table th.el-table__cell,
 .el-table td.el-table__cell {
-  color: #000000 !important;
+  color: var(--el-text-color-primary) !important;
 }
 
 .el-input.is-disabled .el-input__inner,
 .el-input__inner[disabled],
 .el-input__inner[readonly] {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: var(--el-text-color-primary) !important;
+  -webkit-text-fill-color: var(--el-text-color-primary) !important;
 }
 
 .el-select .el-input__inner,
 .el-select .el-select__selected-item {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: var(--el-text-color-primary) !important;
+  -webkit-text-fill-color: var(--el-text-color-primary) !important;
 }

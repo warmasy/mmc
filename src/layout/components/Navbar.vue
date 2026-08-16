@@ -24,8 +24,25 @@
             <svg-icon v-if="!settingsStore.isDark" icon-class="moon" />
           </div>
         </el-tooltip>
-        <el-tooltip content="布局大小" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect" />
+        <el-tooltip content="数据中心" effect="dark" placement="bottom">
+          <el-dropdown trigger="click" @command="handleDataCommand" class="right-menu-item hover-effect">
+            <div class="data-center-trigger">
+              <svg-icon icon-class="chart" />
+            </div>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <router-link to="/online/index">
+                  <el-dropdown-item>在线用户</el-dropdown-item>
+                </router-link>
+                <router-link to="/logininfor/index">
+                  <el-dropdown-item>登录日志</el-dropdown-item>
+                </router-link>
+                <router-link to="/website-data/index">
+                  <el-dropdown-item>网站数据</el-dropdown-item>
+                </router-link>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </el-tooltip>
       </template>
 
@@ -56,7 +73,6 @@ import TopBar from './TopBar'
 import Logo from './Sidebar/Logo'
 import Hamburger from '@/components/Hamburger'
 import Screenfull from '@/components/Screenfull'
-import SizeSelect from '@/components/SizeSelect'
 import HeaderSearch from '@/components/HeaderSearch'
 import RuoYiGit from '@/components/RuoYi/Git'
 import RuoYiDoc from '@/components/RuoYi/Doc'
@@ -80,6 +96,10 @@ function handleCommand(command) {
     default:
       break
   }
+}
+
+function handleDataCommand() {
+  // 数据中心下拉项使用 router-link 跳转，此处无需处理
 }
 
 const emits = defineEmits(['setLayout'])
@@ -209,6 +229,12 @@ async function toggleTheme(event) {
             transform: scale(1.15);
           }
         }
+      }
+
+      .data-center-trigger {
+        display: flex;
+        align-items: center;
+        height: 100%;
       }
     }
 

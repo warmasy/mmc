@@ -62,16 +62,44 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/about',
+    path: '/website-data',
     component: Layout,
     hidden: true,
     redirect: 'noredirect',
     children: [
       {
         path: 'index',
-        component: () => import('@/views/about/index'),
-        name: 'AboutPage',
-        meta: { title: '关于项目', icon: 'dict' }
+        component: () => import('@/views/monitor/transportCrypto/index'),
+        name: 'WebsiteData',
+        meta: { title: '网站数据', icon: 'chart' }
+      }
+    ]
+  },
+  {
+    path: '/online',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/monitor/online/index'),
+        name: 'Online',
+        meta: { title: '在线用户', icon: 'online' }
+      }
+    ]
+  },
+  {
+    path: '/logininfor',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/monitor/logininfor/index'),
+        name: 'Logininfor',
+        meta: { title: '登录日志', icon: 'logininfor' }
       }
     ]
   }

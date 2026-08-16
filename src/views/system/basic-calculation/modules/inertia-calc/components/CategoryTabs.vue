@@ -35,7 +35,7 @@ defineEmits(['update:modelValue'])
   padding: 6px 14px;
   font-size: 13px;
   font-weight: 500;
-  color: #000000;
+  color: var(--el-text-color-primary);
   cursor: pointer;
   border: 1px solid var(--el-border-color-light);
   border-radius: 4px;
@@ -49,9 +49,10 @@ defineEmits(['update:modelValue'])
 }
 
 .category-tab.active {
-  background-color: var(--el-color-primary-light-9);
-  border-color: var(--el-color-primary);
-  color: var(--el-color-primary);
+  font-weight: 700;
+  border-color: var(--el-color-primary, #409eff);
+  color: var(--el-color-primary, #409eff);
+  background-color: transparent;
 }
 
 @media screen and (max-width: 768px) {

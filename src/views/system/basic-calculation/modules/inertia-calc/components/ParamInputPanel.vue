@@ -50,11 +50,11 @@ defineEmits(['change', 'update:modelValue', 'calculate'])
 
 <style scoped lang="less">
 .param-fieldset {
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--el-border-color-light);
   border-radius: 4px;
   padding: 2px 4px 0 4px;
   margin: 0;
-  background-color: #ffffff;
+  background-color: var(--el-bg-color);
   flex-shrink: 0;
   position: relative;
 }
@@ -70,8 +70,8 @@ defineEmits(['change', 'update:modelValue', 'calculate'])
   display: inline-flex;
   align-items: center;
   padding: 1px 2px;
-  background-color: #ffffff;
-  border: 1px solid #e8e8e8;
+  background-color: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 4px;
   font-size: 13px;
   font-weight: 600;
@@ -89,9 +89,9 @@ defineEmits(['change', 'update:modelValue', 'calculate'])
   padding: 1px 3px;
   font-size: 12px;
   font-weight: 500;
-  color: #000000;
-  background-color: #ffffff;
-  border: 1px solid #000000;
+  color: var(--el-text-color-primary);
+  background-color: var(--el-bg-color);
+  border: 1px solid var(--el-text-color-primary);
   border-radius: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -104,7 +104,7 @@ defineEmits(['change', 'update:modelValue', 'calculate'])
   display: inline-block;
   width: 6px;
   height: 6px;
-  background-color: #000000;
+  background-color: var(--el-text-color-primary);
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -124,14 +124,14 @@ defineEmits(['change', 'update:modelValue', 'calculate'])
 
 .param-label {
   font-size: 13px;
-  color: #000000;
+  color: var(--el-text-color-primary);
   font-weight: 500;
   white-space: nowrap;
 }
 
 .param-unit {
   font-size: 12px;
-  color: #000000;
+  color: var(--el-text-color-primary);
   white-space: nowrap;
 }
 

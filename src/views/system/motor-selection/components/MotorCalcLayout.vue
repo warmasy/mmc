@@ -95,8 +95,8 @@ defineEmits(['calculate', 'reset', 'help'])
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-color: #e8e8e8;
-  background-color: #ffffff;
+  border-color: var(--el-border-color-light);
+  background-color: var(--el-bg-color);
   box-shadow: none;
 }
 
@@ -106,14 +106,14 @@ defineEmits(['calculate', 'reset', 'help'])
   display: flex;
   flex-direction: column;
   gap: 0px !important;
-  background-color: #ffffff;
+  background-color: var(--el-bg-color);
   padding: 6px 6px 0px 6px !important;
 }
 
 .calc-card :deep(.el-card__header) {
   padding: 6px 10px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e8e8e8;
+  background-color: var(--el-bg-color);
+  border-bottom: 1px solid var(--el-border-color-light);
 }
 
 .card-header {

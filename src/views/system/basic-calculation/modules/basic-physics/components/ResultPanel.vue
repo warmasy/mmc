@@ -18,8 +18,8 @@ defineProps({
 
 <style scoped lang="less">
 .result-section {
-  background-color: #ffffff;
-  border: 1px solid #e8e8e8;
+  background-color: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 4px;
   padding: 2px;
   flex-shrink: 0;
@@ -31,7 +31,7 @@ defineProps({
   color: var(--el-text-color-primary);
   margin-bottom: 2px;
   padding-bottom: 2px;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--el-border-color-light);
 }
 
 .result-list {
@@ -45,7 +45,7 @@ defineProps({
   align-items: center;
   justify-content: space-between;
   padding: 1px 2px;
-  background-color: #ffffff;
+  background-color: var(--el-bg-color);
   border-radius: 4px;
 }
 
@@ -58,7 +58,7 @@ defineProps({
 .result-value {
   font-size: 16px;
   font-weight: 600;
-  color: #000000;
+  color: var(--el-text-color-primary);
   font-family: 'Courier New', monospace;
 }
 </style>

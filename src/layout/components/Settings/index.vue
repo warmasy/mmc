@@ -98,6 +98,15 @@
       </span>
     </div>
 
+    <div class="drawer-item">
+      <span>布局大小</span>
+      <span class="comp-style">
+        <el-radio-group v-model="size" size="small" @change="handleSetSize">
+          <el-radio-button v-for="item in sizeOptions" :key="item.value" :label="item.value">{{ item.label }}</el-radio-button>
+        </el-radio-group>
+      </span>
+    </div>
+
     <el-divider />
 
     <el-button type="primary" plain icon="DocumentAdd" @click="saveSetting">保存配置</el-button>
@@ -120,6 +129,12 @@ const showSettings = ref(false);
 const navType = ref(settingsStore.navType)
 const theme = ref(settingsStore.theme);
 const sideTheme = ref(settingsStore.sideTheme);
+const size = ref(appStore.size);
+const sizeOptions = ref([
+  { label: "较大", value: "large" },
+  { label: "默认", value: "default" },
+  { label: "稍小", value: "small" },
+]);
 const storeSettings = computed(() => settingsStore);
 const predefineColors = ref(["#409EFF", "#ff4500", "#ff8c00", "#ffd700", "#90ee90", "#00ced1", "#1e90ff", "#c71585"]);
 
@@ -141,6 +156,12 @@ function handleTheme(val) {
 function handleNavType(val) {
   settingsStore.navType = val
   navType.value = val
+}
+
+function handleSetSize(val) {
+  appStore.setSize(val);
+  proxy.$modal.loading("正在设置布局大小，请稍候...");
+  setTimeout("window.location.reload()", 1000);
 }
 
 /** 菜单导航设置 */

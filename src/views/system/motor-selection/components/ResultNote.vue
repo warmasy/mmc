@@ -24,7 +24,7 @@ const props = defineProps({
 .note-box {
   padding: 0 2px;
   background: var(--el-fill-color-light);
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--el-border-color-light);
   border-radius: 4px;
   min-height: 32px;
   height: 32px;

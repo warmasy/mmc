@@ -114,57 +114,6 @@
         </tbody>
       </table>
     </div>
-
-    <!-- 全部单位对照表 -->
-    <div class="convert-table-section">
-      <div class="section-header">
-        <span class="section-title">全部单位对照表</span>
-        <div class="base-unit-selector">
-          <span class="base-unit-label">基础单位：</span>
-          <el-dropdown trigger="click" @command="(cmd) => selectedBaseUnit = cmd" :teleported="false">
-            <el-button size="small" class="base-unit-btn" @wheel.prevent="handleWheelBaseUnit">
-              {{ currentType.units[selectedBaseUnit]?.symbol }}
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item
-                  v-for="(unit, key) in currentType.units"
-                  :key="key"
-                  :command="key"
-                  :class="{ 'is-active': key === selectedBaseUnit }"
-                >
-                  {{ unit.symbol }}({{ unit.name }})
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-      </div>
-      <div class="convert-table">
-        <div class="table-header">
-          <span class="col-unit-name">单位名称</span>
-          <span class="col-symbol">符号</span>
-          <span class="col-formula">换算关系</span>
-          <span class="col-base-formula">基本换算</span>
-        </div>
-        <div class="table-body">
-          <div
-            v-for="(unit, key) in currentType.units"
-            :key="key"
-            :class="['table-row', { highlight: key === sharedSourceUnit }]"
-          >
-            <span class="col-unit-name">{{ unit.name }}</span>
-            <span class="col-symbol">
-              <span :class="['symbol-text', { 'base-active': key === selectedBaseUnit }]">
-                {{ unit.symbol }}
-              </span>
-            </span>
-            <span class="col-formula">{{ getInputConversionFormula(key) }}</span>
-            <span class="col-base-formula">{{ getConversionFormula(key) }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -185,7 +134,6 @@ const currentType = computed(() => getConversionTypeById(currentTypeId.value))
 
 const sharedInputValue = ref(1)
 const sharedSourceUnit = ref('')
-const selectedBaseUnit = ref('')
 
 const rows = ref([])
 let rowIdCounter = 0
@@ -224,41 +172,12 @@ function calculateAll() {
   rows.value.forEach((_, index) => calculateRow(index))
 }
 
-function getConversionFormula(unitKey) {
-  if (!currentType.value || !currentType.value.units[unitKey] || !currentType.value.units[selectedBaseUnit.value]) return ''
-  const baseUnit = currentType.value.units[selectedBaseUnit.value]
-  const targetUnit = currentType.value.units[unitKey]
-  const ratio = baseUnit.factor / targetUnit.factor
-  return `1 ${baseUnit.symbol} = ${formatResult(ratio)} ${targetUnit.symbol}`
-}
-
-function getInputConversionFormula(unitKey) {
-  if (!currentType.value || !currentType.value.units[unitKey]) return ''
-  const refValue = parseFloat(sharedInputValue.value)
-  if (isNaN(refValue)) return ''
-  const targetUnit = currentType.value.units[unitKey]
-  const baseUnitKey = selectedBaseUnit.value
-  const baseUnit = currentType.value.units[baseUnitKey]
-  if (!baseUnit) return ''
-  const ratio = baseUnit.factor / targetUnit.factor
-  const result = refValue * ratio
-  return `${formatResult(refValue)} ${baseUnit.symbol} = ${formatResult(result)} ${targetUnit.symbol}`
-}
-
 function handleWheelSource(e) {
   const keys = Object.keys(currentType.value.units)
   const idx = keys.indexOf(sharedSourceUnit.value)
   if (idx === -1) return
   const newIdx = e.deltaY > 0 ? (idx + 1) % keys.length : (idx - 1 + keys.length) % keys.length
   sharedSourceUnit.value = keys[newIdx]
-}
-
-function handleWheelBaseUnit(e) {
-  const keys = Object.keys(currentType.value.units)
-  const idx = keys.indexOf(selectedBaseUnit.value)
-  if (idx === -1) return
-  const newIdx = e.deltaY > 0 ? (idx + 1) % keys.length : (idx - 1 + keys.length) % keys.length
-  selectedBaseUnit.value = keys[newIdx]
 }
 
 watch(() => props.activeTypeId, (id) => {
@@ -271,7 +190,6 @@ watch(() => currentType.value, (type) => {
   if (!type || !type.units) return
   const unitKeys = Object.keys(type.units)
   sharedSourceUnit.value = type.sourceUnit || unitKeys[0]
-  selectedBaseUnit.value = type.defaultBaseUnit || unitKeys.find(key => type.units[key].isDatum) || unitKeys[0]
   sharedInputValue.value = 1
   initRows()
   calculateAll()
@@ -298,7 +216,6 @@ watch(sharedSourceUnit, () => {
   border-radius: 4px;
   padding: 8px 6px 6px 6px;
   margin: 6px 0 4px 0;
-  background-color: var(--el-bg-color);
   flex-shrink: 0;
   position: relative;
 }
@@ -308,13 +225,12 @@ watch(sharedSourceUnit, () => {
   top: -8px;
   left: 12px;
   font-weight: bold;
-  color: var(--el-text-color-primary);
   font-size: 13px;
   padding: 0 6px;
   line-height: 18px;
 }
 
-/* ==================== 原生 Table + rowspan ==================== */
+/* 上方计算卡表格 */
 .unit-table {
   width: 100%;
   border-collapse: collapse;
@@ -324,15 +240,10 @@ watch(sharedSourceUnit, () => {
   font-size: 13px;
 }
 
-.unit-table thead tr {
-  background-color: transparent;
-}
-
 .unit-table th {
   height: 40px;
   border-bottom: 1px solid var(--el-border-color);
   font-weight: 600;
-  color: var(--el-text-color-primary);
   text-align: center;
   vertical-align: middle;
   padding: 0 8px;
@@ -343,21 +254,52 @@ watch(sharedSourceUnit, () => {
   text-align: center;
   vertical-align: middle;
   padding: 0 8px;
+}
+
+/* 列宽 */
+.th-input, .td-input { width: 110px; min-width: 110px; }
+.th-unit, .td-unit { width: 100px; min-width: 100px; }
+.th-result, .td-result { width: 110px; min-width: 110px; }
+.th-formula, .td-formula { width: 200px; text-align: left; white-space: nowrap; }
+.th-empty, .td-empty { width: auto; border: none; padding: 0; }
+
+/* 换算关系标签 */
+.formula-tag {
+  height: 24px;
+  line-height: 22px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 4px;
+  white-space: nowrap;
+  min-width: 170px;
+  border: 1px solid var(--el-border-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 统一表格内各列控件字体（字号 / 字重 / 颜色一致，表头保持 13px） */
+.unit-table :deep(.native-number-input),
+.unit-table :deep(.el-input__inner),
+.unit-table :deep(.el-select__wrapper),
+.unit-table :deep(.el-select__selected-item) {
+  font-size: 12px;
+  font-weight: 400;
+  font-family: inherit;
   color: var(--el-text-color-primary);
 }
 
-.unit-table tbody tr:last-child td {
-  border-bottom: none;
+.unit-table :deep(.el-input__inner) {
+  -webkit-text-fill-color: var(--el-text-color-primary);
 }
 
-/* 行之间无线 */
-.unit-table tbody tr + tr td {
-  border-top: none;
-}
-
-/* rowspan 单元格内容垂直居中 */
-.unit-table td[rowspan] {
-  vertical-align: middle;
+.unit-table .formula-tag {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--el-text-color-primary);
+  border-color: var(--el-border-color);
+  background-color: var(--el-fill-color-lighter);
 }
 
 /* rowspan 单元格内部 flex 居中 */
@@ -367,230 +309,6 @@ watch(sharedSourceUnit, () => {
   justify-content: center;
   height: 100%;
   width: 100%;
-  background: transparent;
-}
-
-/* 列宽 */
-.th-input, .td-input {
-  width: 110px;
-  min-width: 110px;
-}
-
-.th-unit, .td-unit {
-  width: 100px;
-  min-width: 100px;
-}
-
-.th-result, .td-result {
-  width: 110px;
-  min-width: 110px;
-}
-
-.th-formula, .td-formula {
-  width: 200px;
-  text-align: left;
-  white-space: nowrap;
-}
-
-.th-empty, .td-empty {
-  width: 100%;
-  border: none;
-  padding: 0;
-}
-
-/* 目标单位只读框 */
-.target-unit-input {
-  width: 100%;
-}
-.target-unit-input :deep(.el-input__inner) {
-  cursor: help;
-  text-align: center;
-}
-
-/* 换算关系标签 */
-.formula-tag {
-  height: 24px;
-  line-height: 22px;
-  padding: 0 8px;
-  font-size: 12px;
-  background-color: var(--el-fill-color-light);
-  border-color: var(--el-text-color-primary);
-  color: var(--el-text-color-primary);
-  font-weight: 600;
-  border-radius: 4px;
-  white-space: nowrap;
-  min-width: 170px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ==================== 下方单位对照表 ==================== */
-.convert-table-section {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  margin-top: 4px;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-  margin-bottom: 2px;
-}
-
-.section-title {
-  font-size: 13px;
-  font-weight: bold;
-  color: var(--el-text-color-primary);
-}
-
-.base-unit-selector {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.base-unit-label {
-  font-size: 13px;
-  color: var(--el-text-color-primary);
-}
-
-.base-unit-btn {
-  color: var(--el-text-color-primary);
-  border-color: var(--el-border-color);
-  transition: all 0.3s ease;
-  min-width: 80px;
-}
-
-.base-unit-btn:hover {
-  color: var(--el-text-color-primary);
-  border-color: var(--el-text-color-primary);
-  background-color: var(--el-fill-color);
-}
-
-.convert-table {
-  flex: 1;
-  overflow-y: auto;
-  border: 1px solid var(--el-border-color);
-  border-radius: 4px;
-  background-color: var(--el-bg-color);
-}
-
-.convert-table .table-header {
-  display: flex;
-  padding: 0 3px;
-  height: 40px;
-  background-color: var(--el-bg-color);
-  border-bottom: 1px solid var(--el-border-color-light);
-  font-size: 13px;
-  color: var(--el-text-color-primary);
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  align-items: center;
-}
-
-.convert-table .table-header > span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.convert-table .table-header > .col-unit-name,
-.convert-table .table-header > .col-formula,
-.convert-table .table-header > .col-base-formula {
-  justify-content: flex-start;
-}
-
-.convert-table .table-body {
-  background-color: var(--el-bg-color);
-}
-
-.convert-table .table-body .table-row {
-  display: flex;
-  padding: 0 3px;
-  height: 40px;
-  border-bottom: 1px solid var(--el-border-color-light);
-  font-size: 13px;
-  color: var(--el-text-color-primary);
-  align-items: center;
-  transition: background-color 0.2s;
-}
-
-.convert-table .table-body .table-row > span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.convert-table .table-body .table-row > .col-unit-name,
-.convert-table .table-body .table-row > .col-formula,
-.convert-table .table-body .table-row > .col-base-formula {
-  justify-content: flex-start;
-}
-
-.convert-table .table-body .table-row:last-child {
-  border-bottom: none;
-}
-
-.convert-table .table-body .table-row:hover {
-  background-color: var(--el-fill-color);
-}
-
-.convert-table .table-body .table-row.highlight {
-  background-color: var(--el-fill-color);
-  color: var(--el-text-color-primary);
-  font-weight: 500;
-  border-left: 3px solid var(--el-text-color-primary);
-  padding-left: 4px;
-}
-
-.convert-table .col-unit-name {
-  width: 22%;
-  min-width: 70px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.convert-table .col-symbol {
-  width: 15%;
-  min-width: 40px;
-  color: var(--el-text-color-primary);
-}
-
-.convert-table .col-formula {
-  width: 28%;
-  min-width: 100px;
-  color: var(--el-text-color-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.convert-table .col-base-formula {
-  width: 35%;
-  min-width: 120px;
-  color: var(--el-text-color-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.symbol-text.base-active {
-  color: var(--el-text-color-primary);
-  font-weight: 600;
-  border: 1px solid var(--el-border-color);
-  border-radius: 3px;
-  padding: 0 1px;
-  display: inline-block;
-  line-height: 1.2;
-  transition: all 0.3s ease;
 }
 
 .no-arrow-select :deep(.el-input__suffix),

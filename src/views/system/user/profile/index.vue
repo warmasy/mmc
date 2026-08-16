@@ -38,48 +38,39 @@
             <el-card class="tab-card">
                <template v-slot:header>
                  <div class="clearfix">
-                   <span>资料中心</span>
+                   <span>关于项目</span>
                  </div>
                </template>
-               <el-tabs v-model="selectedTab">
-                  <el-tab-pane label="神的说唱" name="userinfo">
-                     <div class="lyric-box">
-                        <h3>《神的说唱》</h3>
-                        <p>天才在左疯子在右我在中间所以我是天子</p>
-                        <p>上帝在天因为我在人间</p>
-                        <p>我走在前方神明紧随其后</p>
-                        <p>世上本没有白天只有无尽黑夜</p>
-                        <p>因为我的醒来黑夜亮如白昼</p>
-                        <p>自我降世，李白就此封笔</p>
-                        <p>就连战神吕布也不敢与我一斗</p>
-                        <p>王是残缺的玉，再加三笔叫狂</p>
-                        <p>人才如过江之鲫装进我的鱼塘</p>
-                        <p>就算地球毁灭也要等我死亡</p>
-                        <p>我和巨便发热所以我是太阳</p>
-                        <p>王是残缺的玉，再加三笔叫狂</p>
-                        <p>人才如过江之鲫装进我的鱼塘</p>
-                        <p>就算地球毁灭也要等等我死亡</p>
-                        <p>Hold on hold on</p>
-                        <p>牛顿高斯比我提前出生是笨鸟先飞还是避我锋芒</p>
-                        <p>秦王嬴政比我早生千年是惧我三分还是王不见王</p>
-                        <p>我闭眼就天黑睁眼就天亮我不是主角谁是主角</p>
-                        <p>我想照镜子奈何神本无相</p>
-                        <p>你是千里之堤不过我是蚁穴</p>
-                        <p>文人墨客书写唐诗百篇</p>
-                        <p>可我出生后全都变成才尽的江郎</p>
-                        <p>圆的秘密困扰数学家千年</p>
-                        <p>我用Π d瞬间就能求出圆形的周长</p>
-                        <p>猴子到人需要万年的进化</p>
-                        <p>我出生就是因为基因的优良</p>
-                        <p>我知道你们口中所谓糖歌很多</p>
-                        <p>那就看我如何做到孤篇压全糖</p>
-                        <p>王不见王</p>
-                        <p>避我锋芒</p>
-                        <p>王不见王</p>
-                        <p>避我锋芒</p>
-                     </div>
-                  </el-tab-pane>
-               </el-tabs>
+               <div class="about-box">
+                  <h3>机械计算工具系统</h3>
+                  <p class="about-desc">一款面向机械工程师的计算选型工具系统，提供常用机械计算公式、单位换算、电机选型与 3D 模型查看等能力。</p>
+
+                  <div class="about-section">
+                     <h4>✨ 核心功能</h4>
+                     <ul>
+                        <li><b>基本计算</b>：基础物理、转动惯量、单位换算等常用计算模块，配置驱动、即改即用</li>
+                        <li><b>电机选型</b>：支持伺服、步进、直线电机的选型计算，包含惯量比、扭矩、转速校核</li>
+                        <li><b>3D 模型查看</b>：本地解析 STEP / IGES / BREP 文件，支持剖切、标准视图、体积质量估算</li>
+                     </ul>
+                  </div>
+
+                  <div class="about-section">
+                     <h4>🛠️ 技术栈</h4>
+                     <ul>
+                        <li>前端：Vue 3 + Vite + Element Plus + Pinia</li>
+                        <li>3D 渲染：Three.js + occt-import-js（WASM）</li>
+                        <li>安全：请求传输层加密（RSA + AES-GCM 信封）</li>
+                     </ul>
+                  </div>
+
+                  <div class="about-section">
+                     <h4>📌 说明</h4>
+                     <ul>
+                        <li>计算结果仅供学习参考，请勿用于其它用途</li>
+                        <li>项目持续建设中，欢迎反馈建议</li>
+                     </ul>
+                  </div>
+               </div>
             </el-card>
          </el-col>
       </el-row>
@@ -91,8 +82,6 @@ import userAvatar from "./userAvatar";
 import { getUserProfile } from "@/api/system/user";
 import { profileInfoList } from "./profileInfo";
 
-const route = useRoute()
-const selectedTab = ref("userinfo")
 const state = reactive({
   user: {},
   roleGroup: {},
@@ -114,10 +103,6 @@ function openUrl(url) {
 }
 
 onMounted(() => {
-  const activeTab = route.params && route.params.activeTab
-  if (activeTab) {
-    selectedTab.value = activeTab
-  }
   getUser()
 })
 </script>
@@ -188,28 +173,42 @@ onMounted(() => {
 }
 .tab-card :deep(.el-card__body) {
   height: calc(100% - 55px);
-}
-.tab-card :deep(.el-tabs) {
-  height: 100%;
-}
-.tab-card :deep(.el-tabs__content) {
-  height: calc(100% - 50px);
   overflow-y: auto;
 }
-.lyric-box {
-  padding: 30px 20px;
-  text-align: center;
+.about-box {
+  padding: 10px 20px 20px;
 }
-.lyric-box h3 {
-  font-size: 18px;
+.about-box h3 {
+  font-size: 20px;
   color: var(--el-color-primary);
-  margin-bottom: 24px;
+  margin: 0 0 10px;
   font-weight: 600;
 }
-.lyric-box p {
-  font-size: 15px;
-  line-height: 2.2;
+.about-desc {
+  font-size: 14px;
+  line-height: 1.8;
   color: var(--el-text-color-regular);
-  margin: 4px 0;
+  margin: 0 0 16px;
+}
+.about-section {
+  margin-bottom: 14px;
+}
+.about-section h4 {
+  font-size: 15px;
+  color: var(--el-text-color-primary);
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+.about-section ul {
+  padding-left: 20px;
+  margin: 0;
+}
+.about-section li {
+  font-size: 13px;
+  line-height: 2;
+  color: var(--el-text-color-regular);
+}
+.about-section b {
+  color: var(--el-text-color-primary);
 }
 </style>

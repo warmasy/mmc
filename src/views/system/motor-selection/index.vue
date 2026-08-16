@@ -114,7 +114,7 @@ initProjectNo()
 
 <style scoped>
 .motor-selection-page {
-  background-color: #ffffff;
+  background-color: var(--el-bg-color);
   height: calc(100vh - 132px);  /* 84px(Navbar+TagsView) + 48px(底部版权栏) */
   overflow: hidden;
   display: flex;
@@ -129,7 +129,7 @@ initProjectNo()
   justify-content: space-between;
   margin-bottom: 2px;
   padding: 1px 0;
-  border-bottom: 2px solid #e8e8e8;
+  border-bottom: 2px solid var(--el-border-color-light);
   flex-wrap: wrap;
   gap: 6px;
   flex-shrink: 0;
@@ -164,7 +164,7 @@ initProjectNo()
 }
 
 .model-selector:hover {
-  color: #000000;
+  color: var(--el-text-color-primary);
   background: transparent;
 }
 
@@ -177,11 +177,11 @@ initProjectNo()
 .header-left .el-divider--vertical {
   height: 20px;
   margin: 0 1px;
-  border-left: 2px solid #e8e8e8;
+  border-left: 2px solid var(--el-border-color-light);
 }
 
 .model-arrow {
-  color: #000000;
+  color: var(--el-text-color-primary);
   font-size: 12px;
 }
 
@@ -202,7 +202,7 @@ initProjectNo()
 
 .info-item label {
   white-space: nowrap;
-  color: #000000;
+  color: var(--el-text-color-primary);
 }
 
 /* 模型容器 */
@@ -240,7 +240,7 @@ initProjectNo()
 
 .model-dropdown .el-dropdown-menu__item.is-active {
   background-color: transparent;
-  color: #000000;
+  color: var(--el-text-color-primary);
 }
 
 .dropdown-item-content {
@@ -267,6 +267,6 @@ initProjectNo()
 
 .dropdown-subtitle {
   font-size: 11px;
-  color: #000000;
+  color: var(--el-text-color-regular);
 }
 </style>
