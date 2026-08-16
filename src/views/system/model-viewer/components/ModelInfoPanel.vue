@@ -20,6 +20,21 @@
         <span class="info-value file-name" :title="data.fileName">{{ data.fileName }}</span>
       </div>
 
+      <div class="info-item">
+        <span class="info-label">尺寸</span>
+        <span class="info-value">{{ formatSize(data.sizeX) }}×{{ formatSize(data.sizeY) }}×{{ formatSize(data.sizeZ) }}</span>
+      </div>
+
+      <div class="info-item">
+        <span class="info-label">最大边长</span>
+        <span class="info-value">{{ formatSize(data.maxDim) }} mm</span>
+      </div>
+
+      <div class="info-item">
+        <span class="info-label">网格/顶点/面</span>
+        <span class="info-value">{{ data.meshCount }} / {{ data.totalVertices?.toLocaleString() }} / {{ data.totalFaces?.toLocaleString() }}</span>
+      </div>
+
       <div class="info-item unit-row" @wheel.prevent="handleVolumeWheel" title="滚动切换单位">
         <span class="info-label">体积</span>
         <span class="info-value highlight">
@@ -39,21 +54,6 @@
         <span class="info-value highlight">
           {{ formatMass(data.massKg) }} {{ getMassUnitLabel() }}
         </span>
-      </div>
-
-      <div class="info-item">
-        <span class="info-label">尺寸</span>
-        <span class="info-value">{{ formatSize(data.sizeX) }}×{{ formatSize(data.sizeY) }}×{{ formatSize(data.sizeZ) }}</span>
-      </div>
-
-      <div class="info-item">
-        <span class="info-label">最大边长</span>
-        <span class="info-value">{{ formatSize(data.maxDim) }} mm</span>
-      </div>
-
-      <div class="info-item">
-        <span class="info-label">网格/顶点/面</span>
-        <span class="info-value">{{ data.meshCount }} / {{ data.totalVertices?.toLocaleString() }} / {{ data.totalFaces?.toLocaleString() }}</span>
       </div>
 
       <!-- 底部操作按钮 -->
@@ -196,8 +196,8 @@ function formatSize(mm) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #000000;
-  gap: 2px;
+  color: var(--el-text-color-primary);
+  gap: 3px;
 }
 
 .no-data-icon {
@@ -212,10 +212,11 @@ function formatSize(mm) {
 .no-data-hint {
   font-size: 11px;
   opacity: 0.7;
+  color: var(--el-text-color-regular);
 }
 
 .no-data-btn {
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .info-list {
@@ -230,15 +231,15 @@ function formatSize(mm) {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 1px 0;
-  font-size: 11px;
-  line-height: 1.25;
+  padding: 3px 2px;
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .info-label {
-  color: #000000;
+  color: var(--el-text-color-regular);
   flex-shrink: 0;
-  margin-right: 2px;
+  margin-right: 4px;
   white-space: nowrap;
   padding-top: 1px;
 }
@@ -247,7 +248,7 @@ function formatSize(mm) {
   color: var(--el-text-color-primary);
   text-align: right;
   word-break: break-all;
-  line-height: 1.3;
+  line-height: 1.4;
 }
 
 .info-value.file-name {
@@ -257,21 +258,23 @@ function formatSize(mm) {
 }
 
 .info-value.highlight {
-  color: #409EFF !important;
+  color: var(--el-color-primary) !important;
   font-weight: 600;
 }
 
 .info-actions {
   margin-top: auto;
-  padding-top: 1px;
+  padding-top: 6px;
   display: flex;
-  gap: 2px;
+  justify-content: center;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .info-actions .el-button {
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
+  padding: 4px 12px;
 }
 
 .unit-row {

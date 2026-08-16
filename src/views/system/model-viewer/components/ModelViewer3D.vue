@@ -277,10 +277,10 @@ defineExpose({
 .model-viewer-3d {
   width: 100%; height: 100%; position: relative; overflow: hidden;
   border-radius: 4px; background-color: var(--el-bg-color-page);
-  border: 1px dashed #e8e8e8; transition: border-color 0.3s;
+  border: 1px dashed var(--el-border-color); transition: border-color 0.3s;
 }
 .model-viewer-3d.is-dragover {
-  border-color: #000000; background-color: var(--el-color-primary-light-9);
+  border-color: var(--el-color-primary); background-color: var(--el-fill-color-light);
 }
 .model-viewer-3d :deep(canvas) { display: block; width: 100%; height: 100%; }
 .loading-overlay {
@@ -296,7 +296,7 @@ defineExpose({
   right: 10px;
   width: 220px;
   background: var(--el-bg-color-overlay);
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--el-border-color);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.15);
   z-index: 20;
@@ -312,12 +312,12 @@ defineExpose({
   cursor: move;
   user-select: none;
 }
-.clip-title { font-size: 13px; font-weight: 600; }
+.clip-title { font-size: 13px; font-weight: 600; color: var(--el-text-color-primary); }
 .clip-close { padding: 2px; }
 .clip-dialog-body { padding: 3px; display: flex; flex-direction: column; gap: 2px; }
 .clip-form-row { display: flex; flex-direction: column; gap: 2px; }
-.clip-form-label { font-size: 12px; color: var(--el-text-color-secondary); }
+.clip-form-label { font-size: 12px; color: var(--el-text-color-regular); }
 .clip-slider-wrap { display: flex; align-items: center; gap: 2px; }
 .clip-slider-wrap .el-slider { flex: 1; }
-.clip-pos-value { font-size: 12px; color: #000000; font-weight: 600; min-width: 36px; text-align: right; }
+.clip-pos-value { font-size: 12px; color: var(--el-text-color-primary); font-weight: 600; min-width: 36px; text-align: right; }
 </style>

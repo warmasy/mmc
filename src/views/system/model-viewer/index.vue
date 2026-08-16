@@ -157,7 +157,7 @@ function triggerFileSelect() {
 .left-col {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 4px;
   height: 100%;
   overflow-y: auto;
   scrollbar-width: none;
@@ -176,7 +176,7 @@ function triggerFileSelect() {
   :deep(.el-card__body) {
     flex: 1;
     overflow: hidden;
-    padding: 2px !important;
+    padding: 6px !important;
   }
 }
 
@@ -203,13 +203,13 @@ function triggerFileSelect() {
 .note-header {
   display: flex;
   align-items: center;
-  gap: 1px;
+  gap: 4px;
   font-size: 13px;
   font-weight: 600;
   color: var(--el-text-color-primary);
-  padding-bottom: 1px;
-  border-bottom: 1px solid #e8e8e8;
-  margin-bottom: 1px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--el-border-color-light);
+  margin-bottom: 6px;
   flex-shrink: 0;
 }
 
@@ -218,22 +218,22 @@ function triggerFileSelect() {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
 }
 
 .note-item {
   display: flex;
   align-items: flex-start;
-  gap: 1px;
-  font-size: 11px;
-  color: #000000;
-  line-height: 1.4;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--el-text-color-primary);
+  line-height: 1.5;
 }
 
 .note-icon {
   flex-shrink: 0;
-  margin-top: 1px;
-  color: #000000;
+  margin-top: 2px;
+  color: var(--el-text-color-regular);
 }
 
 .right-col {
