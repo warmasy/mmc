@@ -84,6 +84,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import * as THREE from 'three'
 import { useDark } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
 import { Loading, Close, Switch } from '@element-plus/icons-vue'
@@ -151,14 +152,145 @@ onMounted(() => {
       }
     })
   }
+  // 自定义交互：中键轨道球旋转相机（360° 无死角）/ 右键平移 / 滚轮缩放
+  setupModelDragRotate()
   loadOcct().then(() => loadDefaultModel())
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
+  teardownModelDragRotate()
   cleanupClipping()
   disposeThree()
 })
+
+// ==================== 自定义模型交互控制器 ====================
+// OrbitControls 已完全禁用（enabled=false），这里自定义全部鼠标交互：
+//   - 中键拖拽：轨道球旋转相机 —— 绕"视点中心"做增量旋转，跟手、360° 无死角
+//   - 右键拖拽：平移视点（相机 + target 一起移动）
+//   - 滚轮：缩放（相机沿视线靠近/远离 target）
+// 使用 mousedown 在容器上 + mousemove/mouseup 在 window 上的经典模式，
+// 避免 pointer capture 与 OrbitControls 事件干扰。
+let dragRotateCleanup = null
+function setupModelDragRotate() {
+  // 监听挂在容器上（而非 canvas），确保整个查看区域都能响应鼠标操作
+  const dom = containerRef.value
+  if (!dom) return
+
+  let activeButton = -1   // 1=中键旋转，2=右键平移
+  let lastX = 0
+  let lastY = 0
+
+  // 使用基础 mousedown/mousemove/mouseup 事件（最可靠，无 pointer capture 干扰）
+  const onMouseDown = (e) => {
+    // 中键（button 1）旋转，右键（button 2）平移；左键不处理
+    if (e.button !== 1 && e.button !== 2) return
+    e.preventDefault()
+    activeButton = e.button
+    lastX = e.clientX
+    lastY = e.clientY
+  }
+
+  const onMouseMove = (e) => {
+    if (activeButton === -1) return
+    const dx = e.clientX - lastX
+    const dy = e.clientY - lastY
+    lastX = e.clientX
+    lastY = e.clientY
+    if (dx === 0 && dy === 0) return
+
+    const cam = camera.value
+    if (!cam) return
+
+    if (activeButton === 1) {
+      // ===== 中键：轨道球旋转相机（重新设计） =====
+      // 绕"视点中心"（controls.target）做增量旋转：
+      //   - 水平拖拽 → 绕相机上轴旋转（拖右 → 模型右转，跟手）
+      //   - 垂直拖拽 → 绕相机右轴旋转（拖上 → 看到模型顶面，跟手）
+      // 相机 up 轴跟随旋转：上下翻转 360° 连续、不卡极点、不产生歪斜。
+      const target = controls.value?.target
+      if (!target) return
+      cam.updateMatrixWorld()
+
+      const rotSpeed = 0.006   // 弧度/像素
+      const right = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 0).normalize()
+      const up = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 1).normalize()
+
+      const quatY = new THREE.Quaternion().setFromAxisAngle(up, -dx * rotSpeed)
+      const quatX = new THREE.Quaternion().setFromAxisAngle(right, -dy * rotSpeed)
+
+      // 相机位置绕 target 旋转
+      const offset = cam.position.clone().sub(target)
+      offset.applyQuaternion(quatY)
+      offset.applyQuaternion(quatX)
+      cam.position.copy(target).add(offset)
+
+      // up 轴跟随旋转（保持 360° 翻转不卡死、无歪斜）
+      cam.up.applyQuaternion(quatY)
+      cam.up.applyQuaternion(quatX)
+      cam.up.normalize()
+
+      cam.lookAt(target)
+    } else if (activeButton === 2) {
+      // ===== 右键：平移相机 =====
+      const panSpeed = 0.002
+      const dist = cam.position.distanceTo(controls.value?.target || new THREE.Vector3())
+      const factor = panSpeed * dist
+      const right = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 0).normalize()
+      const up = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 1).normalize()
+      const offset = new THREE.Vector3()
+        .addScaledVector(right, -dx * factor)
+        .addScaledVector(up, dy * factor)
+      cam.position.add(offset)
+      if (controls.value?.target) controls.value.target.add(offset)
+    }
+
+    // 触发 change 取消标准视图高亮
+    controls.value?.dispatchEvent({ type: 'change' })
+  }
+
+  const onMouseUp = (e) => {
+    if (e.button === activeButton) activeButton = -1
+  }
+
+  // 滚轮缩放（沿视线方向靠近/远离 target）
+  const onWheel = (e) => {
+    e.preventDefault()
+    const cam = camera.value
+    if (!cam) return
+    const target = controls.value?.target || new THREE.Vector3()
+    const dir = cam.position.clone().sub(target)
+    const dist = dir.length()
+    // 兼容触控板/鼠标：deltaMode 1 时 deltaY 为"行"，换算为像素
+    const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY
+    const newDist = Math.max(0.5, Math.min(dist * Math.exp(dy * 0.0012), 50000))
+    dir.normalize().multiplyScalar(newDist)
+    cam.position.copy(target).add(dir)
+    controls.value?.dispatchEvent({ type: 'change' })
+  }
+
+  // 阻止右键菜单
+  const onContextMenu = (e) => { e.preventDefault() }
+
+  dom.addEventListener('mousedown', onMouseDown)
+  window.addEventListener('mousemove', onMouseMove)
+  window.addEventListener('mouseup', onMouseUp)
+  dom.addEventListener('wheel', onWheel, { passive: false })
+  dom.addEventListener('contextmenu', onContextMenu)
+
+  dragRotateCleanup = () => {
+    dom.removeEventListener('mousedown', onMouseDown)
+    window.removeEventListener('mousemove', onMouseMove)
+    window.removeEventListener('mouseup', onMouseUp)
+    dom.removeEventListener('wheel', onWheel)
+    dom.removeEventListener('contextmenu', onContextMenu)
+    dragRotateCleanup = null
+  }
+}
+
+function teardownModelDragRotate() {
+  if (dragRotateCleanup) dragRotateCleanup()
+}
 
 // ==================== Watchers ====================
 watch(() => props.coordSystem, (val) => {
@@ -176,7 +308,9 @@ watch(() => props.wireframe, (val) => {
       child.material.depthWrite = !val
     }
     if (child.name && child.name.endsWith('_visibleEdges')) {
-      child.visible = val
+      // 可见边始终显示：实体模式淡色轮廓 / 线框模式加深
+      child.visible = true
+      child.material.opacity = val ? 0.95 : 0.6
     }
     if (child.name && child.name.endsWith('_hiddenEdges')) {
       child.visible = val

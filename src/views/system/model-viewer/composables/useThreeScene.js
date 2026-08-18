@@ -115,45 +115,56 @@ export function useThreeScene(containerRef, props) {
     scene.value = new THREE.Scene()
     scene.value.background = getThemeBgColor(isDark)
 
-    // ========== 灯光系统（四灯布光：主光+补光+背光+底光）==========
-    // 环境光 - 提供基础照明
-    lights.ambient = new THREE.AmbientLight(0xffffff, isDark ? 0.6 : 0.8)
+    // ========== 灯光系统（相对相机有方向性，无高光反射） ==========
+    // 方向光挂在相机下（lightRig），方向相对相机固定：
+    //   - 任何面转到眼前时，其法线都指向相机 → 与光源夹角相同 → 顶/底亮度一致，无色差
+    //   - 表面不同朝向的面明暗渐变 → 立体感、轮廓清晰
+    // 材质为纯漫反射（useModelBuilder），不会产生高光/反光。
+    // 环境光 - 基础照明（强度偏低 → 明暗对比更强，轮廓更清晰）
+    lights.ambient = new THREE.AmbientLight(0xffffff, isDark ? 0.5 : 0.65)
     scene.value.add(lights.ambient)
 
-    // 主光（Key Light）- 右上方，产生主要阴影
-    lights.key = new THREE.DirectionalLight(0xfff5e6, 2.0)
-    lights.key.position.set(20, 30, 20)
-    lights.key.castShadow = true
-    lights.key.shadow.mapSize.width = 2048
-    lights.key.shadow.mapSize.height = 2048
-    lights.key.shadow.camera.near = 0.5
-    lights.key.shadow.camera.far = 500
-    lights.key.shadow.bias = -0.0005
-    scene.value.add(lights.key)
-
-    // 补光（Fill Light）- 左前方，柔和填充阴影
-    lights.fill = new THREE.DirectionalLight(0xe6f0ff, 0.8)
-    lights.fill.position.set(-15, 10, 15)
-    scene.value.add(lights.fill)
-
-    // 背光/轮廓光（Rim Light）- 后方，勾勒轮廓
-    lights.rim = new THREE.DirectionalLight(0xffffff, 1.5)
-    lights.rim.position.set(0, 15, -25)
-    scene.value.add(lights.rim)
-
-    // 底光（Bottom Light）- 下方微光，照亮底部阴影
-    lights.bottom = new THREE.DirectionalLight(0xddeeff, 0.4)
-    lights.bottom.position.set(0, -10, 5)
-    scene.value.add(lights.bottom)
-
-    // 半球光 - 模拟天空/地面反射
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.5)
+    // 半球光 - 天空/地面同色（消除世界系顶底偏差），弱强度只做补底
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.4)
     scene.value.add(hemiLight)
+
+    // 主光（Key Light）- 相机右前上方（相对相机），制造主要明暗
+    lights.key = new THREE.DirectionalLight(0xffffff, 1.2)
+    lights.key.name = 'KeyLight'
+    lights.key.position.set(30, 40, -60)
+    lights.key.target.position.set(-30, -40, 60)
+    lights.key.castShadow = false
+
+    // 补光（Fill Light）- 相机左前上方，柔和填充暗部
+    lights.fill = new THREE.DirectionalLight(0xffffff, 0.6)
+    lights.fill.position.set(-50, 25, -35)
+    lights.fill.target.position.set(50, -25, 35)
+
+    // 背光（Rim Light）- 相机后方，提亮背面/暗部，避免死黑
+    lights.rim = new THREE.DirectionalLight(0xffffff, 0.8)
+    lights.rim.position.set(0, 15, 60)
+    lights.rim.target.position.set(0, -15, -60)
+
+    // 底光（Bottom Light）- 相机下方，底面补充照明
+    lights.bottom = new THREE.DirectionalLight(0xffffff, 0.4)
+    lights.bottom.position.set(0, -45, 30)
+    lights.bottom.target.position.set(0, 45, -30)
 
     // ========== 透视相机（轴测图用）==========
     camera.value = new THREE.PerspectiveCamera(45, width / height, 0.1, 100000)
     camera.value.position.set(50, 50, 50)
     camera.value.up.copy(COORD_SYSTEMS[props.coordSystem].up)
+
+    // ========== 灯光跟随相机（CAD 查看器行为） ==========
+    // 方向光挂在相机下的 lightRig 上，光照方向相对相机固定 →
+    // 模型任意面（含底面）转到眼前都会被照亮，不会出现背光发黑
+    const lightRig = new THREE.Group()
+    lightRig.name = 'LightRig'
+    ;[lights.key, lights.fill, lights.rim, lights.bottom].forEach(light => {
+      lightRig.add(light)
+      lightRig.add(light.target)
+    })
+    camera.value.add(lightRig)
 
     // ========== 渲染器 ==========
     renderer.value = new THREE.WebGLRenderer({
@@ -175,19 +186,18 @@ export function useThreeScene(containerRef, props) {
     renderer.value.shadowMap.enabled = true
     renderer.value.shadowMap.type = THREE.PCFSoftShadowMap
 
+    // 注意：不设置 scene.environment（环境贴图）——
+    // 金属/清漆材质会反射环境产生高亮"反光"（看起来像模型内部有亮物），
+    // 用户明确要求无反射的干净着色。
+
     container.appendChild(renderer.value.domElement)
 
     // ========== 控制器 ==========
     controls.value = new OrbitControls(camera.value, renderer.value.domElement)
     controls.value.enableDamping = false   // 关闭阻尼，鼠标和模型完全同步，最跟手
-    controls.value.mouseButtons = {
-      LEFT: null,
-      MIDDLE: THREE.MOUSE.ROTATE,
-      RIGHT: THREE.MOUSE.PAN
-    }
-    controls.value.rotateSpeed = 1.5       // 旋转灵敏度提高
-    controls.value.minPolarAngle = 0.05
-    controls.value.maxPolarAngle = Math.PI - 0.05
+    // 完全禁用 OrbitControls 的鼠标交互：旋转/缩放/平移全部由 ModelViewer3D 自定义实现，
+    // 旋转模型组（四元数）实现 360° 无极点限制旋转，平移/缩放自定义处理。
+    controls.value.enabled = false
 
     modelGroup.value = new THREE.Group()
     scene.value.add(modelGroup.value)
@@ -319,7 +329,9 @@ export function useThreeScene(containerRef, props) {
   function animate() {
     rafId.value = requestAnimationFrame(animate)
     if (!renderer.value || !camera.value || !scene.value) return
-    controls.value.update()
+    // 注意：OrbitControls 已完全禁用（enabled=false），不再每帧调用 controls.update()，
+    // 否则它会用内部缓存的球坐标重置相机位置，导致自定义平移被覆盖。
+    // 相机位置/朝向完全由 ModelViewer3D 的自定义交互逻辑控制。
 
     const container = containerRef.value
     if (!container) return
@@ -356,7 +368,11 @@ export function useThreeScene(containerRef, props) {
     const h = containerRef.value.clientHeight
     camera.value.aspect = w / h
     camera.value.updateProjectionMatrix()
-renderer.value.setSize(w, h)
+    renderer.value.setSize(w, h)
+    // 同步更新轨迹球的屏幕尺寸
+    if (controls.value && typeof controls.value.handleResize === 'function') {
+      controls.value.handleResize()
+    }
   }
 
   function disposeThree() {
@@ -403,6 +419,9 @@ renderer.value.setSize(w, h)
     scene.value = null
     camera.value = null
     renderer.value = null
+    if (controls.value && typeof controls.value.dispose === 'function') {
+      controls.value.dispose()
+    }
     controls.value = null
     modelGroup.value = null
     hudScene.value = null

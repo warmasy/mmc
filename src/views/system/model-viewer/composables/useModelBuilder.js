@@ -53,6 +53,11 @@ export function useModelBuilder(scene, modelGroup, camera, controls, props, getT
       return
     }
 
+    // 主题感知：暗色主题下边线用亮灰色，亮色主题下用深灰色，保证轮廓清晰可见
+    const isDarkTheme = document.documentElement.classList.contains('dark')
+    const visibleEdgeColor = isDarkTheme ? 0xc2cbd6 : 0x2c333d
+    const hiddenEdgeColor = isDarkTheme ? 0x5c6672 : 0x9aa1a8
+
     let totalVertices = 0, totalFaces = 0, totalVolume = 0
 
     meshes.forEach((meshData) => {
@@ -74,20 +79,22 @@ export function useModelBuilder(scene, modelGroup, camera, controls, props, getT
 
       geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1))
 
-      // 颜色处理：优先使用模型自带颜色，否则使用默认金属灰
-      let color = 0xc0c8d0
+      // 颜色处理：优先使用模型自带颜色，否则使用默认金属灰（略深，保证亮/暗背景下都清晰）
+      let color = 0xa8b0b8
       if (meshData.color && Array.isArray(meshData.color) && meshData.color.length >= 3) {
         color = new THREE.Color(meshData.color[0], meshData.color[1], meshData.color[2])
       }
 
-      // ========== 材质优化：使用 MeshPhysicalMaterial 增加质感 ==========
+      // ========== 材质：纯漫反射（无金属/清漆高光，无环境反射） ==========
+      // 用户要求：不要反光、不要"内部亮物"效果、顶底无色差。
+      // metalness=0 / roughness=1 / clearcoat=0 → 完全漫反射，只响应漫反射光照。
       const material = new THREE.MeshPhysicalMaterial({
         color,
-        metalness: 0.4,
-        roughness: 0.2,
-        clearcoat: 0.6,
-        clearcoatRoughness: 0.15,
-        reflectivity: 0.8,
+        metalness: 0,
+        roughness: 1,
+        clearcoat: 0,
+        clearcoatRoughness: 1,
+        reflectivity: 0,
         side: THREE.DoubleSide,
         flatShading: false
       })
@@ -98,25 +105,26 @@ export function useModelBuilder(scene, modelGroup, camera, controls, props, getT
       mesh.receiveShadow = true
       modelGroup.value.add(mesh)
 
-      // ========== 工程图线框：可见边（实线）+ 隐藏边（虚线）==========
-      const edgesGeo = new THREE.EdgesGeometry(geometry, 15)
+      // ========== 轮廓/工程图线框：可见边（实线）+ 隐藏边（虚线）==========
+      // 阈值 10°：比默认 15° 生成更多棱线，曲面（圆柱/圆角）轮廓更"实"
+      const edgesGeo = new THREE.EdgesGeometry(geometry, 10)
 
-      // 可见轮廓线：实线，深色，正常深度测试
+      // 可见轮廓线：实体模式显示淡色轮廓（增强边缘清晰度），线框模式加深
       const visibleEdgesMat = new THREE.LineBasicMaterial({
-        color: 0x333333,
+        color: visibleEdgeColor,
         depthTest: true,
         depthWrite: false,
         transparent: true,
-        opacity: 0.9
+        opacity: 0.6
       })
       const visibleEdges = new THREE.LineSegments(edgesGeo, visibleEdgesMat)
       visibleEdges.name = (meshData.name || 'Mesh') + '_visibleEdges'
-      visibleEdges.visible = false  // 默认隐藏，线框模式时显示
+      visibleEdges.visible = true  // 实体模式默认显示淡色轮廓线
       modelGroup.value.add(visibleEdges)
 
-      // 隐藏轮廓线：虚线，灰色，只显示被遮挡的边
+      // 隐藏轮廓线：虚线，只显示被遮挡的边（仅线框模式显示）
       const hiddenEdgesMat = new THREE.LineDashedMaterial({
-        color: 0xaaaaaa,
+        color: hiddenEdgeColor,
         dashSize: 0.8,
         gapSize: 0.5,
         depthTest: true,
@@ -127,7 +135,7 @@ export function useModelBuilder(scene, modelGroup, camera, controls, props, getT
       })
       const hiddenEdges = new THREE.LineSegments(edgesGeo.clone(), hiddenEdgesMat)
       hiddenEdges.name = (meshData.name || 'Mesh') + '_hiddenEdges'
-      hiddenEdges.visible = false  // 默认隐藏，线框模式时显示
+      hiddenEdges.visible = false  // 仅线框模式显示
       // 计算虚线距离
       hiddenEdges.computeLineDistances()
       modelGroup.value.add(hiddenEdges)
