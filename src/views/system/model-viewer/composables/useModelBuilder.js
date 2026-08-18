@@ -53,9 +53,9 @@ export function useModelBuilder(scene, modelGroup, camera, controls, props, getT
       return
     }
 
-    // 主题感知：暗色主题下边线用亮灰色，亮色主题下用深灰色，保证轮廓清晰可见
+    // 主题感知：暗色主题下边线用亮灰色，亮色主题下用深黑色（白模型衬托下更清晰）
     const isDarkTheme = document.documentElement.classList.contains('dark')
-    const visibleEdgeColor = isDarkTheme ? 0xc2cbd6 : 0x2c333d
+    const visibleEdgeColor = isDarkTheme ? 0xcdd5e0 : 0x14181e
     const hiddenEdgeColor = isDarkTheme ? 0x5c6672 : 0x9aa1a8
 
     let totalVertices = 0, totalFaces = 0, totalVolume = 0
@@ -79,22 +79,23 @@ export function useModelBuilder(scene, modelGroup, camera, controls, props, getT
 
       geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1))
 
-      // 颜色处理：优先使用模型自带颜色，否则使用默认金属灰（略深，保证亮/暗背景下都清晰）
-      let color = 0xa8b0b8
+      // 颜色处理：优先使用模型自带颜色，否则使用默认银白（#fcfcfc）
+      let color = 0xfcfcfc
       if (meshData.color && Array.isArray(meshData.color) && meshData.color.length >= 3) {
         color = new THREE.Color(meshData.color[0], meshData.color[1], meshData.color[2])
       }
 
-      // ========== 材质：纯漫反射（无金属/清漆高光，无环境反射） ==========
-      // 用户要求：不要反光、不要"内部亮物"效果、顶底无色差。
-      // metalness=0 / roughness=1 / clearcoat=0 → 完全漫反射，只响应漫反射光照。
+      // ========== 材质：哑光金属（CAD 带边着色质感） ==========
+      // roughness 0.45 → 柔和漫反射为主、轻微光泽（类似 SolidWorks 表面）；
+      // clearcoat 0（无清漆镜面反射，避免刺眼反光）；envMapIntensity 低 → 环境光柔和。
       const material = new THREE.MeshPhysicalMaterial({
         color,
-        metalness: 0,
-        roughness: 1,
+        metalness: 0.3,
+        roughness: 0.4,
         clearcoat: 0,
         clearcoatRoughness: 1,
-        reflectivity: 0,
+        reflectivity: 1,
+        envMapIntensity: 0.7,
         side: THREE.DoubleSide,
         flatShading: false
       })
@@ -106,16 +107,16 @@ export function useModelBuilder(scene, modelGroup, camera, controls, props, getT
       modelGroup.value.add(mesh)
 
       // ========== 轮廓/工程图线框：可见边（实线）+ 隐藏边（虚线）==========
-      // 阈值 10°：比默认 15° 生成更多棱线，曲面（圆柱/圆角）轮廓更"实"
-      const edgesGeo = new THREE.EdgesGeometry(geometry, 10)
+      // 阈值 8°：比 10° 生成更多棱线，曲面轮廓更"实"、更清晰
+      const edgesGeo = new THREE.EdgesGeometry(geometry, 8)
 
-      // 可见轮廓线：实体模式显示淡色轮廓（增强边缘清晰度），线框模式加深
+      // 可见轮廓线：CAD"带边着色"风格 —— 不透明深色边线，清晰锐利
       const visibleEdgesMat = new THREE.LineBasicMaterial({
         color: visibleEdgeColor,
         depthTest: true,
         depthWrite: false,
-        transparent: true,
-        opacity: 0.6
+        transparent: false,
+        opacity: 1.0
       })
       const visibleEdges = new THREE.LineSegments(edgesGeo, visibleEdgesMat)
       visibleEdges.name = (meshData.name || 'Mesh') + '_visibleEdges'
@@ -152,10 +153,8 @@ export function useModelBuilder(scene, modelGroup, camera, controls, props, getT
     const box = new THREE.Box3().setFromObject(modelGroup.value)
     const { size, maxDim, dist, center } = computeCameraDistance(box)
 
-    camera.value.position.set(center.x + dist * 0.8, center.y + dist * 0.8, center.z + dist * 0.8)
-    camera.value.lookAt(center)
-    controls.value.target.copy(center)
-    controls.value.update()
+    // 注意：不在此处定位相机——初始视图统一由 useStandardViews 的 resetView()
+    // （标准轴测图）决定，保证初始视角与"轴测图"按钮取景完全一致、模型完整显示。
 
     // 包围盒辅助线 - 使用更醒目的颜色
     const boxHelper = new THREE.Box3Helper(box, getThemeColor())
@@ -170,6 +169,13 @@ export function useModelBuilder(scene, modelGroup, camera, controls, props, getT
       sizeX: size.x, sizeY: size.y, sizeZ: size.z, maxDim, fileName
     })
     emit('size-calculated', { x: size.x, y: size.y, z: size.z, maxDim })
+    // 返回统计信息（供拍照标注等使用）
+    return {
+      fileName,
+      volumeMm3: totalVolume, volumeM3: totalVolume / 1e9,
+      massKg: (totalVolume / 1e9) * props.density, density: props.density,
+      sizeX: size.x, sizeY: size.y, sizeZ: size.z, maxDim
+    }
   }
 
   /**

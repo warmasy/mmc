@@ -25,26 +25,13 @@ export function useStandardViews(camera, controls, modelGroup) {
     return { center, maxDim, dist, size }
   }
 
+  /**
+   * 重置视图 = 标准轴测图
+   * 直接复用 setStandardView('iso')，保证与工具栏"轴测图"按钮
+   * 走完全相同的代码路径、完全相同的取景（模型完整显示）。
+   */
   function resetView() {
-    const info = computeCameraDistance()
-    if (!info) return
-    const { center, maxDim, dist } = info
-
-    const dir = new THREE.Vector3(1, 1, 1).normalize()
-    const viewDist = dist * 1.8
-
-    camera.value.position.set(
-      center.x + dir.x * viewDist,
-      center.y + dir.y * viewDist,
-      center.z + dir.z * viewDist
-    )
-    camera.value.up.set(0, 1, 0)
-    controls.value.target.copy(center)
-    camera.value.lookAt(center)
-    controls.value.update()
-    controls.value.minDistance = maxDim * 0.15
-    controls.value.maxDistance = maxDim * 15
-    currentView.value = 'iso'
+    setStandardView('iso')
   }
 
   function setStandardView(viewName) {
@@ -57,7 +44,7 @@ export function useStandardViews(camera, controls, modelGroup) {
     if (!v) return
 
     const dir = new THREE.Vector3(...v.dir).normalize()
-    const viewDist = dist * 1.8  // 增大距离，减小透视效果
+    const viewDist = dist * 1.8  // 模型完整显示（可容纳投影尺寸 = 1.8 × maxDim）
 
     camera.value.position.set(
       center.x + dir.x * viewDist,

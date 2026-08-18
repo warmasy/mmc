@@ -51,6 +51,29 @@ export function useThreeScene(containerRef, props) {
     return new THREE.Color(0xf5f7fa)
   }
 
+  // CAD 风格背景纹理（亮色主题纯白，衬托模型更清晰；暗色主题深蓝渐变）
+  let bgTexture = null
+  function createBgTexture(isDark) {
+    const canvas = document.createElement('canvas')
+    canvas.width = 2
+    canvas.height = 256
+    const ctx = canvas.getContext('2d')
+    const grad = ctx.createLinearGradient(0, 0, 0, 256)
+    if (isDark) {
+      grad.addColorStop(0, '#1d2739')   // 顶部略亮
+      grad.addColorStop(1, '#0d131f')   // 底部更深
+    } else {
+      grad.addColorStop(0, '#ffffff')   // 亮色主题：纯白背景
+      grad.addColorStop(1, '#ffffff')
+    }
+    ctx.fillStyle = grad
+    ctx.fillRect(0, 0, 2, 256)
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.colorSpace = THREE.SRGBColorSpace
+    tex.needsUpdate = true
+    return tex
+  }
+
   function getThemeColor() {
     const el = containerRef.value
     if (!el) return 0x409EFF
@@ -73,8 +96,10 @@ export function useThreeScene(containerRef, props) {
     if (!scene.value) return
 
     try {
-      // 1. 切换背景色
-      scene.value.background = getThemeBgColor(isDark)
+      // 1. 切换渐变背景
+      if (bgTexture) bgTexture.dispose()
+      bgTexture = createBgTexture(isDark)
+      scene.value.background = bgTexture
 
       // 2. 切换星空粒子可见性（暗色才显示）
       if (bgObjects.stars) {
@@ -95,7 +120,7 @@ export function useThreeScene(containerRef, props) {
 
       // 5. 调整环境光强度
       if (lights.ambient) {
-        lights.ambient.intensity = isDark ? 0.6 : 0.8
+        lights.ambient.intensity = isDark ? 0.5 : 0.6
       }
     } catch (e) {
       console.warn('updateTheme error:', e)
@@ -113,26 +138,29 @@ export function useThreeScene(containerRef, props) {
     const isDark = document.documentElement.classList.contains('dark')
 
     scene.value = new THREE.Scene()
-    scene.value.background = getThemeBgColor(isDark)
+    bgTexture = createBgTexture(isDark)
+    scene.value.background = bgTexture
 
     // ========== 灯光系统（相对相机有方向性，无高光反射） ==========
     // 方向光挂在相机下（lightRig），方向相对相机固定：
     //   - 任何面转到眼前时，其法线都指向相机 → 与光源夹角相同 → 顶/底亮度一致，无色差
     //   - 表面不同朝向的面明暗渐变 → 立体感、轮廓清晰
     // 材质为纯漫反射（useModelBuilder），不会产生高光/反光。
-    // 环境光 - 基础照明（强度偏低 → 明暗对比更强，轮廓更清晰）
-    lights.ambient = new THREE.AmbientLight(0xffffff, isDark ? 0.5 : 0.65)
+    // 环境光 - 基础照明（模型整体明亮）
+    lights.ambient = new THREE.AmbientLight(0xffffff, isDark ? 0.65 : 0.75)
     scene.value.add(lights.ambient)
 
-    // 半球光 - 天空/地面同色（消除世界系顶底偏差），弱强度只做补底
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.4)
+    // 半球光 - 天空/地面同色（消除世界系顶底偏差），提供柔和环境照明
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.5)
     scene.value.add(hemiLight)
 
     // 主光（Key Light）- 相机右前上方（相对相机），制造主要明暗
-    lights.key = new THREE.DirectionalLight(0xffffff, 1.2)
+    lights.key = new THREE.DirectionalLight(0xfff5e6, 1.8)
     lights.key.name = 'KeyLight'
     lights.key.position.set(30, 40, -60)
     lights.key.target.position.set(-30, -40, 60)
+    // 不开实时阴影：GTAO 已提供立体暗影（嘉立创/CAD 查看器同样不做每帧实时阴影），
+    // 实时阴影每帧多一次场景渲染，是卡顿的主要来源之一。
     lights.key.castShadow = false
 
     // 补光（Fill Light）- 相机左前上方，柔和填充暗部
@@ -170,25 +198,28 @@ export function useThreeScene(containerRef, props) {
     renderer.value = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
+      preserveDrawingBuffer: true,   // 拍照功能需要保留画布缓冲
       powerPreference: 'high-performance'
     })
     renderer.value.setSize(width, height)
-    renderer.value.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    // pixelRatio 用满设备像素（min(dpr, 2)）：保证模型锐利不模糊。
+    // 性能由"交互自适应"兜底：旋转时 AO 降采样 + 静止跳过 GBuffer。
+    const pixelRatio = Math.min(window.devicePixelRatio, 2)
+    renderer.value.setPixelRatio(pixelRatio)
     renderer.value.autoClear = false
     renderer.value.localClippingEnabled = true
 
     // 色调映射 - 让高光更自然，质感更好
     renderer.value.toneMapping = THREE.ACESFilmicToneMapping
-    renderer.value.toneMappingExposure = 1.2
+    renderer.value.toneMappingExposure = 1.35
     renderer.value.outputColorSpace = THREE.SRGBColorSpace
 
     // 开启阴影
     renderer.value.shadowMap.enabled = true
     renderer.value.shadowMap.type = THREE.PCFSoftShadowMap
 
-    // 注意：不设置 scene.environment（环境贴图）——
-    // 金属/清漆材质会反射环境产生高亮"反光"（看起来像模型内部有亮物），
-    // 用户明确要求无反射的干净着色。
+    // 注意：不设置 scene.environment（无环境反射贴图），
+    // 材质光泽仅由灯光（相对相机固定）提供 → 任何面转到眼前光照一致。
 
     container.appendChild(renderer.value.domElement)
 
@@ -267,6 +298,9 @@ export function useThreeScene(containerRef, props) {
     hudCamera.value.position.set(2, 2, 2)
     hudCamera.value.lookAt(0, 0, 0)
 
+    // 注意：直接渲染到画布（无后处理管线），
+    // renderer.antialias = true 提供硬件 MSAA 抗锯齿。
+
     animate()
   }
 
@@ -308,13 +342,15 @@ export function useThreeScene(containerRef, props) {
     canvas.width = 256
     canvas.height = 256
     const ctx = canvas.getContext('2d')
-    ctx.strokeStyle = '#000000'
+    // 暗色主题：字母用红色 + 亮描边（否则绿色/蓝色字母在深色背景上看不清）
+    const isDark = document.documentElement.classList.contains('dark')
+    ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.95)' : '#000000'
     ctx.lineWidth = 8
     ctx.font = 'bold 140px Arial'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.strokeText(text, 128, 128)
-    ctx.fillStyle = color
+    ctx.fillStyle = isDark ? '#ff4444' : color
     ctx.fillText(text, 128, 128)
 
     const texture = new THREE.CanvasTexture(canvas)
@@ -344,7 +380,7 @@ export function useThreeScene(containerRef, props) {
     renderer.value.clear()
     renderer.value.render(scene.value, camera.value)
 
-    // HUD 坐标轴 - 左下角（跟随相机旋转）
+    // HUD 坐标轴 - 左下角（跟随相机旋转，叠加在主画面上）
     const hudSize = Math.min(120, w * 0.18) * window.devicePixelRatio
     const hudX = 15
     const hudY = 15
@@ -408,6 +444,12 @@ export function useThreeScene(containerRef, props) {
 
     scene.value?.traverse(disposeObject)
     hudScene.value?.traverse(disposeObject)
+
+    // 释放渐变背景纹理
+    if (bgTexture) {
+      bgTexture.dispose()
+      bgTexture = null
+    }
 
     if (renderer.value) {
       renderer.value.dispose()

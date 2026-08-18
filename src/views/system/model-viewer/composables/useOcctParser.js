@@ -2,10 +2,13 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 
 // OCCT 解析参数（提取常量，避免重复定义）
+// linearDeflection 0.0006（包围盒比例 0.06%）：流畅度与曲面平滑的平衡点。
+// 0.03% 过度细分（复杂件几十万面、渲染卡）；0.1% 曲面稍粗；
+// 0.06% 曲面足够平滑、面数适中（配合边线显示棱线）。
 const OCCT_PARAMS = {
   linearUnit: 'millimeter',
   linearDeflectionType: 'bounding_box_ratio',
-  linearDeflection: 0.0003,
+  linearDeflection: 0.0006,
   angularDeflection: 0.5
 }
 
