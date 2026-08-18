@@ -428,7 +428,8 @@ watch(() => props.coordSystem, (val) => {
 watch(() => props.wireframe, (val) => {
   if (!modelGroup.value) return
   modelGroup.value.children.forEach(child => {
-    if (child.isMesh && child.material && !(child.name && child.name.endsWith('_outline'))) {
+    const isEdge = child.name && (child.name.endsWith('_visibleEdges') || child.name.endsWith('_hiddenEdges') || child.name.endsWith('_outline'))
+    if (child.isMesh && child.material && !isEdge) {
       // 线框模式：mesh 半透明；实体模式：使用颜色面板设置的不透明度
       child.material.transparent = val ? true : colorAlpha.value < 100
       child.material.opacity = val ? 0.15 : colorAlpha.value / 100
@@ -656,7 +657,8 @@ function applyModelColor(c) {
   if (!modelGroup.value) return
   const color = new THREE.Color(c)
   modelGroup.value.children.forEach(child => {
-    if (child.isMesh && child.material && !(child.name && child.name.endsWith('_outline'))) {
+    const isEdge = child.name && (child.name.endsWith('_visibleEdges') || child.name.endsWith('_hiddenEdges') || child.name.endsWith('_outline'))
+    if (child.isMesh && child.material && !isEdge) {
       child.material.color.copy(color)
     }
   })
