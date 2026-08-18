@@ -21,7 +21,12 @@ export function useStandardViews(camera, controls, modelGroup) {
     const size = box.getSize(new THREE.Vector3())
     const maxDim = Math.max(size.x, size.y, size.z)
     const fov = camera.value.fov * (Math.PI / 180)
-    const dist = maxDim / (2 * Math.tan(fov / 2))
+    // 按视口宽高比取"最受限方向"的 fov：窄窗口（aspect<1）下水平方向可容纳更小，
+    // 若用垂直 fov 计算距离，模型左右角会被切掉
+    const aspect = camera.value.aspect || 1
+    const fovH = 2 * Math.atan(Math.tan(fov / 2) * aspect)
+    const effFov = Math.min(fov, fovH)
+    const dist = maxDim / (2 * Math.tan(effFov / 2))
     return { center, maxDim, dist, size }
   }
 
@@ -44,7 +49,9 @@ export function useStandardViews(camera, controls, modelGroup) {
     if (!v) return
 
     const dir = new THREE.Vector3(...v.dir).normalize()
-    const viewDist = dist * 1.8  // 模型完整显示（可容纳投影尺寸 = 1.8 × maxDim）
+    // 2.2 倍距离：可容纳投影 ≈ 2.2×maxDim，充分大于模型 iso 投影（≈1.63×maxDim），
+    // 保证模型任何角都不会超出视口被切
+    const viewDist = dist * 2.2
 
     camera.value.position.set(
       center.x + dir.x * viewDist,
@@ -53,7 +60,10 @@ export function useStandardViews(camera, controls, modelGroup) {
     )
     camera.value.up.set(v.up[0], v.up[1], v.up[2])
     controls.value.target.copy(center)
-    camera.value.lookAt(center)
+    // 视线目标点略微下移：模型在视口中偏上一点，底部轮廓线不被画布边缘切掉
+    const lookTarget = center.clone()
+    lookTarget.y -= maxDim * 0.06
+    camera.value.lookAt(lookTarget)
     controls.value.update()
     controls.value.minDistance = maxDim * 0.15
     controls.value.maxDistance = maxDim * 15  // 增大最大距离

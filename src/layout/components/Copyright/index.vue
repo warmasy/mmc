@@ -130,10 +130,13 @@ const copyrightStyle = computed(() => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  backgroundColor: 'var(--copyright-bg, #f8f8f8)',
-  color: 'var(--copyright-color, #666)',
+  // 背景/文字/边框统一使用系统主题变量（亮色白底、暗色深底，与整体风格一致）
+  backgroundColor: 'var(--copyright-bg, var(--el-bg-color))',
+  color: 'var(--copyright-color, var(--el-text-color-secondary))',
   fontSize: '13px',
-  borderTop: '1px solid var(--copyright-border, #e7e7e7)',
+  borderTop: '1px solid var(--copyright-border, var(--el-border-color))',
+  boxShadow: '0 -1px 6px rgba(0, 0, 0, 0.05)',
+  borderRadius: '0',
   zIndex: 999,
   transition: 'left 0.28s'
 }))
@@ -271,5 +274,12 @@ const copyrightStyle = computed(() => ({
   .badge-img {
     height: 14px;
   }
+}
+</style>
+
+<!-- 暗色主题下页脚边框/背景变量覆盖（亮色用系统默认边框色） -->
+<style>
+html.dark {
+  --copyright-border: #4e5259;
 }
 </style>

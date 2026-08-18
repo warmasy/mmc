@@ -137,11 +137,14 @@ function triggerFileSelect() {
 
 <style scoped lang="less">
 .model-viewer-page {
-  height: 100%; /* 高度由 AppMain 底部内边距统一预留页脚空间 */
+  // 高度 100%：页脚显示时 AppMain 底部内边距 52px 为页脚让位（模型区缩小，不被遮挡）；
+  // 页脚隐藏时内边距为 0，模型区自动填满整个卡片框。
+  height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
+  padding: 0 !important;   // 覆盖 .app-container 的 6px 内边距，模型区域完全填满
 }
 
 // 主体行

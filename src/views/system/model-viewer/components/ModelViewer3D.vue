@@ -222,6 +222,8 @@ const isSettingView = ref(false) // 标记是否正在程序设置视图
 // 拍照信息
 const currentFileName = ref('')
 const modelStats = ref(null)
+// 容器尺寸监听（页脚显隐/侧边栏折叠时画布自适应）
+let resizeObserver = null
 
 // ==================== Composables ====================
 const {
@@ -254,6 +256,12 @@ watch(isDark, (dark) => {
 
 onMounted(() => {
   window.addEventListener('resize', handleResize)
+  // 容器尺寸变化（页脚显隐、侧边栏折叠等）也会改变画布可用高度，
+  // window.resize 不触发，用 ResizeObserver 兜底保证画布始终填满容器
+  if (typeof ResizeObserver !== 'undefined' && containerRef.value) {
+    resizeObserver = new ResizeObserver(() => handleResize())
+    resizeObserver.observe(containerRef.value)
+  }
   initThree()
   // 初始化时应用当前主题
   updateTheme(isDark.value)
@@ -272,6 +280,10 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
+  if (resizeObserver) {
+    resizeObserver.disconnect()
+    resizeObserver = null
+  }
   teardownModelDragRotate()
   cleanupClipping()
   disposeThree()

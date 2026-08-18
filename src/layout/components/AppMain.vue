@@ -22,9 +22,9 @@ const route = useRoute()
 const tagsViewStore = useTagsViewStore()
 const settingsStore = useSettingsStore()
 
-// 页脚显示时预留其高度（48px + 余量），隐藏时恢复正常内边距，避免固定页脚遮挡页面内容
+// 页脚显示时预留其高度（48px + 余量）；隐藏时留 8px 小边距（不贴底，也不像之前 20px 那么空）
 const mainStyle = computed(() => {
-  const footerHeight = settingsStore.footerVisible ? '52px' : '20px'
+  const footerHeight = settingsStore.footerVisible ? '52px' : '8px'
   return { '--app-main-pb': footerHeight }
 })
 
