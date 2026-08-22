@@ -1,0 +1,484 @@
+/* ==========================================================================
+   O3DV 页面内集成全局样式修复（非 scoped）
+   这些规则作用于 body 下挂载的 O3DV 浮动元素（tooltip/弹窗/测量面板等），
+   以及 .o3dv-root 内需要覆盖 O3DV 默认行为的选择器。
+
+   背景：
+   1) O3DV 的 Pickr 颜色弹层由 Pickr 库 append 到 body（不在 .o3dv-root 内），
+      而 prefixed CSS 的 .pcr-app 规则都带 .o3dv-root 前缀，导致弹层拿不到
+      定位样式退回 position:static 且关闭后仍在文档流占位，撑高页面产生滚动。
+      这里恢复 Pickr 应有的 fixed 定位（打开时 inline top/left 由 Pickr 计算），
+      并让未打开（无 .visible）的弹层脱离文档流/隐藏。
+   2) 项目全局设置了 *{box-sizing:border-box}，但 O3DV 的布局计算（面板按钮、
+      容器宽度、分割条等）基于 content-box（width 不含 padding/border）。
+      在 .o3dv-root 内恢复 content-box，否则面板按钮被压扁、容器错位、
+      左右面板相互干涉、内容溢出卡片。O3DV 自己显式声明 border-box 的地方
+      （如属性表格单元格）优先级更高，不受影响。
+   3) only_full_width 元素在小屏（≤800px）默认被 O3DV 隐藏，这里强制显示，
+      保证导航器/侧边栏容器完整。
+   ========================================================================== */
+
+/* ---------- box-sizing 恢复 content-box ---------- */
+.o3dv-root,
+.o3dv-root *,
+.o3dv-root *:before,
+.o3dv-root *:after {
+  box-sizing: content-box;
+}
+
+/* ---------- Pickr 颜色弹层 ---------- */
+body > div.pcr-app {
+  position: fixed !important;
+  z-index: 10000;
+}
+body > div.pcr-app:not(.visible) {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+body > div.pcr-app.visible {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* ---------- Tooltip（InstallTooltip 挂到 body） ----------
+   prefixed CSS 的 .o3dv-root div.ov_tooltip 规则匹配不到，导致 tooltip
+   退回 position:static 并撑高页面（悬停工具栏按钮时页面右侧弹一下/出现滚动条），
+   且背景/圆角/阴影等样式全部丢失（裸文本）。
+   这里恢复原版 controls.css 的完整样式（颜色变量跟随 O3DV 主题）。 */
+body > div.ov_tooltip {
+  position: absolute !important;
+  z-index: 10001;
+  color: var(--ov_dialog_foreground_color, #333);
+  background: var(--ov_dialog_background_color, #fff);
+  padding: 5px 10px;
+  border-radius: 5px;
+  box-shadow: var(--ov_shadow, 0 2px 8px rgba(0, 0, 0, 0.2));
+  font-family: Quicksand, Helvetica, sans-serif;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+/* ---------- 对话框/弹窗定位（dialog.js 挂到 body） ---------- */
+body > div.ov_modal,
+body > div.ov_dialog,
+body > div.ov_progress,
+body > div.ov_popup,
+body > div.ov_context_menu {
+  position: absolute !important;
+  z-index: 10002;
+}
+
+/* ---------- 补全对话框样式（dialogs.css） ---------- */
+body > div.ov_dialog {
+  color: var(--ov_dialog_foreground_color, #333);
+  background: var(--ov_dialog_background_color, #fff);
+  width: 400px;
+  padding: 20px;
+  box-shadow: var(--ov_shadow, 0 2px 8px rgba(0, 0, 0, 0.2));
+  border-radius: 5px;
+  font-family: Quicksand, Helvetica, sans-serif;
+  font-size: 16px;
+}
+body > div.ov_dialog > div.ov_dialog_title {
+  font-size: 19px;
+  font-weight: bold;
+}
+body > div.ov_dialog > div.ov_dialog_inner_title {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+body > div.ov_dialog > div.ov_dialog_content {
+  padding: 20px 0px;
+  overflow: auto;
+}
+body > div.ov_dialog > div.ov_dialog_section {
+  margin: 10px 0px;
+  overflow: auto;
+}
+body > div.ov_dialog > div.ov_dialog_buttons {
+  overflow: auto;
+}
+body > div.ov_dialog > div.ov_dialog_buttons_inner {
+  float: right;
+  overflow: auto;
+}
+body > div.ov_dialog div.ov_dialog_button {
+  margin-left: 10px;
+  width: 80px;
+  float: left;
+}
+body > div.ov_dialog > div.ov_dialog_message {
+  overflow: auto;
+}
+body > div.ov_dialog > div.ov_dialog_submessage {
+  font-size: 14px;
+  font-style: italic;
+  margin-top: 10px;
+}
+body > div.ov_dialog > div.ov_dialog_row {
+  padding: 3px 0px;
+  overflow: auto;
+}
+body > div.ov_dialog > div.ov_dialog_row_name {
+  width: 30%;
+  margin-top: 6px;
+  float: left;
+}
+body > div.ov_dialog > div.ov_dialog_row_value {
+  width: 70%;
+  float: left;
+}
+body > div.ov_dialog input.ov_dialog_text {
+  padding: 5px;
+  border: 1px solid var(--ov_dialog_control_border_color, #ccc);
+  border-radius: 5px;
+  overflow: auto;
+}
+body > div.ov_dialog textarea.ov_dialog_textarea {
+  margin: 10px 0px;
+  width: 100%;
+  height: 120px;
+  border: 1px solid var(--ov_dialog_control_border_color, #ccc);
+  box-sizing: border-box;
+}
+body > div.ov_dialog > div.ov_dialog_copyable_input {
+  padding: 3px;
+  border: 1px solid var(--ov_dialog_control_border_color, #ccc);
+  border-radius: 5px;
+  overflow: auto;
+}
+
+/* ---------- 弹窗（ov_popup） ---------- */
+body > div.ov_popup {
+  color: var(--ov_dialog_foreground_color, #333);
+  background: var(--ov_dialog_background_color, #fff);
+  width: 200px;
+  padding: 10px;
+  box-shadow: var(--ov_shadow, 0 2px 8px rgba(0, 0, 0, 0.2));
+  border-radius: 5px;
+}
+body > div.ov_popup div.ov_popup_list {
+  max-height: 200px;
+  overflow: auto;
+}
+body > div.ov_popup div.ov_popup_list_item {
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  overflow: auto;
+}
+body > div.ov_popup div.ov_popup_list_item_icon {
+  float: left;
+}
+body > div.ov_popup div.ov_popup_list_item_name {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* ---------- 进度对话框（ov_progress） ---------- */
+body > div.ov_progress {
+  color: var(--ov_dialog_foreground_color, #333);
+  background: var(--ov_dialog_background_color, #fff);
+  padding: 20px;
+  text-align: center;
+  width: 400px;
+  box-shadow: var(--ov_shadow, 0 2px 8px rgba(0, 0, 0, 0.2));
+  border-radius: 5px;
+}
+
+/* ---------- 弹窗内部控件（select/按钮） ---------- */
+body > div.ov_dialog div.ov_select_container {
+  position: relative;
+}
+body > div.ov_dialog div.ov_select_container:after {
+  font-family: O3DVIcons;
+  font-size: 18px;
+  content: "\f101";
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  pointer-events: none;
+}
+body > div.ov_dialog select.ov_select {
+  color: var(--ov_dialog_foreground_color, #333);
+  background: var(--ov_dialog_background_color, #fff);
+  font-size: 16px;
+  margin: 0;
+  padding: 5px;
+  border: 1px solid var(--ov_border_color, #ccc);
+  border-radius: 5px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+body > div.ov_dialog div.ov_button {
+  color: var(--ov_button_text_color, #fff);
+  background: var(--ov_button_color, #3393bd);
+  text-align: center;
+  padding: 3px;
+  border: 1px solid var(--ov_button_color, #3393bd);
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: Quicksand, Helvetica, sans-serif;
+  font-size: 16px;
+}
+body > div.ov_dialog div.ov_button:hover {
+  background: var(--ov_button_hover_color, #146a8f);
+  border: 1px solid var(--ov_button_hover_color, #146a8f);
+}
+body > div.ov_dialog div.ov_button.outline {
+  color: var(--ov_outline_button_text_color, #333);
+  background: transparent;
+  border: 1px solid var(--ov_outline_button_color, #3393bd);
+}
+body > div.ov_dialog div.ov_button.outline:hover {
+  background: var(--ov_outline_button_hover_color, #c9e5f8);
+  border: 1px solid var(--ov_outline_button_color, #3393bd);
+}
+
+/* ---------- only_full_width 强制显示 ---------- */
+.o3dv-root .only_full_width {
+  display: block !important;
+}
+
+/* ---------- 禁用的工具栏按钮（红色斜杠，保持手指光标） ---------- */
+.o3dv-root .ov_toolbar_button.ov_toolbar_button_disabled {
+  position: relative;
+  opacity: 0.6;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.o3dv-root .ov_toolbar_button.ov_toolbar_button_disabled::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: 50%;
+  height: 2px;
+  background: #e5484d;
+  border-radius: 1px;
+  transform: rotate(-45deg);
+  transform-origin: center;
+  z-index: 2;
+}
+.o3dv-root div.ov_toolbar_button.ov_toolbar_button_disabled:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+/* 禁用按钮的 selected 高亮也清除：主题按钮（Dark/Light mode）默认是选中态，
+   O3DV 会给 selected 加 --ov_toolbar_selected_color 背景（看起来像阴影），
+   这里让禁用按钮（含选中态）与普通禁用按钮样式完全一致 */
+.o3dv-root div.ov_toolbar_button.ov_toolbar_button_disabled.selected {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.o3dv-root div.ov_toolbar_button.ov_toolbar_button_disabled.selected:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* ---------- 导航器树选中项（修复 hover 覆盖） ---------- */
+.o3dv-root div.ov_tree_view div.ov_tree_item.selected {
+  background: var(--ov_treeview_selected_color) !important;
+  font-weight: bold;
+}
+
+/* ---------- 主页按钮 SVG 图标 ---------- */
+.o3dv-root div.ov_toolbar_button .ov_svg_icon svg {
+  width: 20px;
+  height: 20px;
+  color: var(--ov_icon_color);
+}
+
+/* ---------- 标准视图按钮图标（圆角方框 + 汉字） ---------- */
+.o3dv-root div.ov_toolbar_button .ov_svg_icon .ov_view_icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border: 1px solid var(--ov_icon_color);
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--ov_icon_color);
+  font-family: Quicksand, "Microsoft YaHei", Helvetica, sans-serif;
+}
+
+/* ---------- 文件名显示（移到 snapshot 按钮后） ---------- */
+.o3dv-root .ov_file_name_after_snapshot {
+  display: inline-block;
+  float: left;
+  border-left: 1px solid var(--ov_toolbar_separator_color, #ccc);
+  margin: 5px 8px !important;
+  padding: 0 10px;
+  font-size: 14px;
+  color: var(--ov_foreground_color);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 260px;
+  vertical-align: middle;
+  line-height: 28px;
+  height: 28px;
+}
+
+/* ---------- 测量面板（挂到 body） ---------- */
+body > div.ov_measure_panel {
+  position: absolute !important;
+  z-index: 10003;
+  padding: 6px 15px;
+  border-radius: 30px;
+  font-family: Quicksand, Helvetica, sans-serif;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+/* ---------- 快照弹窗（挂到 body） ---------- */
+body > div.ov_dialog.ov_snapshot_dialog {
+  width: 480px;
+  float: right;
+}
+body > div.ov_dialog.ov_snapshot_dialog img.ov_snapshot_dialog_preview {
+  background: var(--ov_border_color, #ddd);
+  border: 1px solid var(--ov_dialog_control_border_color, #e1e1e1);
+  width: 230px;
+  height: 230px;
+  object-fit: contain;
+  float: left;
+  border-radius: 5px;
+}
+body > div.ov_dialog.ov_snapshot_dialog div.ov_snapshot_dialog_options {
+  width: 230px;
+  float: right;
+}
+body > div.ov_dialog.ov_snapshot_dialog div.ov_snapshot_dialog_param_name {
+  width: 60px;
+  margin-left: 30px;
+  margin-top: 6px;
+  float: left;
+}
+body > div.ov_dialog.ov_snapshot_dialog input.ov_snapshot_dialog_param_value {
+  width: 80px;
+  text-align: right;
+  float: left;
+}
+body > div.ov_dialog.ov_snapshot_dialog div.ov_snapshot_dialog_separator {
+  margin: 10px 0px;
+  border-bottom: 1px solid var(--ov_border_color, #ddd);
+}
+
+/* ---------- 环境贴图弹窗（挂到 body） ---------- */
+body > div.ov_popup img.ov_environment_map_preview {
+  width: 160px;
+  height: 88px;
+  display: block;
+  float: left;
+  padding: 1px;
+  border: 5px solid var(--ov_dialog_background_color, #fff);
+  cursor: pointer;
+  box-sizing: content-box;
+}
+body > div.ov_popup img.ov_environment_map_preview.selected {
+  border: 5px solid var(--ov_button_color, #3393bd);
+}
+body > div.ov_popup.sidebar {
+  width: auto;
+  max-width: 380px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+body > div.ov_popup.sidebar div.ov_environment_map_checkbox {
+  clear: both;
+  margin-bottom: 8px;
+}
+
+/* ---------- 模型展示区域底部留空隙 ---------- */
+.o3dv-root div.main_viewer {
+  padding-bottom: 10px;
+}
+
+/* ---------- main 区域限制高度 ---------- */
+.o3dv-root div.main {
+  height: calc(100% - 38px) !important;
+  overflow: hidden;
+}
+
+/* ---------- 左下角 XYZ 坐标轴指示器 ---------- */
+/* 去掉全局样式给 canvas 加的边框方框，直接显示坐标轴 */
+.o3dv-root .main_viewer #ov_axis_indicator_hud canvas {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+/* 指示器容器本身也不带任何边框/背景，纯透明覆盖层 */
+.o3dv-root .main_viewer #ov_axis_indicator_hud {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* ---------- 清除左侧导航器的信息面板（ov_navigator_info_panel） ---------- */
+.o3dv-root .ov_navigator_info_panel {
+  display: none !important;
+}
+
+/* ---------- 左侧"计算"面板 ---------- */
+.o3dv-root .ov_calc_panel {
+  padding: 10px 12px 12px;
+  font-size: 13px;
+  color: var(--ov_foreground_color, #333);
+}
+/* 三列网格：标签 | 数值 | 单位，三行完全对齐 */
+.o3dv-root .ov_calc_row {
+  display: grid;
+  grid-template-columns: 48px 1fr 60px;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+}
+.o3dv-root .ov_calc_row .ov_calc_label {
+  color: var(--ov_foreground_color, #333);
+  font-size: 13px;
+}
+.o3dv-root .ov_calc_row .ov_calc_value {
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--ov_foreground_color, #333);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.o3dv-root .ov_calc_row .ov_calc_unit {
+  color: var(--ov_foreground_color, #888);
+  font-size: 12px;
+  text-align: left;
+}
+.o3dv-root .ov_calc_row input[type="number"] {
+  width: 100%;
+  padding: 3px 6px;
+  border: 1px solid var(--ov_dialog_control_border_color, #ccc);
+  border-radius: 3px;
+  background: var(--ov_dialog_control_background_color, #fff);
+  color: var(--ov_foreground_color, #333);
+  font-size: 13px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+.o3dv-root .ov_calc_row input[type="number"]:hover {
+  border-color: var(--ov_button_color, #3393bd);
+}
+.o3dv-root .ov_calc_row input[type="number"]:focus {
+  outline: none;
+  border-color: var(--ov_button_color, #3393bd);
+  box-shadow: 0 0 0 1px var(--ov_button_color, #3393bd);
+}

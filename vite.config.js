@@ -50,11 +50,10 @@ export default defineConfig(({ mode, command }) => {
           changeOrigin: true,
           rewrite: (p) => p.replace(/^\/dev-api/, '')
         }
-      },
-      headers: {
-        'Cross-Origin-Embedder-Policy': 'require-corp',
-        'Cross-Origin-Opener-Policy': 'same-origin'
       }
+      // 注意：不设置 COEP/COOP（Cross-Origin-Embedder-Policy: require-corp 等）——
+      // 它会让 iframe 内嵌的 Online3DViewer（3D 查看器）加载 OCCT worker/wasm 时
+      // 被 COEP 策略拦截（ERR_BLOCKED_BY_RESPONSE...Coep），导致模型导入失败
     },
     // 将 wasm 文件作为静态资源处理
     assetsInclude: ['**/*.wasm'],

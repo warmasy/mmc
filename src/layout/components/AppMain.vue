@@ -1,11 +1,11 @@
 <template>
   <section class="app-main" :style="mainStyle">
+    <!-- 无过渡动画：直接渲染（用户要求删除页面加载/切换时的 fade-transform 过渡动画；
+         不使用 mode="out-in" 也是为了避免切换含 WebGL 的重组件时空白屏） -->
     <router-view v-slot="{ Component, route }">
-      <transition name="fade-transform" mode="out-in">
-        <keep-alive :include="tagsViewStore.cachedViews">
-          <component v-if="!route.meta.link" :is="Component" :key="route.path"/>
-        </keep-alive>
-      </transition>
+      <keep-alive :include="tagsViewStore.cachedViews">
+        <component v-if="!route.meta.link" :is="Component" :key="route.path"/>
+      </keep-alive>
     </router-view>
     <iframe-toggle />
     <copyright />
